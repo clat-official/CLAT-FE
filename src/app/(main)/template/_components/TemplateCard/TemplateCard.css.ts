@@ -1,0 +1,68 @@
+import { style } from '@vanilla-extract/css'
+import { colors } from '@/styles/tokens/colors'
+import { fontStyles } from '@/styles/tokens/typography'
+
+export const cardStyle = style({
+  backgroundColor: colors.white,
+  border: `1px solid ${colors.gray100}`,
+  borderRadius: '16px',
+  padding: '24px',
+  cursor: 'pointer',
+  transition: 'background-color 0.2s',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+  selectors: {
+    '&:hover': {
+      backgroundColor: colors.primary50,
+    },
+  },
+})
+
+export const cardHeaderStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+})
+
+export const iconGroupStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+})
+
+export const iconButtonStyle = style({
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  padding: '4px',
+  color: colors.gray100,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  transition: 'color 0.2s',
+  selectors: {
+    '&:hover': {
+      color: colors.gray300,
+    },
+  },
+})
+
+export const classCountStyle = style({
+  fontSize: fontStyles.titleSm.fontSize,
+  fontWeight: fontStyles.titleSm.fontWeight,
+  letterSpacing: '-0.03em',
+  lineHeight: '140%',
+  color: colors.gray500,
+})
+
+export const countHighlightStyle = style({
+  color: colors.primary500,
+  fontWeight: fontStyles.titleSm.fontWeight,
+})
+
+export const chipGroupStyle = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '4px',
+})
