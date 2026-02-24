@@ -1,16 +1,26 @@
+import PlusIcon from '@/assets/icons/icon-plus.svg'
 import Text from '@/components/common/Text'
+import Button from '@/components/common/Button'
+import Input from '@/components/common/Input'
+import Textarea from '@/components/common/Textarea'
+
 export default function HomePage() {
   return (
-    <div style={{ padding: '40px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      <Text variant="display" as="h1" color='primary500'>display · 28px</Text>
-      <Text variant="headingLg" as="h2">headingLg · 24px</Text>
-      <Text variant="headingMd" as="h3">headingMd · 20px</Text>
-      <Text variant="headingSm" as="h4">headingSm · 18px</Text>
-      <Text variant="titleMd" as="p">titleMd · 16px</Text>
-      <Text variant="titleSm" as="p">titleSm · 14px</Text>
-      <Text variant="bodyLg" as="p">bodyLg · 16px</Text>
-      <Text variant="bodyMd" as="p">bodyMd · 14px</Text>
-      <Text variant="labelSm" as="span">labelSm · 12px</Text>
+    <div
+      style={{
+        padding: '40px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        maxWidth: '600px',
+      }}
+    >
+      <Input placeholder="예) 정규 수업 템플릿" />
+      <Input defaultValue="정규 수업 템플릿" />
+      <Input disabled placeholder="disabled" />
+      <Textarea placeholder="내용을 입력해주세요" />
+      <Textarea defaultValue="내용내용내용내용내용내용내용내용내용내용내용내용" />
+      <Textarea disabled placeholder="disabled" />
     </div>
   )
 }

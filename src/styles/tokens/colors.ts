@@ -9,6 +9,8 @@ export const colors = {
   primary700: '#333A9A',
   primary800: '#2E367A',
 
+  white: '#FFFFFF',
+  background: '#FAFAFA',
   gray50: '#F3F4F5',
   gray75: '#E5E6EC',
   gray100: '#D7D7E3',
