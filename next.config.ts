@@ -7,6 +7,28 @@ const nextConfig = {
   webpack(config: Configuration) {
     config.module!.rules!.push({
       test: /\.svg$/,
+      exclude: /logo/,
+      use: [
+        {
+          loader: '@svgr/webpack',
+          options: {
+            svgoConfig: {
+              plugins: [
+                {
+                  name: 'removeAttrs',
+                  params: { attrs: '(width|height)' },
+                },
+              ],
+            },
+          },
+        },
+      ],
+    })
+
+    // 로고 별도 처리
+    config.module!.rules!.push({
+      test: /\.svg$/,
+      include: /logo/,
       use: ['@svgr/webpack'],
     })
     return config
