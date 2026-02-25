@@ -3,12 +3,11 @@
 import { useRouter } from 'next/navigation'
 import Text from '@/components/common/Text'
 import Chip from '@/components/common/Chip'
-import EditIcon from '@/assets/icons/icon-edit.svg'
+
 import TrashIcon from '@/assets/icons/icon-trash.svg'
 import {
   cardStyle,
   cardHeaderStyle,
-  iconGroupStyle,
   iconButtonStyle,
   classCountStyle,
   countHighlightStyle,
@@ -33,34 +32,21 @@ export default function TemplateCard({
   const router = useRouter()
 
   return (
-    <div
-      className={cardStyle}
-      onClick={() => router.push(`/template/${id}`)}
-    >
+    <div className={cardStyle} onClick={() => router.push(`/template/${id}`)}>
       <div className={cardHeaderStyle}>
-        <div />
-        <div className={iconGroupStyle}>
-          <button
-            className={iconButtonStyle}
-            onClick={(e) => {
-              e.stopPropagation()
-              router.push(`/template/${id}/edit`)
-            }}
-          >
-            <EditIcon width={16} height={16} />
-          </button>
-          <button
-            className={iconButtonStyle}
-            onClick={(e) => {
-              e.stopPropagation()
-              onDelete(id)
-            }}
-          >
-            <TrashIcon width={16} height={16} />
-          </button>
-        </div>
+        <Text variant="headingLg" as="h3">
+          {title}
+        </Text>
+        <button
+          className={iconButtonStyle}
+          onClick={(e) => {
+            e.stopPropagation()
+            onDelete(id)
+          }}
+        >
+          <TrashIcon width={24} height={24} />
+        </button>
       </div>
-      <Text variant="headingLg" as="h3">{title}</Text>
       <p className={classCountStyle}>
         사용 중인 반 <span className={countHighlightStyle}>{classCount}</span>
       </p>

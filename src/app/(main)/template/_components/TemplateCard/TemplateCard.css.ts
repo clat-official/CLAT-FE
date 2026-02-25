@@ -11,7 +11,7 @@ export const cardStyle = style({
   transition: 'background-color 0.2s',
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
+  gap: '12px',
   selectors: {
     '&:hover': {
       backgroundColor: colors.primary50,
@@ -21,14 +21,9 @@ export const cardStyle = style({
 
 export const cardHeaderStyle = style({
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   justifyContent: 'space-between',
-})
-
-export const iconGroupStyle = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '4px',
+  marginBottom: '8px',
 })
 
 export const iconButtonStyle = style({
