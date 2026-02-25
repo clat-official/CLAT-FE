@@ -9,6 +9,7 @@ export const buttonRecipe = recipe({
     gap: '4px',
     border: 'none',
     borderRadius: '8px',
+    boxSizing: 'border-box',
     cursor: 'pointer',
     fontFamily: 'Pretendard, sans-serif',
     transition: 'background-color 0.2s, opacity 0.2s',
@@ -53,8 +54,16 @@ export const buttonRecipe = recipe({
         color: colors.gray700,
         outline: `1px solid ${colors.gray100}`,
         selectors: {
-          '&:hover:not(:disabled)': { backgroundColor: colors.primary50, color: colors.primary500, outline: `1px solid ${colors.primary500}` },
-          '&:active:not(:disabled)': { backgroundColor: colors.primary50, color: colors.primary500, outline: `1px solid ${colors.primary500}` },
+          '&:hover:not(:disabled)': {
+            backgroundColor: colors.primary50,
+            color: colors.primary500,
+            outline: `1px solid ${colors.primary500}`,
+          },
+          '&:active:not(:disabled)': {
+            backgroundColor: colors.primary50,
+            color: colors.primary500,
+            outline: `1px solid ${colors.primary500}`,
+          },
           '&:disabled': { color: colors.gray100, outline: `1px solid ${colors.gray100}` },
         },
       },
@@ -70,8 +79,8 @@ export const buttonRecipe = recipe({
     },
     size: {
       sm: { padding: '8px 12px', fontSize: '14px', fontWeight: '500' },
-      md: { padding: '12px 128px', fontSize: '14px', fontWeight: '600' },
-      lg: { padding: '16px 120px', fontSize: '16px', fontWeight: '600' },
+      md: { padding: '12px 24px', fontSize: '14px', fontWeight: '600' },
+      lg: { padding: '16px 24px', fontSize: '16px', fontWeight: '600' },
     },
     fullWidth: {
       true: { width: '100%' },
