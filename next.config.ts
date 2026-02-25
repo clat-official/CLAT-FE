@@ -15,8 +15,7 @@ const nextConfig = {
             svgoConfig: {
               plugins: [
                 {
-                  name: 'removeAttrs',
-                  params: { attrs: '(width|height)' },
+                  name: 'removeDimensions',
                 },
               ],
             },
