@@ -38,7 +38,7 @@ const ITEM_TYPES: Array<{ id: ItemTypeId; name: string; desc: string }> = [
 ]
 
 interface AddItemFormProps {
-  onAdd: (label: string, type: string) => void
+  onAdd: (label: string, type: string, choices?: string[]) => void
   onCancel: () => void
 }
 
@@ -77,7 +77,11 @@ export default function AddItemForm({ onAdd, onCancel }: AddItemFormProps) {
 
   const handleAdd = () => {
     if (!label.trim() || !selectedType) return
-    onAdd(label.trim(), selectedType)
+    const finalChoices =
+      selectedType === 'choice'
+        ? [...choices, ...(choiceInput.trim() ? [choiceInput.trim()] : [])]
+        : undefined
+    onAdd(label.trim(), selectedType, finalChoices)
   }
 
   return (

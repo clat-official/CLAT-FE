@@ -17,25 +17,19 @@ import {
   checkButtonVariants,
   addButtonStyle,
 } from './ContentSection.css'
-
-interface ContentItem {
-  id: string
-  label: string
-  isActive: boolean
-  locked?: boolean
-}
+import type { TemplateItem } from '../../_types/template'
 
 interface ContentSectionProps {
   title: string
   description: string
-  items: ContentItem[]
+  items: TemplateItem[]
   onToggle: (id: string) => void
   onDelete: (id: string) => void
   // 인라인 모드 (공통 내용): 항목 즉시 생성 후 인라인 편집
   onAddInline?: () => string
   onUpdate?: (id: string, label: string) => void
   // 폼 모드 (개별 내용): AddItemForm 표시
-  onAdd?: (label: string, type: string) => void
+  onAdd?: (label: string, type: string, choices?: string[]) => void
 }
 
 function renderLabel(label: string) {
@@ -144,8 +138,8 @@ export default function ContentSection({
 
       {isFormOpen && onAdd && (
         <AddItemForm
-          onAdd={(label, type) => {
-            onAdd(label, type)
+          onAdd={(label, type, choices) => {
+            onAdd(label, type, choices)
             setIsFormOpen(false)
           }}
           onCancel={() => setIsFormOpen(false)}
