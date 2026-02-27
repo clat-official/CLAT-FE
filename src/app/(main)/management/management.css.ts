@@ -1,0 +1,44 @@
+import { style } from '@vanilla-extract/css'
+import { colors } from '@/styles/tokens/colors'
+import { fontStyles } from '@/styles/tokens/typography'
+
+const tabBase = {
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: fontStyles.headingLg.fontSize,
+  fontWeight: fontStyles.headingLg.fontWeight,
+  letterSpacing: '-0.03em',
+  lineHeight: '140%',
+  padding: 0,
+} as const
+
+export const tabContainerStyle = style({
+  display: 'flex',
+  gap: '32px',
+  marginTop: '60px',
+  marginBottom: '24px',
+})
+
+export const tabStyle = style([tabBase, {
+  color: colors.gray300,
+}])
+
+export const tabActiveStyle = style([tabBase, {
+  color: colors.gray900,
+}])
+
+export const gridStyle = style({
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridAutoRows: 'minmax(190px, auto)',
+    gap: '20px',
+    '@media': {
+      'screen and (max-width: 1279px)': {
+        gridTemplateColumns: 'repeat(2, 1fr)',
+      },
+      'screen and (max-width: 767px)': {
+        gridTemplateColumns: 'repeat(1, 1fr)',
+      },
+    },
+  })
