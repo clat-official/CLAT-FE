@@ -1,12 +1,13 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { colors } from '@/styles/tokens/colors'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
-import ClassInfoTable from '../_components/ClassInfoTable/ClassInfoTable'
+import ClassInfoTable from './_components/ClassInfoTable/ClassInfoTable'
+import StudentTable from './_components/StudentTable/StudentTable'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import EditIcon from '@/assets/icons/icon-edit.svg'
+import PlusIcon from '@/assets/icons/icon-plus.svg'
 
 const MOCK_CLASS = {
   id: 1,
@@ -17,11 +18,21 @@ const MOCK_CLASS = {
   template: '정규 수업 템플릿',
 }
 
+const MOCK_STUDENTS = Array.from({ length: 10 }, (_, i) => ({
+  id: i + 1,
+  name: '홍길동',
+  studentPhone: '010-1234-5678',
+  parentPhone: '010-1234-5678',
+  memo: '',
+  completionRate: 47,
+  remaining: 3,
+}))
+
 export default function ClassDetailPage() {
   const router = useRouter()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
       {/* 헤더 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <button
@@ -58,15 +69,15 @@ export default function ClassDetailPage() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '16px',
+            marginBottom: '24px',
           }}
         >
           <Text variant="headingMd">학생 명단</Text>
-          <Button variant="primary" size="sm">
-            + 학생 추가
+          <Button variant="primary" size="sm" leftIcon={<PlusIcon width={20} height={20} />}>
+            학생 추가
           </Button>
         </div>
-        {/* StudentTable 추후 추가 */}
+        <StudentTable students={MOCK_STUDENTS} onDelete={(id) => console.log('delete', id)} />
       </section>
 
       {/* 반 종료 */}
