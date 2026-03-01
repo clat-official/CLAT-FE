@@ -108,9 +108,9 @@ export const buttonRecipe = recipe({
       },
     },
     size: {
-      sm: { padding: '8px 12px', fontSize: '14px', fontWeight: '600' },
-      md: { padding: '12px 24px', fontSize: '14px', fontWeight: '600' },
-      lg: { padding: '16px 24px', fontSize: '16px', fontWeight: '600' },
+      sm: { padding: '8px 12px', fontSize: '14px', fontWeight: '600', borderRadius: '8px' },
+      md: { padding: '12px 24px', fontSize: '14px', fontWeight: '600', borderRadius: '8px' },
+      lg: { padding: '16px 24px', fontSize: '16px', fontWeight: '600', borderRadius: '12px' },
     },
     fullWidth: {
       true: { width: '100%' },

@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import ClassInfoTable from './_components/ClassInfoTable/ClassInfoTable'
@@ -10,6 +11,7 @@ import { sectionWrapperStyle } from './_components/DangerSection/DangerSection.c
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import EditIcon from '@/assets/icons/icon-edit.svg'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
+import AddStudentModal from './_components/AddStudentModal/AddStudentModal'
 
 const MOCK_CLASS = {
   id: 1,
@@ -32,6 +34,7 @@ const MOCK_STUDENTS = Array.from({ length: 10 }, (_, i) => ({
 
 export default function ClassDetailPage() {
   const router = useRouter()
+  const [isAddStudentOpen, setIsAddStudentOpen] = useState(false)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
@@ -75,9 +78,20 @@ export default function ClassDetailPage() {
           }}
         >
           <Text variant="headingMd">학생 명단</Text>
-          <Button variant="primary" size="sm" leftIcon={<PlusIcon width={20} height={20} />}>
+          <Button
+            variant="primary"
+            size="sm"
+            leftIcon={<PlusIcon width={20} height={20} />}
+            onClick={() => setIsAddStudentOpen(true)}
+          >
             학생 추가
           </Button>
+
+          <AddStudentModal
+            isOpen={isAddStudentOpen}
+            onClose={() => setIsAddStudentOpen(false)}
+            onConfirm={(ids) => console.log('추가할 학생 ids:', ids)}
+          />
         </div>
         <StudentTable students={MOCK_STUDENTS} onDelete={(id) => console.log('delete', id)} />
       </section>
