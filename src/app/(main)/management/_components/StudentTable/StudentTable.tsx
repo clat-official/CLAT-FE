@@ -28,9 +28,9 @@ interface StudentTableProps {
 }
 
 function getProgressColor(rate: number): string {
-  if (rate >= 70) return '#4CAF50'
-  if (rate >= 40) return '#FFA726'
-  return '#EF4453'
+  if (rate >= 70) return colors.success500
+  if (rate >= 40) return colors.warning500
+  return colors.error500
 }
 
 export default function StudentTable({ students, middleColumn, onDelete }: StudentTableProps) {
@@ -74,7 +74,7 @@ export default function StudentTable({ students, middleColumn, onDelete }: Stude
                     {student.remaining}개 남음
                   </span>
                   <button className={deleteButtonStyle} onClick={() => onDelete(student.id)}>
-                    <TrashIcon width={16} height={16} />
+                    <TrashIcon width={20} height={20} />
                   </button>
                 </div>
               </td>

@@ -15,9 +15,16 @@ const tabBase = {
 
 export const tabContainerStyle = style({
   display: 'flex',
+  alignItems: 'center',
   gap: '32px',
   marginTop: '60px',
   marginBottom: '24px',
+})
+
+export const tabActionsStyle = style({
+  marginLeft: 'auto',
+  display: 'flex',
+  gap: '8px',
 })
 
 export const tabStyle = style([tabBase, {
