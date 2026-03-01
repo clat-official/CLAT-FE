@@ -3,12 +3,19 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
 import Text from '@/components/common/Text'
+import Button from '@/components/common/Button'
+import PlusIcon from '@/assets/icons/icon-plus.svg'
+import UploadIcon from '@/assets/icons/icon-upload.svg'
 import AddCard from '@/components/common/AddCard'
 import Dropdown from '@/components/common/Dropdown'
 import ClassCard from './_components/ClassCard/ClassCard'
 import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
 import { tabStyle, tabActiveStyle, tabContainerStyle, gridStyle } from './management.css'
 import ClassFormModal from './_components/ClassFormModal/ClassFormModal'
+import StudentTable from './_components/StudentTable/StudentTable'
+import { tdStyle } from './_components/StudentTable/StudentTable.css'
+import AddStudentFormModal from './_components/AddStudentFormModal/AddStudentFormModal'
+import BulkUploadModal from './_components/BulkUploadModal/BulkUploadModal'
 
 const FILTER_OPTIONS = [
   { label: '전체', value: 'all' },
@@ -45,6 +52,16 @@ const MOCK_CLASSES = [
   },
 ]
 
+const MOCK_ALL_STUDENTS = Array.from({ length: 10 }, (_, i) => ({
+  id: i + 1,
+  name: '홍길동',
+  studentPhone: '010-1234-5678',
+  parentPhone: '010-1234-5678',
+  completionRate: i === 1 ? 87 : i === 2 ? 17 : 47,
+  remaining: i === 1 ? 1 : i === 2 ? 5 : 3,
+  classes: ['미적분 A반', '미적분 B반'],
+}))
+
 function ManagementContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -58,6 +75,8 @@ function ManagementContent() {
   })
 
   const [isAddClassOpen, setIsAddClassOpen] = useState(false)
+  const [isAddStudentOpen, setIsAddStudentOpen] = useState(false)
+  const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false)
 
   return (
     <>
@@ -109,7 +128,60 @@ function ManagementContent() {
           </div>
         </>
       )}
-      {tab === 'students' && <div>{/* 전체 학생 */}</div>}
+      {tab === 'students' && (
+        <>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '8px',
+              marginBottom: '16px',
+            }}
+          >
+            <Button
+              variant="secondary"
+              size="sm"
+              leftIcon={<UploadIcon width={20} height={20} />}
+              onClick={() => setIsBulkUploadOpen(true)}
+            >
+              일괄 등록
+            </Button>
+
+            <BulkUploadModal
+              isOpen={isBulkUploadOpen}
+              onClose={() => setIsBulkUploadOpen(false)}
+              onConfirm={(file) => console.log('업로드', file)}
+            />
+
+            <Button
+              variant="primary"
+              size="sm"
+              leftIcon={<PlusIcon width={20} height={20} />}
+              onClick={() => setIsAddStudentOpen(true)}
+            >
+              학생 추가
+            </Button>
+
+            <AddStudentFormModal
+              isOpen={isAddStudentOpen}
+              onClose={() => setIsAddStudentOpen(false)}
+              onConfirm={(data) => {
+                console.log('새 학생 추가:', data)
+              }}
+            />
+          </div>
+          <StudentTable
+            students={MOCK_ALL_STUDENTS}
+            middleColumn={{
+              header: '소속 반',
+              render: (student) => (
+                <td className={tdStyle}>{student.classes?.join(', ') ?? '-'}</td>
+              ),
+            }}
+            onDelete={(id) => console.log('학생 삭제', id)}
+          />
+        </>
+      )}
     </>
   )
 }
