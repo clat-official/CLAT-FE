@@ -12,6 +12,7 @@ import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import EditIcon from '@/assets/icons/icon-edit.svg'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
 import AddStudentModal from './_components/AddStudentModal/AddStudentModal'
+import ConfirmModal from '@/components/common/ConfirmModal'
 
 const MOCK_CLASS = {
   id: 1,
@@ -35,6 +36,9 @@ const MOCK_STUDENTS = Array.from({ length: 10 }, (_, i) => ({
 export default function ClassDetailPage() {
   const router = useRouter()
   const [isAddStudentOpen, setIsAddStudentOpen] = useState(false)
+  const [deleteStudentTarget, setDeleteStudentTarget] = useState<number | null>(null)
+  const [isEndClassOpen, setIsEndClassOpen] = useState(false)
+  const [isDeleteClassOpen, setIsDeleteClassOpen] = useState(false)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
@@ -93,7 +97,7 @@ export default function ClassDetailPage() {
             onConfirm={(ids) => console.log('추가할 학생 ids:', ids)}
           />
         </div>
-        <StudentTable students={MOCK_STUDENTS} onDelete={(id) => console.log('delete', id)} />
+        <StudentTable students={MOCK_STUDENTS} onDelete={(id) => setDeleteStudentTarget(id)} />
       </section>
 
       <div className={sectionWrapperStyle}>
@@ -102,14 +106,54 @@ export default function ClassDetailPage() {
           title="반 종료"
           description="학기가 끝났거나 더 이상 수업이 없다면 반을 종료할 수 있어요."
           buttonLabel="반 종료하기"
-          onConfirm={() => console.log('반 종료')}
+          onConfirm={() => setIsEndClassOpen(true)}
         />
         <DangerSection
           variant="delete"
           title="반 삭제"
           description="반을 삭제하면 학생 배정이 해제되지만, 수업 기록은 그대로 남아요."
           buttonLabel="반 삭제하기"
-          onConfirm={() => console.log('반 삭제')}
+          onConfirm={() => setIsDeleteClassOpen(true)}
+        />
+
+        {/* 모달들 */}
+        <ConfirmModal
+          isOpen={!!deleteStudentTarget}
+          onClose={() => setDeleteStudentTarget(null)}
+          onConfirm={() => {
+            console.log('학생 삭제', deleteStudentTarget)
+            setDeleteStudentTarget(null)
+          }}
+          title={`'${MOCK_STUDENTS.find((s) => s.id === deleteStudentTarget)?.name}' 학생을 ${MOCK_CLASS.name}에서 제거할까요?`}
+          descriptions={['반에서 제거되지만 학생 정보는 그대로 남아요.']}
+          confirmLabel="제거"
+          confirmVariant="danger"
+        />
+
+        <ConfirmModal
+          isOpen={isEndClassOpen}
+          onClose={() => setIsEndClassOpen(false)}
+          onConfirm={() => {
+            console.log('반 종료')
+            setIsEndClassOpen(false)
+          }}
+          title={`'${MOCK_CLASS.name}'을 종료할까요?`}
+          descriptions={['종료 후에는 수업 입력이 불가능해요.']}
+          confirmLabel="종료"
+          confirmVariant="primary"
+        />
+
+        <ConfirmModal
+          isOpen={isDeleteClassOpen}
+          onClose={() => setIsDeleteClassOpen(false)}
+          onConfirm={() => {
+            console.log('반 삭제')
+            setIsDeleteClassOpen(false)
+          }}
+          title={`'${MOCK_CLASS.name}'을 삭제할까요?`}
+          descriptions={['학생 배정이 해제되지만, 수업 기록은 그대로 남아요.']}
+          confirmLabel="삭제"
+          confirmVariant="danger"
         />
       </div>
     </div>
