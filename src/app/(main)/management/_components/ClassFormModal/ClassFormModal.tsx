@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
 import Button from '@/components/common/Button'
@@ -11,7 +11,7 @@ import {
   dayGroupStyle,
   dayButtonRecipe,
   actionsStyle,
-} from './AddClassModal.css'
+} from './ClassFormModal.css'
 
 const DAYS = [
   { label: '월', value: 1 },
@@ -23,16 +23,38 @@ const DAYS = [
   { label: '일', value: 7 },
 ]
 
-interface AddClassModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onConfirm: (data: { academyName: string; name: string; dayOfWeek: number[] }) => void
+interface ClassFormData {
+  academyName: string
+  name: string
+  dayOfWeek: number[]
 }
 
-export default function AddClassModal({ isOpen, onClose, onConfirm }: AddClassModalProps) {
+interface ClassFormModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onConfirm: (data: ClassFormData) => void
+  mode: 'add' | 'edit'
+  defaultValues?: ClassFormData
+}
+
+export default function ClassFormModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  mode,
+  defaultValues,
+}: ClassFormModalProps) {
   const [academyName, setAcademyName] = useState('')
   const [name, setName] = useState('')
   const [selectedDays, setSelectedDays] = useState<number[]>([])
+
+  useEffect(() => {
+    if (isOpen && defaultValues) {
+      setAcademyName(defaultValues.academyName)
+      setName(defaultValues.name)
+      setSelectedDays(defaultValues.dayOfWeek)
+    }
+  }, [isOpen, defaultValues])
 
   const toggleDay = (value: number) => {
     setSelectedDays((prev) =>
@@ -57,30 +79,20 @@ export default function AddClassModal({ isOpen, onClose, onConfirm }: AddClassMo
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
       <div style={{ marginBottom: '24px' }}>
         <Text variant="headingMd" as="h2">
-          반 추가
+          {mode === 'add' ? '반 추가' : '반 정보 수정'}
         </Text>
       </div>
       <div className={fieldGroupStyle}>
         <div className={fieldStyle}>
-          <Text variant="titleSm">
-            학원명 <span style={{ color: '#EF4453' }}>*</span>
-          </Text>
-          <Input
-            value={academyName}
-            onChange={(e) => setAcademyName(e.target.value)}
-            placeholder="예) OO학원"
-          />
+          <Text variant="titleSm">학원명 <span style={{ color: '#EF4453' }}>*</span></Text>
+          <Input value={academyName} onChange={(e) => setAcademyName(e.target.value)} placeholder="예) OO학원" />
         </div>
         <div className={fieldStyle}>
-          <Text variant="titleSm">
-            반 이름 <span style={{ color: '#EF4453' }}>*</span>
-          </Text>
+          <Text variant="titleSm">반 이름 <span style={{ color: '#EF4453' }}>*</span></Text>
           <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="예) 미적분 A반" />
         </div>
         <div className={fieldStyle}>
-          <Text variant="titleSm">
-            수업 요일 <span style={{ color: '#EF4453' }}>*</span>
-          </Text>
+          <Text variant="titleSm">수업 요일 <span style={{ color: '#EF4453' }}>*</span></Text>
           <div className={dayGroupStyle}>
             {DAYS.map((day) => (
               <button
@@ -95,9 +107,7 @@ export default function AddClassModal({ isOpen, onClose, onConfirm }: AddClassMo
         </div>
       </div>
       <div className={actionsStyle}>
-        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>
-          취소
-        </Button>
+        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>취소</Button>
         <Button
           variant="primary"
           size="lg"
@@ -105,7 +115,7 @@ export default function AddClassModal({ isOpen, onClose, onConfirm }: AddClassMo
           disabled={!academyName.trim() || !name.trim() || selectedDays.length === 0}
           onClick={handleConfirm}
         >
-          등록하기
+          {mode === 'add' ? '등록하기' : '저장'}
         </Button>
       </div>
     </Modal>

@@ -62,7 +62,7 @@ export default function StudentTable({ students, onDelete }: StudentTableProps) 
               <td className={tdStyle}>{student.studentPhone}</td>
               <td className={tdStyle}>{student.parentPhone}</td>
               <td className={tdStyle}>{student.memo}</td>
-              <td>
+              <td className={tdStyle} style={{ padding: 0 }}>
                 <div className={completionCellStyle}>
                   <div className={progressTrackStyle}>
                     <div

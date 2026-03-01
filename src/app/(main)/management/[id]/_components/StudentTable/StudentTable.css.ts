@@ -41,6 +41,9 @@ export const tdStyle = style({
   borderBottom: `1px solid ${colors.gray100}`,
   borderRight: `1px solid ${colors.gray100}`,
   selectors: {
+    'tr:last-child &': {
+      borderBottom: 'none',
+    },
     '&:last-child': {
       borderRight: 'none',
     },
@@ -48,10 +51,9 @@ export const tdStyle = style({
 })
 
 export const completionCellStyle = style({
-  height: '40px',
+  height: '100%',
   paddingLeft: '20px',
   paddingRight: '24px',
-  borderBottom: `1px solid ${colors.gray100}`,
   display: 'flex',
   alignItems: 'center',
   gap: '12px',

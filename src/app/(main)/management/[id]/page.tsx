@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { colors } from '@/styles/tokens/colors'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import ClassInfoTable from './_components/ClassInfoTable/ClassInfoTable'
@@ -13,6 +14,7 @@ import EditIcon from '@/assets/icons/icon-edit.svg'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
 import AddStudentModal from './_components/AddStudentModal/AddStudentModal'
 import ConfirmModal from '@/components/common/ConfirmModal'
+import ClassFormModal from '../_components/ClassFormModal/ClassFormModal'
 
 const MOCK_CLASS = {
   id: 1,
@@ -39,6 +41,7 @@ export default function ClassDetailPage() {
   const [deleteStudentTarget, setDeleteStudentTarget] = useState<number | null>(null)
   const [isEndClassOpen, setIsEndClassOpen] = useState(false)
   const [isDeleteClassOpen, setIsDeleteClassOpen] = useState(false)
+  const [isEditClassOpen, setIsEditClassOpen] = useState(false)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
@@ -46,7 +49,7 @@ export default function ClassDetailPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <button
           onClick={() => router.back()}
-          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: colors.gray500 }}
         >
           <ArrowLeftIcon width={24} height={24} />
         </button>
@@ -64,9 +67,22 @@ export default function ClassDetailPage() {
             size="sm"
             leftIcon={<EditIcon width={14} height={14} />}
             style={{ height: '28px' }}
+            onClick={() => setIsEditClassOpen(true)}
           >
             수정
           </Button>
+
+          <ClassFormModal
+            isOpen={isEditClassOpen}
+            onClose={() => setIsEditClassOpen(false)}
+            onConfirm={(data) => console.log('반 수정', data)}
+            mode="edit"
+            defaultValues={{
+              academyName: MOCK_CLASS.academyName,
+              name: MOCK_CLASS.name,
+              dayOfWeek: [2, 5],
+            }}
+          />
         </div>
         <ClassInfoTable {...MOCK_CLASS} />
       </section>

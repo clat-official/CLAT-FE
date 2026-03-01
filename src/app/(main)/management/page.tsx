@@ -8,7 +8,7 @@ import Dropdown from '@/components/common/Dropdown'
 import ClassCard from './_components/ClassCard/ClassCard'
 import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
 import { tabStyle, tabActiveStyle, tabContainerStyle, gridStyle } from './management.css'
-import AddClassModal from './_components/AddClassModal/AddClassModal'
+import ClassFormModal from './_components/ClassFormModal/ClassFormModal'
 
 const FILTER_OPTIONS = [
   { label: '전체', value: 'all' },
@@ -98,12 +98,13 @@ function ManagementContent() {
               onClick={() => setIsAddClassOpen(true)}
             />
 
-            <AddClassModal
+            <ClassFormModal
               isOpen={isAddClassOpen}
               onClose={() => setIsAddClassOpen(false)}
               onConfirm={(data) => {
                 console.log('새 반 추가:', data)
               }}
+              mode="add"
             />
           </div>
         </>
