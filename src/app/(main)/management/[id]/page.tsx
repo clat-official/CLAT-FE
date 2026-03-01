@@ -5,6 +5,8 @@ import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import ClassInfoTable from './_components/ClassInfoTable/ClassInfoTable'
 import StudentTable from './_components/StudentTable/StudentTable'
+import DangerSection from './_components/DangerSection/DangerSection'
+import { sectionWrapperStyle } from './_components/DangerSection/DangerSection.css'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import EditIcon from '@/assets/icons/icon-edit.svg'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
@@ -80,49 +82,22 @@ export default function ClassDetailPage() {
         <StudentTable students={MOCK_STUDENTS} onDelete={(id) => console.log('delete', id)} />
       </section>
 
-      {/* 반 종료 */}
-      <section
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '24px',
-          backgroundColor: '#F3F4F5',
-          borderRadius: '12px',
-        }}
-      >
-        <div>
-          <Text variant="headingMd">반 종료</Text>
-          <Text variant="bodyMd" color="gray500">
-            학기가 끝났거나 더 이상 수업이 없다면 반을 종료할 수 있어요.
-          </Text>
-        </div>
-        <Button variant="outlined" size="sm">
-          반 종료하기
-        </Button>
-      </section>
-
-      {/* 반 삭제 */}
-      <section
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '24px',
-          backgroundColor: '#FFF1F1',
-          borderRadius: '12px',
-        }}
-      >
-        <div>
-          <Text variant="headingMd">반 삭제</Text>
-          <Text variant="bodyMd" color="error500">
-            반을 삭제하면 학생 배정이 해제되지만, 수업 기록은 그대로 남아요.
-          </Text>
-        </div>
-        <Button variant="danger" size="sm">
-          반 삭제하기
-        </Button>
-      </section>
+      <div className={sectionWrapperStyle}>
+        <DangerSection
+          variant="end"
+          title="반 종료"
+          description="학기가 끝났거나 더 이상 수업이 없다면 반을 종료할 수 있어요."
+          buttonLabel="반 종료하기"
+          onConfirm={() => console.log('반 종료')}
+        />
+        <DangerSection
+          variant="delete"
+          title="반 삭제"
+          description="반을 삭제하면 학생 배정이 해제되지만, 수업 기록은 그대로 남아요."
+          buttonLabel="반 삭제하기"
+          onConfirm={() => console.log('반 삭제')}
+        />
+      </div>
     </div>
   )
 }
