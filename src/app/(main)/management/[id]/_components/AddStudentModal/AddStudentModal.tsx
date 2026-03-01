@@ -56,7 +56,7 @@ export default function AddStudentModal({ isOpen, onClose, onConfirm }: AddStude
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
       <div className={titleStyle}>
-        <Text variant="headingMd">학생 추가</Text>
+        <Text variant="headingLg">학생 추가</Text>
       </div>
       <div className={searchWrapperStyle}>
         <Input

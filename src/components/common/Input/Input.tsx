@@ -1,15 +1,10 @@
 import { InputHTMLAttributes } from 'react'
-import { inputStyle } from './Input.css'
+import { inputRecipe } from './Input.css'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  className?: string
+  variant?: 'default' | 'gray'
 }
 
-export default function Input({ className, ...props }: InputProps) {
-  return (
-    <input
-      className={`${inputStyle}${className ? ` ${className}` : ''}`}
-      {...props}
-    />
-  )
+export default function Input({ variant = 'default', ...props }: InputProps) {
+  return <input className={inputRecipe({ variant })} {...props} />
 }

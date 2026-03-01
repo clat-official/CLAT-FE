@@ -6,7 +6,7 @@ import { colors } from '@/styles/tokens/colors'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import ClassInfoTable from './_components/ClassInfoTable/ClassInfoTable'
-import StudentTable from './_components/StudentTable/StudentTable'
+import StudentTable from '../_components/StudentTable/StudentTable'
 import DangerSection from './_components/DangerSection/DangerSection'
 import { sectionWrapperStyle } from './_components/DangerSection/DangerSection.css'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
@@ -15,6 +15,7 @@ import PlusIcon from '@/assets/icons/icon-plus.svg'
 import AddStudentModal from './_components/AddStudentModal/AddStudentModal'
 import ConfirmModal from '@/components/common/ConfirmModal'
 import ClassFormModal from '../_components/ClassFormModal/ClassFormModal'
+import { tdStyle } from '../_components/StudentTable/StudentTable.css'
 
 const MOCK_CLASS = {
   id: 1,
@@ -113,7 +114,14 @@ export default function ClassDetailPage() {
             onConfirm={(ids) => console.log('추가할 학생 ids:', ids)}
           />
         </div>
-        <StudentTable students={MOCK_STUDENTS} onDelete={(id) => setDeleteStudentTarget(id)} />
+        <StudentTable
+          students={MOCK_STUDENTS}
+          middleColumn={{
+            header: '메모',
+            render: (student) => <td className={tdStyle}>{student.memo ?? ''}</td>,
+          }}
+          onDelete={(id) => setDeleteStudentTarget(id)}
+        />
       </section>
 
       <div className={sectionWrapperStyle}>

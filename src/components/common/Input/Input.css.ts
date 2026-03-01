@@ -1,30 +1,45 @@
-import { style } from '@vanilla-extract/css'
+import { recipe } from '@vanilla-extract/recipes'
 import { colors } from '@/styles/tokens/colors'
 import { fontStyles } from '@/styles/tokens/typography'
 
-export const inputStyle = style({
-  width: '100%',
-  padding: '10px 16px',
-  borderRadius: '8px',
-  border: `1px solid ${colors.gray100}`,
-  backgroundColor: colors.white,
-  fontSize: fontStyles.bodyMd.fontSize,
-  fontWeight: fontStyles.bodyMd.fontWeight,
-  lineHeight: '140%',
-  letterSpacing: '-0.03em',
-  color: colors.gray700,
-  outline: 'none',
-  transition: 'border-color 0.2s',
-  selectors: {
-    '&::placeholder': {
-      color: colors.gray300,
+export const inputRecipe = recipe({
+  base: {
+    width: '100%',
+    padding: '10px 16px',
+    borderRadius: '8px',
+    fontSize: fontStyles.bodyMd.fontSize,
+    fontWeight: fontStyles.bodyMd.fontWeight,
+    lineHeight: '140%',
+    letterSpacing: '-0.03em',
+    color: colors.gray700,
+    outline: 'none',
+    transition: 'border-color 0.2s',
+    selectors: {
+      '&::placeholder': {
+        color: colors.gray300,
+      },
+      '&:focus': {
+        borderColor: colors.primary500,
+      },
+      '&:disabled': {
+        color: colors.gray100,
+        cursor: 'not-allowed',
+      },
     },
-    '&:focus': {
-      borderColor: colors.primary500,
+  },
+  variants: {
+    variant: {
+      default: {
+        backgroundColor: colors.white,
+        border: `1px solid ${colors.gray100}`,
+      },
+      gray: {
+        backgroundColor: colors.background,
+        border: `1px solid ${colors.gray50}`,
+      },
     },
-    '&:disabled': {
-      color: colors.gray100,
-      cursor: 'not-allowed',
-    },
+  },
+  defaultVariants: {
+    variant: 'default',
   },
 })
