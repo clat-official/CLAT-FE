@@ -1,6 +1,7 @@
 import { style } from '@vanilla-extract/css'
 import { colors } from '@/styles/tokens/colors'
 import { fontStyles } from '@/styles/tokens/typography'
+import { listItemRowStyle, listItemRowSelectedStyle } from '@/components/common/styles/listItem.css'
 
 export const titleStyle = style({
   marginBottom: '20px',
@@ -19,29 +20,9 @@ export const studentListStyle = style({
   overflowY: 'auto',
 })
 
-export const studentRowStyle = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-  padding: '12px 16px',
-  borderRadius: '8px',
-  cursor: 'pointer',
-  transition: 'background-color 0.15s',
-  selectors: {
-    '&:hover': {
-      backgroundColor: colors.gray50,
-    },
-  },
-})
+export const studentRowStyle = listItemRowStyle
 
-export const studentRowSelectedStyle = style({
-  backgroundColor: colors.primary50,
-  selectors: {
-    '&:hover': {
-      backgroundColor: colors.primary100,
-    },
-  },
-})
+export const studentRowSelectedStyle = listItemRowSelectedStyle
 
 export const studentNameStyle = style({
   fontSize: fontStyles.titleSm.fontSize,

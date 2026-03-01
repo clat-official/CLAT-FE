@@ -1,7 +1,7 @@
 import { chipRecipe } from './Chip.css'
 
 interface ChipProps {
-  variant?: 'default' | 'active' | 'ended'
+  variant?: 'default' | 'active' | 'ended' | 'done' | 'inProgress'
   label: string
   className?: string
 }
