@@ -8,6 +8,7 @@ import Dropdown from '@/components/common/Dropdown'
 import ClassCard from './_components/ClassCard/ClassCard'
 import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
 import { tabStyle, tabActiveStyle, tabContainerStyle, gridStyle } from './management.css'
+import ClassFormModal from './_components/ClassFormModal/ClassFormModal'
 
 const FILTER_OPTIONS = [
   { label: '전체', value: 'all' },
@@ -16,9 +17,32 @@ const FILTER_OPTIONS = [
 ]
 
 const MOCK_CLASSES = [
-  { id: 1, academyName: '엘리에듀학원', name: '미적분 A반', schedule: '수·금 14:00 – 16:00', studentCount: 25, isEnded: false },
-  { id: 2, academyName: '엘리에듀학원', name: '미적분 A반', schedule: '수·금 14:00 – 16:00', studentCount: 25, isEnded: false },
-  { id: 3, academyName: '엘리에듀학원', name: '미적분 A반', schedule: '수·금 14:00 – 16:00', studentCount: 25, isEnded: true, startDate: '26.02.14', endDate: '26.07.23' },
+  {
+    id: 1,
+    academyName: '엘리에듀학원',
+    name: '미적분 A반',
+    schedule: '수·금 14:00 – 16:00',
+    studentCount: 25,
+    isEnded: false,
+  },
+  {
+    id: 2,
+    academyName: '엘리에듀학원',
+    name: '미적분 A반',
+    schedule: '수·금 14:00 – 16:00',
+    studentCount: 25,
+    isEnded: false,
+  },
+  {
+    id: 3,
+    academyName: '엘리에듀학원',
+    name: '미적분 A반',
+    schedule: '수·금 14:00 – 16:00',
+    studentCount: 25,
+    isEnded: true,
+    startDate: '26.02.14',
+    endDate: '26.07.23',
+  },
 ]
 
 function ManagementContent() {
@@ -33,9 +57,13 @@ function ManagementContent() {
     return true
   })
 
+  const [isAddClassOpen, setIsAddClassOpen] = useState(false)
+
   return (
     <>
-      <Text variant="display" as="h1">학생·반 관리</Text>
+      <Text variant="display" as="h1">
+        학생·반 관리
+      </Text>
       <div className={tabContainerStyle}>
         <button
           className={tab === 'class' ? tabActiveStyle : tabStyle}
@@ -67,7 +95,16 @@ function ManagementContent() {
             <AddCard
               icon={<PlusCircleIcon width={36} height={36} />}
               label="반 추가"
-              onClick={() => console.log('반 추가')}
+              onClick={() => setIsAddClassOpen(true)}
+            />
+
+            <ClassFormModal
+              isOpen={isAddClassOpen}
+              onClose={() => setIsAddClassOpen(false)}
+              onConfirm={(data) => {
+                console.log('새 반 추가:', data)
+              }}
+              mode="add"
             />
           </div>
         </>

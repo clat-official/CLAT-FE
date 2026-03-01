@@ -2,7 +2,7 @@ import { ReactNode, ButtonHTMLAttributes } from 'react'
 import { buttonRecipe } from './Button.css'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'outlined' | 'danger'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outlined' | 'danger' | 'endClass' | 'deleteClass'
   size?: 'sm' | 'md' | 'lg'
   fullWidth?: boolean
   leftIcon?: ReactNode

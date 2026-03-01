@@ -1,19 +1,19 @@
 import { style } from '@vanilla-extract/css'
 
-export const deleteModalContentStyle = style({
+export const contentStyle = style({
   display: 'flex',
   flexDirection: 'column',
-  marginBottom: '36px',
-  marginTop: '44px',
-  textAlign: 'center',
   alignItems: 'center',
+  textAlign: 'center',
+  marginTop: '44px',
+  marginBottom: '36px',
 })
 
 export const titleStyle = style({
   marginBottom: '12px',
 })
 
-export const deleteModalActionsStyle = style({
+export const actionsStyle = style({
   display: 'flex',
   gap: '8px',
 })

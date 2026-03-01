@@ -76,11 +76,41 @@ export const buttonRecipe = recipe({
           '&:disabled': { backgroundColor: colors.gray300, color: colors.gray100 },
         },
       },
+      endClass: {
+        backgroundColor: colors.white,
+        color: colors.primary500,
+        outline: `1px solid ${colors.primary200}`,
+        selectors: {
+          '&:hover:not(:disabled)': {
+            backgroundColor: colors.primary500,
+            color: colors.white,
+            outline: `1px solid ${colors.primary500}`,
+          },
+          '&:active:not(:disabled)': {
+            backgroundColor: colors.primary600,
+          },
+        },
+      },
+      deleteClass: {
+        backgroundColor: colors.white,
+        color: colors.error500,
+        outline: `1px solid ${colors.error200}`,
+        selectors: {
+          '&:hover:not(:disabled)': {
+            backgroundColor: colors.error500,
+            color: colors.white,
+            outline: `1px solid ${colors.error500}`,
+          },
+          '&:active:not(:disabled)': {
+            backgroundColor: colors.error600,
+          },
+        },
+      },
     },
     size: {
-      sm: { padding: '8px 12px', fontSize: '14px', fontWeight: '500' },
-      md: { padding: '12px 24px', fontSize: '14px', fontWeight: '600' },
-      lg: { padding: '16px 24px', fontSize: '16px', fontWeight: '600' },
+      sm: { padding: '8px 12px', fontSize: '14px', fontWeight: '600', borderRadius: '8px' },
+      md: { padding: '12px 24px', fontSize: '14px', fontWeight: '600', borderRadius: '8px' },
+      lg: { padding: '16px 24px', fontSize: '16px', fontWeight: '600', borderRadius: '12px' },
     },
     fullWidth: {
       true: { width: '100%' },
