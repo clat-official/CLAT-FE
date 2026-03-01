@@ -1,4 +1,9 @@
+'use client'
+
+import { ReactNode } from 'react'
 import TrashIcon from '@/assets/icons/icon-trash.svg'
+import { colors } from '@/styles/tokens/colors'
+import type { Student } from '@/types/student'
 import {
   tableStyle,
   thStyle,
@@ -11,30 +16,24 @@ import {
   deleteButtonStyle,
 } from './StudentTable.css'
 
-
-interface Student {
-  id: number
-  name: string
-  studentPhone: string
-  parentPhone: string
-  memo: string
-  completionRate: number
-  remaining: number
+interface MiddleColumn {
+  header: string
+  render: (student: Student) => ReactNode
 }
 
 interface StudentTableProps {
   students: Student[]
+  middleColumn: MiddleColumn
   onDelete: (id: number) => void
 }
 
 function getProgressColor(rate: number): string {
-  // 기준 미정 — 추후 수정
   if (rate >= 70) return '#4CAF50'
   if (rate >= 40) return '#FFA726'
   return '#EF4453'
 }
 
-export default function StudentTable({ students, onDelete }: StudentTableProps) {
+export default function StudentTable({ students, middleColumn, onDelete }: StudentTableProps) {
   return (
     <table className={tableStyle}>
       <colgroup>
@@ -49,7 +48,7 @@ export default function StudentTable({ students, onDelete }: StudentTableProps) 
           <th className={thStyle}>학생</th>
           <th className={thStyle}>학생 전화</th>
           <th className={thStyle}>학부모 전화</th>
-          <th className={thStyle}>메모</th>
+          <th className={thStyle}>{middleColumn.header}</th>
           <th className={thStyle}>완료율</th>
         </tr>
       </thead>
@@ -61,7 +60,7 @@ export default function StudentTable({ students, onDelete }: StudentTableProps) 
               <td className={tdStyle}>{student.name}</td>
               <td className={tdStyle}>{student.studentPhone}</td>
               <td className={tdStyle}>{student.parentPhone}</td>
-              <td className={tdStyle}>{student.memo}</td>
+              {middleColumn.render(student)}
               <td className={tdStyle} style={{ padding: 0 }}>
                 <div className={completionCellStyle}>
                   <div className={progressTrackStyle}>
