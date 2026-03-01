@@ -8,23 +8,58 @@ import Text from '@/components/common/Text'
 import DateCard from './_components/DateCard/DateCard'
 import LessonCard from './_components/LessonCard/LessonCard'
 import AddCard from '@/components/common/AddCard'
+import AddLessonModal from './_components/AddLessonModal/AddLessonModal'
 import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
 import ArrowLeftIcon from '@/assets/icons/icon-chevron-left.svg'
 import ArrowRightIcon from '@/assets/icons/icon-chevron-right.svg'
-import { pageStyle, dateGridStyle, lessonGridStyle, sectionTitleStyle, navButtonStyle } from './lesson.css'
+import {
+  pageStyle,
+  dateGridStyle,
+  lessonGridStyle,
+  sectionTitleStyle,
+  navButtonStyle,
+} from './lesson.css'
 
 const DAYS_KO = ['월', '화', '수', '목', '금', '토', '일']
 
 const MOCK_LESSONS = [
-  { id: 1, academyName: '엘리에듀학원', templateName: '정규 수업 템플릿', className: '미적분 A반', progress: 100, totalStudents: 29, inputCount: 29, isDone: true },
-  { id: 2, academyName: '엘리에듀학원', templateName: '겨울방학 특강 템플릿', className: '미적분 A반', progress: 0, totalStudents: 29, inputCount: 0, isDone: false },
-  { id: 3, academyName: '엘리에듀학원', templateName: '겨울방학 특강 템플릿', className: '미적분 A반', progress: 0, totalStudents: 29, inputCount: 0, isDone: false },
+  {
+    id: 1,
+    academyName: '엘리에듀학원',
+    templateName: '정규 수업 템플릿',
+    className: '미적분 A반',
+    progress: 100,
+    totalStudents: 29,
+    inputCount: 29,
+    isDone: true,
+  },
+  {
+    id: 2,
+    academyName: '엘리에듀학원',
+    templateName: '겨울방학 특강 템플릿',
+    className: '미적분 A반',
+    progress: 0,
+    totalStudents: 29,
+    inputCount: 0,
+    isDone: false,
+  },
+  {
+    id: 3,
+    academyName: '엘리에듀학원',
+    templateName: '겨울방학 특강 템플릿',
+    className: '미적분 A반',
+    progress: 0,
+    totalStudents: 29,
+    inputCount: 0,
+    isDone: false,
+  },
 ]
 
 export default function LessonPage() {
   const router = useRouter()
   const [currentWeek, setCurrentWeek] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(new Date())
+  const [isAddLessonOpen, setIsAddLessonOpen] = useState(false)
 
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 })
 
@@ -43,10 +78,20 @@ export default function LessonPage() {
 
   return (
     <div className={pageStyle}>
-      <Text variant="display" as="h1">수업 입력</Text>
+      <Text variant="display" as="h1">
+        수업 입력
+      </Text>
 
       {/* 주간 네비게이션 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '60px', marginBottom: '24px'}}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+          marginTop: '60px',
+          marginBottom: '24px',
+        }}
+      >
         <button className={navButtonStyle} onClick={() => setCurrentWeek(subWeeks(currentWeek, 1))}>
           <ArrowLeftIcon width={24} height={24} />
         </button>
@@ -85,8 +130,15 @@ export default function LessonPage() {
         <AddCard
           icon={<PlusCircleIcon width={36} height={36} />}
           label="다른 수업 추가"
-          description="오늘 일정에 있는 반의 수업을 입력하러 이어요"
-          onClick={() => console.log('다른 수업 추가')}
+          description="오늘 일정에 없는 반의 수업을 입력할 수 있어요"
+          onClick={() => setIsAddLessonOpen(true)}
+        />
+
+        <AddLessonModal
+          isOpen={isAddLessonOpen}
+          onClose={() => setIsAddLessonOpen(false)}
+          onConfirm={(id) => console.log('수업 추가', id)}
+          selectedDate={selectedDate}
         />
       </div>
     </div>
