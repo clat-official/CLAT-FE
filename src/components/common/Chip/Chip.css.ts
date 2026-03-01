@@ -28,6 +28,14 @@ export const chipRecipe = recipe({
         backgroundColor: colors.error50,
         color: colors.error500,
       },
+      done: {
+        backgroundColor: colors.success50,
+        color: colors.success500,
+      },
+      inProgress: {
+        backgroundColor: colors.warning50,
+        color: colors.warning500,
+      }
     },
   },
   defaultVariants: {
