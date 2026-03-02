@@ -5,7 +5,7 @@ import Dropdown from '@/components/common/Dropdown'
 import CloseIcon from '@/assets/icons/icon-close.svg'
 import {
   backdrop, drawer, drawerClosing, header, content,
-  dropdownTrigger, messagePreview, footer
+  dropdownTrigger, messagePreview,
 } from './MessagePreview.css'
 import { colors } from '@/styles/tokens/colors'
 
