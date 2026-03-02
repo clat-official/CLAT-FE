@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import * as XLSX from 'xlsx'
 import { colors } from '@/styles/tokens/colors'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
@@ -22,6 +23,8 @@ import {
   templateChipGroupStyle,
   templateChipRecipe,
 } from './lessonDetail.css'
+import MessagePreview from './_components/MessagePreview/MessagePreview'
+
 const MOCK_TEMPLATES = [
   { id: 1, name: '정규 수업 템플릿' },
   { id: 2, name: '클리닉 템플릿' },
@@ -50,6 +53,53 @@ export default function LessonDetailPage() {
   const [selectedTemplateId, setSelectedTemplateId] = useState(1)
   const [commonValues, setCommonValues] = useState<Record<number, string>>({})
   const [students, setStudents] = useState(MOCK_STUDENTS)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  const generateStudentMessage = (s: typeof students[0]) =>
+    `안녕하세요, 엘리에듀학원 윤준용 강사입니다.
+미적분 A반 2월 20일(금) 수업 결과입니다.
+
+• 오늘 학습 내용: ${commonValues[1] || '-'}
+• 다음 시간 범위: ${commonValues[2] || '-'}
+• 클리닉 안내: ${commonValues[3] || '-'}
+
+• 출결: ${s.attendance || '미입력'}
+• 시험 점수: ${s.score || '0'}점
+
+감사합니다.`
+
+  const handleExcelDownload = () => {
+    const commonRows = MOCK_COMMON_ITEMS.map((item) => [item.label, commonValues[item.id] || ''])
+    const studentRows = students.map((s) => [
+      s.name,
+      s.attendance ?? '미입력',
+      s.homework ?? '미입력',
+      s.answerNote ?? '미입력',
+      s.score || '0',
+      s.memo || '',
+    ])
+
+    const ws = XLSX.utils.aoa_to_sheet([
+      ['2월 20일(금) 미적분 A반 수업 결과'],
+      [],
+      ['공통 내용'],
+      ...commonRows,
+      [],
+      ['개별 내용'],
+      ['이름', '출결', '숙제', '오답노트', '시험 점수', '메모'],
+      ...studentRows,
+    ])
+
+    const wsMessages = XLSX.utils.aoa_to_sheet([
+      ['이름', '문자 내용'],
+      ...students.map((s) => [s.name, generateStudentMessage(s)]),
+    ])
+
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '수업 결과')
+    XLSX.utils.book_append_sheet(wb, wsMessages, '문자 내용')
+    XLSX.writeFile(wb, '수업결과.xlsx')
+  }
 
   const inputCount = students.filter(
     (s) => s.attendance !== null && s.homework !== null && s.answerNote !== null && s.score !== ''
@@ -72,7 +122,7 @@ export default function LessonDetailPage() {
           </Text>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <Button variant="secondary" size="sm" leftIcon={<DownloadIcon width={20} height={20} />}>
+          <Button variant="secondary" size="sm" leftIcon={<DownloadIcon width={20} height={20} />} onClick={handleExcelDownload}>
             엑셀 다운로드
           </Button>
           <Button variant="primary" size="sm" leftIcon={<SaveIcon width={20} height={20} />}>
@@ -121,10 +171,22 @@ export default function LessonDetailPage() {
       {/* 하단 진행도 */}
       <div className={footerStyle}>
         <ProgressBar current={inputCount} total={students.length} />
-        <Button variant="primary" size="sm" leftIcon={<MessageIcon width={20} height={20} />}>
+        <Button
+          variant="primary"
+          size="sm"
+          leftIcon={<MessageIcon width={20} height={20} />}
+          onClick={() => setIsDrawerOpen(true)}
+        >
           문자 미리보기
         </Button>
       </div>
+
+      <MessagePreview
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        commonValues={commonValues}
+        students={students}
+      />
     </div>
   )
 }
