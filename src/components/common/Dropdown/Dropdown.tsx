@@ -25,6 +25,7 @@ interface DropdownProps {
   onChange: (value: string) => void
   placeholder?: string
   menuLabel?: string
+  triggerClassName?: string
 }
 
 export default function Dropdown({
@@ -33,6 +34,7 @@ export default function Dropdown({
   onChange,
   placeholder = '선택',
   menuLabel,
+  triggerClassName,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -53,7 +55,7 @@ export default function Dropdown({
   return (
     <div className={containerStyle} ref={containerRef}>
       <button
-        className={`${triggerStyle}${isSelected ? ` ${triggerActiveStyle}` : ''}`}
+        className={[triggerStyle, isSelected ? triggerActiveStyle : '', triggerClassName ?? ''].join(' ').trim()}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {selectedOption ? selectedOption.label : placeholder}
