@@ -1,16 +1,13 @@
 import { style } from '@vanilla-extract/css'
 import { colors } from '@/styles/tokens/colors'
 import { fontStyles } from '@/styles/tokens/typography'
+import { baseCardStyleRule } from '@/styles/tokens/card'
 
 export const cardStyle = style({
-  backgroundColor: colors.white,
-  border: `1px solid ${colors.gray100}`,
-  borderRadius: '16px',
-  padding: '24px',
+  ...baseCardStyleRule,
   display: 'flex',
   flexDirection: 'column',
   gap: '16px',
-  cursor: 'pointer',
 })
 
 export const chipGroupStyle = style({
