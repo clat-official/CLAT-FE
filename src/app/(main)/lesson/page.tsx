@@ -18,6 +18,7 @@ import {
   lessonGridStyle,
   sectionTitleStyle,
   navButtonStyle,
+  weekNavStyle,
 } from './lesson.css'
 
 const DAYS_KO = ['월', '화', '수', '목', '금', '토', '일']
@@ -83,15 +84,7 @@ export default function LessonPage() {
       </Text>
 
       {/* 주간 네비게이션 */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-          marginTop: '60px',
-          marginBottom: '24px',
-        }}
-      >
+      <div className={weekNavStyle}>
         <button className={navButtonStyle} onClick={() => setCurrentWeek(subWeeks(currentWeek, 1))}>
           <ArrowLeftIcon width={24} height={24} />
         </button>

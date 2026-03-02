@@ -52,6 +52,15 @@ export const content = style({
   gap: '16px',
 })
 
+export const closeButtonStyle = style({
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  color: colors.gray500,
+  display: 'flex',
+  alignItems: 'center',
+})
+
 export const dropdownTrigger = style({
   border: 'none',
   backgroundColor: colors.white,

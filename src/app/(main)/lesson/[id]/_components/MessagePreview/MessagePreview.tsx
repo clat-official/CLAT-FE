@@ -6,9 +6,8 @@ import { generateStudentMessage } from '@/lib/generateStudentMessage'
 import type { LessonStudent } from '@/types/lessonStudent'
 import {
   backdrop, drawer, drawerClosing, header, content,
-  dropdownTrigger, messagePreview,
+  dropdownTrigger, messagePreview, closeButtonStyle,
 } from './MessagePreview.css'
-import { colors } from '@/styles/tokens/colors'
 
 interface MessagePreviewProps {
   isOpen: boolean
@@ -46,7 +45,7 @@ export default function MessagePreview({
       >
         <div className={header}>
           <Text variant="headingMd">문자 미리보기</Text>
-          <button onClick={handleClose} style={{ cursor: 'pointer', background: 'none', border: 'none', color: colors.gray500 }}>
+          <button onClick={handleClose} className={closeButtonStyle}>
             <CloseIcon width={24} height={24}  />
           </button>
         </div>

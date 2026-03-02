@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import * as XLSX from 'xlsx'
 import { generateStudentMessage } from '@/lib/generateStudentMessage'
-import { colors } from '@/styles/tokens/colors'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
@@ -23,6 +22,9 @@ import {
   templateLabelRowStyle,
   templateChipGroupStyle,
   templateChipRecipe,
+  backButtonStyle,
+  headerLeftStyle,
+  headerButtonGroupStyle,
 } from './lessonDetail.css'
 import MessagePreview from './_components/MessagePreview/MessagePreview'
 
@@ -97,10 +99,10 @@ export default function LessonDetailPage() {
     <div className={pageStyle}>
       {/* 헤더 */}
       <div className={headerStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className={headerLeftStyle}>
           <button
             onClick={() => router.back()}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: colors.gray500 }}
+            className={backButtonStyle}
           >
             <ArrowLeftIcon width={24} height={24} />
           </button>
@@ -109,7 +111,7 @@ export default function LessonDetailPage() {
             2월 20일(금) 미적분 A반
           </Text>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className={headerButtonGroupStyle}>
           <Button variant="secondary" size="sm" leftIcon={<DownloadIcon width={20} height={20} />} onClick={handleExcelDownload}>
             엑셀 다운로드
           </Button>

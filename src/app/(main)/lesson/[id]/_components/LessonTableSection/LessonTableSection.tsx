@@ -1,7 +1,6 @@
 'use client'
 
 import CheckIcon from '@/assets/icons/icon-check.svg'
-import { colors } from '@/styles/tokens/colors'
 import {
   tableStyle,
   thStyle,
@@ -16,6 +15,7 @@ import {
   nameCellStyle,
   thInnerStyle,
   checkboxLabelStyle,
+  checkboxLabelActiveStyle,
   activeRowStyle,
 } from './LessonTable.css'
 
@@ -110,8 +110,7 @@ export default function LessonTable({ students, onChange }: LessonTableSectionPr
             <div className={thInnerStyle}>
               출결
               <div
-                className={checkboxLabelStyle}
-                style={{ color: allAttend ? colors.primary500 : colors.gray300 }}
+                className={`${checkboxLabelStyle}${allAttend ? ` ${checkboxLabelActiveStyle}` : ''}`}
                 onClick={() => handleAllAttend(!allAttend)}
               >
                 <CheckIcon width={14} height={14} />
@@ -123,8 +122,7 @@ export default function LessonTable({ students, onChange }: LessonTableSectionPr
             <div className={thInnerStyle}>
               과제
               <div
-                className={checkboxLabelStyle}
-                style={{ color: allHomework ? colors.primary500 : colors.gray300 }}
+                className={`${checkboxLabelStyle}${allHomework ? ` ${checkboxLabelActiveStyle}` : ''}`}
                 onClick={() => handleAllHomework(!allHomework)}
               >
                 <CheckIcon width={14} height={14} />
@@ -136,8 +134,7 @@ export default function LessonTable({ students, onChange }: LessonTableSectionPr
             <div className={thInnerStyle}>
               오답노트
               <div
-                className={checkboxLabelStyle}
-                style={{ color: allAnswerNote ? colors.primary500 : colors.gray300 }}
+                className={`${checkboxLabelStyle}${allAnswerNote ? ` ${checkboxLabelActiveStyle}` : ''}`}
                 onClick={() => handleAllAnswerNote(!allAnswerNote)}
               >
                 <CheckIcon width={14} height={14} />
