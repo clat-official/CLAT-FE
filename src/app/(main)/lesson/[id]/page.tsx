@@ -1,0 +1,130 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { colors } from '@/styles/tokens/colors'
+import Text from '@/components/common/Text'
+import Button from '@/components/common/Button'
+import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
+import DownloadIcon from '@/assets/icons/icon-download.svg'
+import SaveIcon from '@/assets/icons/icon-save.svg'
+import MessageIcon from '@/assets/icons/icon-message.svg'
+import LessonTable from './_components/LessonTableSection/LessonTableSection'
+import CommonContent from './_components/CommonContent/CommonContent'
+import ProgressBar from './_components/ProgressBar/ProgressBar'
+import {
+  pageStyle,
+  headerStyle,
+  footerStyle,
+  sectionStyle,
+  templateSectionStyle,
+  templateLabelRowStyle,
+  templateChipGroupStyle,
+  templateChipRecipe,
+} from './lessonDetail.css'
+const MOCK_TEMPLATES = [
+  { id: 1, name: '정규 수업 템플릿' },
+  { id: 2, name: '클리닉 템플릿' },
+  { id: 3, name: '보강 템플릿' },
+]
+
+const MOCK_COMMON_ITEMS = [
+  { id: 1, label: '오늘 학습 내용' },
+  { id: 2, label: '다음 시간 범위' },
+  { id: 3, label: '클리닉 안내' },
+  { id: 4, label: '이번 주 과제' },
+]
+
+const MOCK_STUDENTS = Array.from({ length: 6 }, (_, i) => ({
+  id: i + 1,
+  name: '홍길동',
+  attendance: null as '출석' | '지각' | '결석' | null,
+  homework: null as '완료' | '미완료' | null,
+  answerNote: null as '완료' | '미완료' | null,
+  score: '',
+  memo: '',
+}))
+
+export default function LessonDetailPage() {
+  const router = useRouter()
+  const [selectedTemplateId, setSelectedTemplateId] = useState(1)
+  const [commonValues, setCommonValues] = useState<Record<number, string>>({})
+  const [students, setStudents] = useState(MOCK_STUDENTS)
+
+  const inputCount = students.filter(
+    (s) => s.attendance !== null && s.homework !== null && s.answerNote !== null && s.score !== ''
+  ).length
+
+  return (
+    <div className={pageStyle}>
+      {/* 헤더 */}
+      <div className={headerStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => router.back()}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: colors.gray500 }}
+          >
+            <ArrowLeftIcon width={24} height={24} />
+          </button>
+
+          <Text variant="display" as="h1">
+            2월 20일(금) 미적분 A반
+          </Text>
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Button variant="secondary" size="sm" leftIcon={<DownloadIcon width={20} height={20} />}>
+            엑셀 다운로드
+          </Button>
+          <Button variant="primary" size="sm" leftIcon={<SaveIcon width={20} height={20} />}>
+            저장
+          </Button>
+        </div>
+      </div>
+
+      {/* 템플릿 선택 */}
+      <div className={templateSectionStyle}>
+        <div className={templateLabelRowStyle}>
+          <Text variant="headingMd">템플릿</Text>
+          <Text variant="bodyMd" color="gray500">
+            오늘 수업에 적용할 템플릿을 선택해주세요
+          </Text>
+        </div>
+        <div className={templateChipGroupStyle}>
+          {MOCK_TEMPLATES.map((t) => (
+            <button
+              key={t.id}
+              className={templateChipRecipe({ selected: selectedTemplateId === t.id })}
+              onClick={() => setSelectedTemplateId(t.id)}
+            >
+              {t.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 공통 내용 */}
+      <div className={sectionStyle}>
+        <Text variant="headingMd">공통 내용</Text>
+        <CommonContent
+          items={MOCK_COMMON_ITEMS}
+          values={commonValues}
+          onChange={(id, value) => setCommonValues((prev) => ({ ...prev, [id]: value }))}
+        />
+      </div>
+
+      {/* 개별 내용 */}
+      <div className={sectionStyle}>
+        <Text variant="headingMd">개별 내용</Text>
+        <LessonTable students={students} onChange={setStudents} />
+      </div>
+
+      {/* 하단 진행도 */}
+      <div className={footerStyle}>
+        <ProgressBar current={inputCount} total={students.length} />
+        <Button variant="primary" size="sm" leftIcon={<MessageIcon width={20} height={20} />}>
+          문자 미리보기
+        </Button>
+      </div>
+    </div>
+  )
+}
