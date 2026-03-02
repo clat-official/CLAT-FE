@@ -20,41 +20,9 @@ import {
   navButtonStyle,
   weekNavStyle,
 } from './lesson.css'
+import { MOCK_LESSONS } from '@/mocks/lesson'
 
 const DAYS_KO = ['월', '화', '수', '목', '금', '토', '일']
-
-const MOCK_LESSONS = [
-  {
-    id: 1,
-    academyName: '엘리에듀학원',
-    templateName: '정규 수업 템플릿',
-    className: '미적분 A반',
-    progress: 100,
-    totalStudents: 29,
-    inputCount: 29,
-    isDone: true,
-  },
-  {
-    id: 2,
-    academyName: '엘리에듀학원',
-    templateName: '겨울방학 특강 템플릿',
-    className: '미적분 A반',
-    progress: 0,
-    totalStudents: 29,
-    inputCount: 0,
-    isDone: false,
-  },
-  {
-    id: 3,
-    academyName: '엘리에듀학원',
-    templateName: '겨울방학 특강 템플릿',
-    className: '미적분 A반',
-    progress: 0,
-    totalStudents: 29,
-    inputCount: 0,
-    isDone: false,
-  },
-]
 
 export default function LessonPage() {
   const router = useRouter()

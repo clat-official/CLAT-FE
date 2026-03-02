@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
 import Text from '@/components/common/Text'
+import useDisclosure from '@/hooks/useDisclosure'
+import { MOCK_CLASSES, MOCK_ALL_STUDENTS } from '@/mocks/management'
 import Button from '@/components/common/Button'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
 import UploadIcon from '@/assets/icons/icon-upload.svg'
@@ -30,44 +32,6 @@ const FILTER_OPTIONS = [
   { label: '종료', value: 'ended' },
 ]
 
-const MOCK_CLASSES = [
-  {
-    id: 1,
-    academyName: '엘리에듀학원',
-    name: '미적분 A반',
-    schedule: '수·금 14:00 – 16:00',
-    studentCount: 25,
-    isEnded: false,
-  },
-  {
-    id: 2,
-    academyName: '엘리에듀학원',
-    name: '미적분 A반',
-    schedule: '수·금 14:00 – 16:00',
-    studentCount: 25,
-    isEnded: false,
-  },
-  {
-    id: 3,
-    academyName: '엘리에듀학원',
-    name: '미적분 A반',
-    schedule: '수·금 14:00 – 16:00',
-    studentCount: 25,
-    isEnded: true,
-    startDate: '26.02.14',
-    endDate: '26.07.23',
-  },
-]
-
-const MOCK_ALL_STUDENTS = Array.from({ length: 10 }, (_, i) => ({
-  id: i + 1,
-  name: '홍길동',
-  studentPhone: '010-1234-5678',
-  parentPhone: '010-1234-5678',
-  completionRate: i === 1 ? 87 : i === 2 ? 17 : 47,
-  remaining: i === 1 ? 1 : i === 2 ? 5 : 3,
-  classes: ['미적분 A반', '미적분 B반'],
-}))
 
 function ManagementContent() {
   const router = useRouter()
@@ -81,9 +45,9 @@ function ManagementContent() {
     return true
   })
 
-  const [isAddClassOpen, setIsAddClassOpen] = useState(false)
-  const [isAddStudentOpen, setIsAddStudentOpen] = useState(false)
-  const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false)
+  const addClass = useDisclosure()
+  const addStudent = useDisclosure()
+  const bulkUpload = useDisclosure()
   const [deleteStudentTarget, setDeleteStudentTarget] = useState<number | null>(null)
 
   return (
@@ -110,7 +74,7 @@ function ManagementContent() {
               variant="secondary"
               size="sm"
               leftIcon={<UploadIcon width={20} height={20} />}
-              onClick={() => setIsBulkUploadOpen(true)}
+              onClick={bulkUpload.open}
             >
               일괄 등록
             </Button>
@@ -118,7 +82,7 @@ function ManagementContent() {
               variant="primary"
               size="sm"
               leftIcon={<PlusIcon width={20} height={20} />}
-              onClick={() => setIsAddStudentOpen(true)}
+              onClick={addStudent.open}
             >
               학생 등록
             </Button>
@@ -142,12 +106,12 @@ function ManagementContent() {
             <AddCard
               icon={<PlusCircleIcon width={36} height={36} />}
               label="반 추가"
-              onClick={() => setIsAddClassOpen(true)}
+              onClick={addClass.open}
             />
 
             <ClassFormModal
-              isOpen={isAddClassOpen}
-              onClose={() => setIsAddClassOpen(false)}
+              isOpen={addClass.isOpen}
+              onClose={addClass.close}
               onConfirm={(data) => {
                 console.log('새 반 추가:', data)
               }}
@@ -159,13 +123,13 @@ function ManagementContent() {
       {tab === 'students' && (
         <>
           <BulkUploadModal
-            isOpen={isBulkUploadOpen}
-            onClose={() => setIsBulkUploadOpen(false)}
+            isOpen={bulkUpload.isOpen}
+            onClose={bulkUpload.close}
             onConfirm={(file) => console.log('업로드', file)}
           />
           <AddStudentFormModal
-            isOpen={isAddStudentOpen}
-            onClose={() => setIsAddStudentOpen(false)}
+            isOpen={addStudent.isOpen}
+            onClose={addStudent.close}
             onConfirm={(data) => {
               console.log('새 학생 추가:', data)
             }}

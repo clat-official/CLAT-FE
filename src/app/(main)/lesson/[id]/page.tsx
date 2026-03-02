@@ -27,35 +27,17 @@ import {
   headerButtonGroupStyle,
 } from './lessonDetail.css'
 import MessagePreview from './_components/MessagePreview/MessagePreview'
-
-const MOCK_TEMPLATES = [
-  { id: 1, name: '정규 수업 템플릿' },
-  { id: 2, name: '클리닉 템플릿' },
-  { id: 3, name: '보강 템플릿' },
-]
-
-const MOCK_COMMON_ITEMS = [
-  { id: 1, label: '오늘 학습 내용' },
-  { id: 2, label: '다음 시간 범위' },
-  { id: 3, label: '클리닉 안내' },
-  { id: 4, label: '이번 주 과제' },
-]
-
-const MOCK_STUDENTS = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 1,
-  name: '홍길동',
-  attendance: null as '출석' | '지각' | '결석' | null,
-  homework: null as '완료' | '미완료' | null,
-  answerNote: null as '완료' | '미완료' | null,
-  score: '',
-  memo: '',
-}))
+import {
+  MOCK_LESSON_TEMPLATES,
+  MOCK_COMMON_ITEMS,
+  MOCK_LESSON_STUDENTS,
+} from '@/mocks/lesson'
 
 export default function LessonDetailPage() {
   const router = useRouter()
   const [selectedTemplateId, setSelectedTemplateId] = useState(1)
   const [commonValues, setCommonValues] = useState<Record<number, string>>({})
-  const [students, setStudents] = useState(MOCK_STUDENTS)
+  const [students, setStudents] = useState(MOCK_LESSON_STUDENTS)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   const handleExcelDownload = () => {
@@ -130,7 +112,7 @@ export default function LessonDetailPage() {
           </Text>
         </div>
         <div className={templateChipGroupStyle}>
-          {MOCK_TEMPLATES.map((t) => (
+          {MOCK_LESSON_TEMPLATES.map((t) => (
             <button
               key={t.id}
               className={templateChipRecipe({ selected: selectedTemplateId === t.id })}

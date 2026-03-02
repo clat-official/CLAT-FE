@@ -7,6 +7,8 @@ import Button from '@/components/common/Button'
 import Modal from '@/components/common/Modal'
 import CheckIcon from '@/assets/icons/icon-check.svg'
 import { colors } from '@/styles/tokens/colors'
+import useToggleArray from '@/hooks/useToggleArray'
+import { MOCK_CANDIDATE_STUDENTS } from '@/mocks/management'
 import {
   titleStyle,
   searchWrapperStyle,
@@ -19,14 +21,6 @@ import {
   emptyStyle,
 } from './AddStudentModal.css'
 
-const MOCK_STUDENTS = [
-  { id: 1, name: '홍길동', phone: '010-1234-5678' },
-  { id: 2, name: '김철수', phone: '010-2345-6789' },
-  { id: 3, name: '이영희', phone: '010-3456-7890' },
-  { id: 4, name: '박민준', phone: '010-4567-8901' },
-  { id: 5, name: '최지은', phone: '010-5678-9012' },
-]
-
 interface AddStudentModalProps {
   isOpen: boolean
   onClose: () => void
@@ -35,21 +29,15 @@ interface AddStudentModalProps {
 
 export default function AddStudentModal({ isOpen, onClose, onConfirm }: AddStudentModalProps) {
   const [search, setSearch] = useState('')
-  const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const { items: selectedIds, toggle: toggleSelect, reset: resetIds } = useToggleArray<number>()
 
-  const filtered = MOCK_STUDENTS.filter((s) =>
+  const filtered = MOCK_CANDIDATE_STUDENTS.filter((s) =>
     s.name.includes(search) || s.phone.includes(search)
   )
 
-  const toggleSelect = (id: number) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    )
-  }
-
   const handleClose = () => {
     setSearch('')
-    setSelectedIds([])
+    resetIds()
     onClose()
   }
 
