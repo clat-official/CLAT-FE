@@ -1,9 +1,6 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import * as XLSX from 'xlsx'
-import { generateStudentMessage } from '@/lib/generateStudentMessage'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
@@ -27,74 +24,42 @@ import {
   headerButtonGroupStyle,
 } from './lessonDetail.css'
 import MessagePreview from './_components/MessagePreview/MessagePreview'
-import {
-  MOCK_LESSON_TEMPLATES,
-  MOCK_COMMON_ITEMS,
-  MOCK_LESSON_STUDENTS,
-} from '@/mocks/lesson'
+import { MOCK_LESSON_TEMPLATES, MOCK_COMMON_ITEMS } from '@/mocks/lesson'
+import useLessonDetail, { DEFAULT_LESSON_CONTEXT } from '@/hooks/useLessonDetail'
 
 export default function LessonDetailPage() {
   const router = useRouter()
-  const [selectedTemplateId, setSelectedTemplateId] = useState(1)
-  const [commonValues, setCommonValues] = useState<Record<number, string>>({})
-  const [students, setStudents] = useState(MOCK_LESSON_STUDENTS)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-
-  const handleExcelDownload = () => {
-    const commonRows = MOCK_COMMON_ITEMS.map((item) => [item.label, commonValues[item.id] || ''])
-    const studentRows = students.map((s) => [
-      s.name,
-      s.attendance ?? '미입력',
-      s.homework ?? '미입력',
-      s.answerNote ?? '미입력',
-      s.score || '0',
-      s.memo || '',
-    ])
-
-    const ws = XLSX.utils.aoa_to_sheet([
-      ['2월 20일(금) 미적분 A반 수업 결과'],
-      [],
-      ['공통 내용'],
-      ...commonRows,
-      [],
-      ['개별 내용'],
-      ['이름', '출결', '숙제', '오답노트', '시험 점수', '메모'],
-      ...studentRows,
-    ])
-
-    const wsMessages = XLSX.utils.aoa_to_sheet([
-      ['이름', '문자 내용'],
-      ...students.map((s) => [s.name, generateStudentMessage(s, commonValues)]),
-    ])
-
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, '수업 결과')
-    XLSX.utils.book_append_sheet(wb, wsMessages, '문자 내용')
-    XLSX.writeFile(wb, '수업결과.xlsx')
-  }
-
-  const inputCount = students.filter(
-    (s) => s.attendance !== null && s.homework !== null && s.answerNote !== null && s.score !== ''
-  ).length
+  const {
+    selectedTemplateId,
+    setSelectedTemplateId,
+    commonValues,
+    setCommonValues,
+    students,
+    setStudents,
+    messagePreview,
+    inputCount,
+    handleExcelDownload,
+  } = useLessonDetail()
 
   return (
     <div className={pageStyle}>
       {/* 헤더 */}
       <div className={headerStyle}>
         <div className={headerLeftStyle}>
-          <button
-            onClick={() => router.back()}
-            className={backButtonStyle}
-          >
+          <button onClick={() => router.back()} className={backButtonStyle}>
             <ArrowLeftIcon width={24} height={24} />
           </button>
-
           <Text variant="display" as="h1">
-            2월 20일(금) 미적분 A반
+            {DEFAULT_LESSON_CONTEXT.lessonDate} {DEFAULT_LESSON_CONTEXT.className}
           </Text>
         </div>
         <div className={headerButtonGroupStyle}>
-          <Button variant="secondary" size="sm" leftIcon={<DownloadIcon width={20} height={20} />} onClick={handleExcelDownload}>
+          <Button
+            variant="secondary"
+            size="sm"
+            leftIcon={<DownloadIcon width={20} height={20} />}
+            onClick={handleExcelDownload}
+          >
             엑셀 다운로드
           </Button>
           <Button variant="primary" size="sm" leftIcon={<SaveIcon width={20} height={20} />}>
@@ -147,15 +112,15 @@ export default function LessonDetailPage() {
           variant="primary"
           size="sm"
           leftIcon={<MessageIcon width={20} height={20} />}
-          onClick={() => setIsDrawerOpen(true)}
+          onClick={messagePreview.open}
         >
           문자 미리보기
         </Button>
       </div>
 
       <MessagePreview
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        isOpen={messagePreview.isOpen}
+        onClose={messagePreview.close}
         commonValues={commonValues}
         students={students}
       />

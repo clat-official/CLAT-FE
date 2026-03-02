@@ -25,3 +25,25 @@ export const sectionBoxStyle = style({
   borderRadius: '16px',
   padding: '32px',
 })
+
+export const formHeaderStyle = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '32px',
+})
+
+export const formHeaderLeftStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+})
+
+export const formBackButtonStyle = style({
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  color: colors.gray500,
+  display: 'flex',
+  alignItems: 'center',
+})

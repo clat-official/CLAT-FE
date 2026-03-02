@@ -1,11 +1,19 @@
 import type { LessonStudent } from '@/types/lessonStudent'
 
+export interface MessageContext {
+  academyName: string
+  teacherName: string
+  className: string
+  lessonDate: string
+}
+
 export function generateStudentMessage(
   student: LessonStudent,
   commonValues: Record<number, string>,
+  context: MessageContext,
 ): string {
-  return `안녕하세요, 엘리에듀학원 윤준용 강사입니다.
-미적분 A반 2월 20일(금) 수업 결과입니다.
+  return `안녕하세요, ${context.academyName} ${context.teacherName} 강사입니다.
+${context.className} ${context.lessonDate} 수업 결과입니다.
 
 • 오늘 학습 내용: ${commonValues[1] || '-'}
 • 다음 시간 범위: ${commonValues[2] || '-'}

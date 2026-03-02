@@ -4,6 +4,7 @@ import Dropdown from '@/components/common/Dropdown'
 import CloseIcon from '@/assets/icons/icon-close.svg'
 import { generateStudentMessage } from '@/lib/generateStudentMessage'
 import type { LessonStudent } from '@/types/lessonStudent'
+import { DEFAULT_LESSON_CONTEXT } from '@/hooks/useLessonDetail'
 import {
   backdrop, drawer, drawerClosing, header, content,
   dropdownTrigger, messagePreview, closeButtonStyle,
@@ -59,7 +60,7 @@ export default function MessagePreview({
           />
 
           <div className={messagePreview}>
-            {selectedStudent ? generateStudentMessage(selectedStudent, commonValues) : ''}
+            {selectedStudent ? generateStudentMessage(selectedStudent, commonValues, DEFAULT_LESSON_CONTEXT) : ''}
           </div>
         </div>
       </div>
