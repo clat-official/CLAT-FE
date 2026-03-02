@@ -1,5 +1,6 @@
 import { style, globalStyle } from '@vanilla-extract/css'
 import { colors } from '@/styles/tokens/colors'
+import { cardGridBase } from '@/styles/tokens/grid'
 
 export const pageStyle = style({
   display: 'flex',
@@ -29,9 +30,7 @@ export const dateGridStyle = style({
 })
 
 export const lessonGridStyle = style({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '20px',
+  ...cardGridBase,
 })
 
 globalStyle(`${lessonGridStyle} > *`, {
@@ -40,4 +39,12 @@ globalStyle(`${lessonGridStyle} > *`, {
 
 export const sectionTitleStyle = style({
   margin: '80px 0 20px',
+})
+
+export const weekNavStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+  marginTop: '60px',
+  marginBottom: '24px',
 })
