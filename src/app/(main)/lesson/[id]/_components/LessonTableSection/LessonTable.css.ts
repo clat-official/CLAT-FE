@@ -147,6 +147,10 @@ export const checkboxLabelStyle = style({
   letterSpacing: '-0.03em',
 })
 
+export const checkboxLabelActiveStyle = style({
+  color: colors.primary500,
+})
+
 export const activeRowStyle = style({
   backgroundColor: colors.success50,
 })

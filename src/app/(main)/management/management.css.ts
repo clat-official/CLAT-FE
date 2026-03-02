@@ -1,6 +1,7 @@
 import { style } from '@vanilla-extract/css'
 import { colors } from '@/styles/tokens/colors'
 import { fontStyles } from '@/styles/tokens/typography'
+import { cardGridResponsive } from '@/styles/tokens/grid'
 
 const tabBase = {
   background: 'none',
@@ -36,16 +37,6 @@ export const tabActiveStyle = style([tabBase, {
 }])
 
 export const gridStyle = style({
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gridAutoRows: 'minmax(190px, auto)',
-    gap: '20px',
-    '@media': {
-      'screen and (max-width: 1279px)': {
-        gridTemplateColumns: 'repeat(2, 1fr)',
-      },
-      'screen and (max-width: 767px)': {
-        gridTemplateColumns: 'repeat(1, 1fr)',
-      },
-    },
-  })
+  ...cardGridResponsive,
+  gridAutoRows: 'minmax(190px, auto)',
+})

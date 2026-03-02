@@ -16,6 +16,26 @@ export const headerStyle = style({
   alignItems: 'center',
 })
 
+export const backButtonStyle = style({
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  color: colors.gray500,
+  display: 'flex',
+  alignItems: 'center',
+})
+
+export const headerLeftStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+})
+
+export const headerButtonGroupStyle = style({
+  display: 'flex',
+  gap: '8px',
+})
+
 export const footerStyle = style({
   position: 'fixed',
   bottom: 0,
