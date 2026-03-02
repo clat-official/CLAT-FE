@@ -77,11 +77,9 @@ export const addButtonStyle = style({
   color: colors.primary500,
   letterSpacing: '-0.03em',
   lineHeight: '140%',
-  ':hover': {
-    backgroundColor: colors.primary200,
-  },
-  ':active': {
-    backgroundColor: colors.primary300,
+  selectors: {
+    '&:hover': { backgroundColor: colors.primary200 },
+    '&:active': { backgroundColor: colors.primary300 },
   },
 })
 

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import * as XLSX from 'xlsx'
+import { generateStudentMessage } from '@/lib/generateStudentMessage'
 import { colors } from '@/styles/tokens/colors'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
@@ -55,19 +56,6 @@ export default function LessonDetailPage() {
   const [students, setStudents] = useState(MOCK_STUDENTS)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
-  const generateStudentMessage = (s: typeof students[0]) =>
-    `안녕하세요, 엘리에듀학원 윤준용 강사입니다.
-미적분 A반 2월 20일(금) 수업 결과입니다.
-
-• 오늘 학습 내용: ${commonValues[1] || '-'}
-• 다음 시간 범위: ${commonValues[2] || '-'}
-• 클리닉 안내: ${commonValues[3] || '-'}
-
-• 출결: ${s.attendance || '미입력'}
-• 시험 점수: ${s.score || '0'}점
-
-감사합니다.`
-
   const handleExcelDownload = () => {
     const commonRows = MOCK_COMMON_ITEMS.map((item) => [item.label, commonValues[item.id] || ''])
     const studentRows = students.map((s) => [
@@ -92,7 +80,7 @@ export default function LessonDetailPage() {
 
     const wsMessages = XLSX.utils.aoa_to_sheet([
       ['이름', '문자 내용'],
-      ...students.map((s) => [s.name, generateStudentMessage(s)]),
+      ...students.map((s) => [s.name, generateStudentMessage(s, commonValues)]),
     ])
 
     const wb = XLSX.utils.book_new()
