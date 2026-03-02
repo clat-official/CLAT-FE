@@ -19,18 +19,7 @@ import {
   activeRowStyle,
 } from './LessonTable.css'
 
-type Attendance = '출석' | '지각' | '결석' | null
-type CompletionStatus = '완료' | '미완료' | null
-
-interface Student {
-  id: number
-  name: string
-  attendance: Attendance
-  homework: CompletionStatus
-  answerNote: CompletionStatus
-  score: string
-  memo: string
-}
+import type { LessonStudent as Student, Attendance, CompletionStatus } from '@/types/lessonStudent'
 
 interface LessonTableSectionProps {
   students: Student[]

@@ -17,6 +17,7 @@ import {
   checkButtonVariants,
   addButtonStyle,
 } from './ContentSection.css'
+import { colors } from '@/styles/tokens/colors'
 import type { TemplateItem } from '../../_types/template'
 
 interface ContentSectionProps {
@@ -36,7 +37,7 @@ function renderLabel(label: string) {
   if (!label.includes('*')) return label
   return label.split('*').map((part, i, arr) =>
     i < arr.length - 1 ? (
-      <span key={i}>{part}<span style={{ color: '#EF4453' }}>*</span></span>
+      <span key={i}>{part}<span style={{ color: colors.error500 }}>*</span></span>
     ) : part
   )
 }

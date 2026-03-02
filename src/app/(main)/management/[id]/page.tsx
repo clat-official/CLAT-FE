@@ -105,7 +105,7 @@ export default function ClassDetailPage() {
             leftIcon={<PlusIcon width={20} height={20} />}
             onClick={() => setIsAddStudentOpen(true)}
           >
-            학생 추가
+            학생 등록
           </Button>
 
           <AddStudentModal
