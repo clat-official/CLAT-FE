@@ -1,7 +1,11 @@
 'use client'
 
+import { use } from 'react'
+import { useRouter } from 'next/navigation'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
+import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
+import SaveIcon from '@/assets/icons/icon-save.svg'
 import TemplateName from '../_components/TemplateName/TemplateName'
 import ContentSection from '../_components/ContentSection/ContentSection'
 import MessageSettings from '../_components/MessageSettings/MessageSettings'
@@ -11,26 +15,30 @@ import {
   leftSectionStyle,
   rightSectionStyle,
   sectionBoxStyle,
+  formHeaderStyle,
+  formHeaderLeftStyle,
+  formBackButtonStyle,
 } from '../template-form.css'
-import SaveIcon from '@/assets/icons/icon-save.svg'
 import useTemplateEditor from '@/hooks/useTemplateEditor'
+import { MOCK_TEMPLATES } from '@/mocks/template'
 
-export default function TemplateNewPage() {
-  const editor = useTemplateEditor()
+export default function TemplateEditPage({ params }: { params: Promise<{ id: string }> }) {
+  const router = useRouter()
+  const { id } = use(params)
+  const template = MOCK_TEMPLATES.find((t) => t.id === Number(id))
+  const editor = useTemplateEditor({ name: template?.title })
 
   return (
     <>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '32px',
-        }}
-      >
-        <Text variant="display" as="h1">
-          수업 템플릿 생성
-        </Text>
+      <div className={formHeaderStyle}>
+        <div className={formHeaderLeftStyle}>
+          <button className={formBackButtonStyle} onClick={() => router.back()}>
+            <ArrowLeftIcon width={24} height={24} />
+          </button>
+          <Text variant="display" as="h1">
+            수업 템플릿 수정
+          </Text>
+        </div>
         <Button variant="primary" size="sm" leftIcon={<SaveIcon width={16} height={16} />}>
           저장
         </Button>
