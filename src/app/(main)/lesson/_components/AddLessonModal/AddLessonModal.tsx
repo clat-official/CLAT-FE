@@ -19,12 +19,7 @@ import {
   radioSelectedStyle,
   actionsStyle,
 } from './AddLessonModal.css'
-
-const MOCK_CLASSES = [
-  { id: 1, name: '미적분 B반', academyName: '엘리에듀학원', schedule: '수·금' },
-  { id: 2, name: '토요 클리닉', academyName: '엘리에듀학원', schedule: '수·금' },
-  { id: 3, name: '기하 A반', academyName: '엘리에듀학원', schedule: '수·금' },
-]
+import { MOCK_LESSON_CLASSES } from '@/mocks/lesson'
 
 interface AddLessonModalProps {
   isOpen: boolean
@@ -55,7 +50,7 @@ export default function AddLessonModal({
         </Text>
       </div>
       <div className={classListStyle}>
-        {MOCK_CLASSES.map((cls) => {
+        {MOCK_LESSON_CLASSES.map((cls) => {
           const isSelected = selectedId === cls.id
           return (
             <div

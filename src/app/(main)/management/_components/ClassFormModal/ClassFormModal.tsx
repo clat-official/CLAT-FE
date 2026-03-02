@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
+import useToggleArray from '@/hooks/useToggleArray'
 import Button from '@/components/common/Button'
 import Modal from '@/components/common/Modal'
 import {
@@ -46,7 +47,7 @@ export default function ClassFormModal({
 }: ClassFormModalProps) {
   const [academyName, setAcademyName] = useState('')
   const [name, setName] = useState('')
-  const [selectedDays, setSelectedDays] = useState<number[]>([])
+  const { items: selectedDays, toggle: toggleDay, set: setSelectedDays, reset: resetDays } = useToggleArray<number>()
 
   useEffect(() => {
     if (isOpen && defaultValues) {
@@ -56,16 +57,10 @@ export default function ClassFormModal({
     }
   }, [isOpen, defaultValues])
 
-  const toggleDay = (value: number) => {
-    setSelectedDays((prev) =>
-      prev.includes(value) ? prev.filter((d) => d !== value) : [...prev, value]
-    )
-  }
-
   const handleClose = () => {
     setAcademyName('')
     setName('')
-    setSelectedDays([])
+    resetDays()
     onClose()
   }
 

@@ -15,22 +15,7 @@ import {
 } from '../template-form.css'
 import SaveIcon from '@/assets/icons/icon-save.svg'
 import type { TemplateItem } from '../_types/template'
-
-const INITIAL_COMMON_ITEMS: TemplateItem[] = [
-  { id: 'c-1', label: '오늘 학습 내용', isActive: true, isInMessage: true, category: 'common', itemType: 'inline' },
-  { id: 'c-2', label: '다음 시간 범위', isActive: true, isInMessage: true, category: 'common', itemType: 'inline' },
-  { id: 'c-3', label: '클리닉 안내', isActive: true, isInMessage: true, category: 'common', itemType: 'inline' },
-  { id: 'c-4', label: '이번 주 과제', isActive: true, isInMessage: true, category: 'common', itemType: 'inline' },
-  { id: 'c-5', label: '다음 시험 일정', isActive: true, isInMessage: true, category: 'common', itemType: 'inline' },
-]
-
-const INITIAL_INDIVIDUAL_ITEMS: TemplateItem[] = [
-  { id: 'i-1', label: '출결 *', isActive: true, isInMessage: true, locked: true, category: 'individual', itemType: 'completion' },
-  { id: 'i-2', label: '시험 점수', isActive: true, isInMessage: true, category: 'individual', itemType: 'number' },
-  { id: 'i-3', label: '과제', isActive: false, isInMessage: true, category: 'individual', itemType: 'completion' },
-  { id: 'i-4', label: '반평균', isActive: true, isInMessage: true, category: 'individual', itemType: 'number' },
-  { id: 'i-5', label: '오답노트', isActive: true, isInMessage: true, category: 'individual', itemType: 'completion' },
-]
+import { INITIAL_COMMON_ITEMS, INITIAL_INDIVIDUAL_ITEMS } from '@/mocks/template'
 
 const INITIAL_MESSAGE_ORDER = [
   ...INITIAL_COMMON_ITEMS.map((i) => i.id),

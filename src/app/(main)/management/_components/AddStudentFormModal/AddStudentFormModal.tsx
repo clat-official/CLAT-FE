@@ -5,6 +5,8 @@ import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
 import Button from '@/components/common/Button'
 import Modal from '@/components/common/Modal'
+import useToggleArray from '@/hooks/useToggleArray'
+import { MOCK_CLASS_NAMES } from '@/mocks/management'
 import {
   fieldGroupStyle,
   fieldStyle,
@@ -13,8 +15,6 @@ import {
   classChipRecipe,
   actionsStyle,
 } from './AddStudentFormModal.css'
-
-const MOCK_CLASSES = ['미적분 A반', '미적분 B반', '미적분 C반', '기하 A반', '기하 B반']
 
 interface AddStudentFormModalProps {
   isOpen: boolean
@@ -35,19 +35,13 @@ export default function AddStudentFormModal({
   const [name, setName] = useState('')
   const [studentPhone, setStudentPhone] = useState('')
   const [parentPhone, setParentPhone] = useState('')
-  const [selectedClasses, setSelectedClasses] = useState<string[]>([])
-
-  const toggleClass = (cls: string) => {
-    setSelectedClasses((prev) =>
-      prev.includes(cls) ? prev.filter((c) => c !== cls) : [...prev, cls]
-    )
-  }
+  const { items: selectedClasses, toggle: toggleClass, reset: resetClasses } = useToggleArray<string>()
 
   const handleClose = () => {
     setName('')
     setStudentPhone('')
     setParentPhone('')
-    setSelectedClasses([])
+    resetClasses()
     onClose()
   }
 
@@ -90,7 +84,7 @@ export default function AddStudentFormModal({
         <div className={fieldStyle}>
           <span className={labelStyle}>소속 반</span>
           <div className={classChipGroupStyle}>
-            {MOCK_CLASSES.map((cls) => (
+            {MOCK_CLASS_NAMES.map((cls) => (
               <button
                 key={cls}
                 className={classChipRecipe({ selected: selectedClasses.includes(cls) })}
