@@ -29,14 +29,8 @@ const NAV_ITEMS = [
 
 export default function Sidebar() {
   const pathname = usePathname()
-  
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
 
-  const handleLogout = () => {
-    if (confirm('로그아웃 하시겠습니까?')) {
-      auth.logout()
-    }
-  }
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
 
   return (
     <aside className={sidebarStyle}>
@@ -67,7 +61,9 @@ export default function Sidebar() {
       <LogoutConfirmModal
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
-        onConfirm={() => auth.logout()}
+        onConfirm={async () => {
+          await auth.logout()
+        }}
       />
     </aside>
   )
