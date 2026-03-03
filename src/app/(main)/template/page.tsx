@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Text from '@/components/common/Text'
 import AddCard from '@/components/common/AddCard'
@@ -8,6 +8,7 @@ import TemplateCard from './_components/TemplateCard/TemplateCard'
 import DeleteConfirmModal from './_components/DeleteConfirmModal/DeleteConfirmModal'
 import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
 import { gridStyle } from './template.css'
+import { templateService, type Template } from '@/services/template'
 import { MOCK_TEMPLATES } from '@/mocks/template'
 
 type DeleteTarget = {
@@ -18,17 +19,57 @@ type DeleteTarget = {
 
 export default function TemplatePage() {
   const router = useRouter()
+  const [templates, setTemplates] = useState<Template[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null)
+
+  const fetchTemplates = async () => {
+    try {
+      const data = await templateService.getTemplates()
+      setTemplates(data)
+    } catch (err) {
+      console.error('템플릿 목록 조회 실패', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchTemplates()
+  }, [])
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    try {
+      await templateService.deleteTemplate(deleteTarget.id)
+      setTemplates((prev) => prev.filter((t) => t.id !== deleteTarget.id))
+    } catch (err) {
+      console.error('템플릿 삭제 실패', err)
+    } finally {
+      setDeleteTarget(null)
+    }
+  }
+
+  if (isLoading) {
+    return null
+  }
 
   return (
     <>
-      <Text variant="display" as="h1">수업 템플릿</Text>
+      <Text variant="display" as="h1">
+        수업 템플릿
+      </Text>
       <div className={gridStyle}>
-        {MOCK_TEMPLATES.map((template) => (
+        {templates.map((template) => (
           <TemplateCard
             key={template.id}
-            {...template}
-            onDelete={(id) => setDeleteTarget({ id, title: template.title, classCount: template.classCount })}
+            id={template.id}
+            title={template.name}
+            classCount={template.class_count}
+            classList={template.class_list}
+            onDelete={(id) =>
+              setDeleteTarget({ id, title: template.name, classCount: template.class_count })
+            }
           />
         ))}
         <AddCard
@@ -40,10 +81,7 @@ export default function TemplatePage() {
       <DeleteConfirmModal
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
-        onConfirm={() => {
-          console.log('delete', deleteTarget?.id)
-          setDeleteTarget(null)
-        }}
+        onConfirm={handleDelete}
         templateName={deleteTarget?.title ?? ''}
         classCount={deleteTarget?.classCount ?? 0}
       />
