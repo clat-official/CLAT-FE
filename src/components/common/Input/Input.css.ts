@@ -13,7 +13,7 @@ export const inputRecipe = recipe({
     letterSpacing: '-0.03em',
     color: colors.gray700,
     outline: 'none',
-    transition: 'border-color 0.2s',
+    transition: 'all 0.2s',
     selectors: {
       '&::placeholder': {
         color: colors.gray300,
@@ -38,8 +38,21 @@ export const inputRecipe = recipe({
         border: `1px solid ${colors.gray50}`,
       },
     },
+    shape: {
+      square: {
+        height: '48px',
+        borderRadius: '8px',
+      },
+      capsule: {
+        height: '48px',
+        borderRadius: '999px',
+        padding: '0 32px',
+        border: `1px solid ${colors.gray200}`,
+      },
+    },
   },
   defaultVariants: {
     variant: 'default',
+    shape: 'square',
   },
 })

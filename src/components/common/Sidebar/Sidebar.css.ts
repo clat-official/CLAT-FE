@@ -45,9 +45,33 @@ export const navItemStyle = style({
   color: colors.gray600,
   textDecoration: 'none',
   transition: 'color 0.2s',
+  ':hover': {
+    color: colors.gray300,
+  },
 })
 
 export const navItemActiveStyle = style({
   color: colors.white,
   fontWeight: fontStyles.titleMd.fontWeight,
+})
+
+export const logoutButtonStyle = style({
+  marginTop: 'auto',
+  marginBottom: '40px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+  padding: '0 16px',
+  color: colors.gray600,
+  cursor: 'pointer',
+  border: 'none',
+  background: 'none',
+  fontSize: fontStyles.titleMd.fontSize,
+  fontWeight: fontStyles.titleMd.fontWeight,
+  letterSpacing: '-0.03em',
+  lineHeight: '140%',
+  transition: 'all 0.2s',
+  ':hover': {
+    color: colors.gray300,
+  },
 })

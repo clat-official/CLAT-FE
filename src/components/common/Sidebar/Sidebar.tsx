@@ -1,19 +1,23 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { auth } from '@/services/auth'
 import {
   sidebarStyle,
   sidebarTopStyle,
   navStyle,
   navItemStyle,
   navItemActiveStyle,
+  logoutButtonStyle,
 } from './Sidebar.css'
+import LogoutConfirmModal from './_components/LogoutConfirmModal'
 import HomeIcon from '@/assets/icons/icon-home.svg'
 import EditIcon from '@/assets/icons/icon-edit.svg'
 import UsersIcon from '@/assets/icons/icon-users.svg'
 import ClipboardIcon from '@/assets/icons/icon-clipboard.svg'
-import LogoIcon from '@/assets/logo/logo.svg'
+import LogoIcon from '@/assets/logo/logo-symbol.svg'
 import LogoutIcon from '@/assets/icons/icon-logout.svg'
 
 const NAV_ITEMS = [
@@ -25,6 +29,14 @@ const NAV_ITEMS = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
+
+  const handleLogout = () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      auth.logout()
+    }
+  }
 
   return (
     <aside className={sidebarStyle}>
@@ -45,7 +57,18 @@ export default function Sidebar() {
             </Link>
           )
         })}
+
+        <button className={logoutButtonStyle} onClick={() => setIsLogoutModalOpen(true)}>
+          <LogoutIcon width={20} height={20} />
+          로그아웃
+        </button>
       </nav>
+
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => auth.logout()}
+      />
     </aside>
   )
 }

@@ -4,6 +4,7 @@ import { buttonRecipe } from './Button.css'
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'outlined' | 'danger' | 'endClass' | 'deleteClass'
   size?: 'sm' | 'md' | 'lg'
+  shape?: 'square' | 'capsule'
   fullWidth?: boolean
   leftIcon?: ReactNode
   rightIcon?: ReactNode
@@ -13,6 +14,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export default function Button({
   variant = 'primary',
   size = 'md',
+  shape = 'square',
   fullWidth = false,
   leftIcon,
   rightIcon,
@@ -22,7 +24,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`${buttonRecipe({ variant, size, fullWidth })}${className ? ` ${className}` : ''}`}
+      className={`${buttonRecipe({ variant, size, shape, fullWidth })}${className ? ` ${className}` : ''}`}
       {...props}
     >
       {leftIcon}
