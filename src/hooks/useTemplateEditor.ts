@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { CreateTEmplateItemDto, templateService } from '@/services/template'
+import { CreateTemplateItemDto, templateService } from '@/services/template'
 import type { TemplateItem } from '@/app/(main)/template/_types/template'
 import { INITIAL_COMMON_ITEMS, INITIAL_INDIVIDUAL_ITEMS } from '@/mocks/template'
 
@@ -25,6 +25,13 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     ...initIndividual.map((i) => i.id),
   ])
 
+  const [originalItemIds] = useState<number[]>(
+    () =>
+      [...(initial.commonItems ?? []), ...(initial.individualItems ?? [])]
+        .map((item) => Number(item.id))
+        .filter((id) => !isNaN(id) && id > 0) // 새로 추가한 'c-xxx', 'i-xxx' 제외
+  )
+
   const allItemsMap = useMemo(() => {
     const map = new Map<string, TemplateItem>()
     for (const item of commonItems) map.set(item.id, item)
@@ -40,7 +47,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     inline: 'TEXT',
   }
 
-  const buildItems = (items: TemplateItem[]): CreateTEmplateItemDto[] =>
+  const buildItems = (items: TemplateItem[]): CreateTemplateItemDto[] =>
     items
       .filter((item) => item.label.trim() !== '')
       .map((item, index) => ({
@@ -71,6 +78,28 @@ export default function useTemplateEditor(initial: InitialData = {}) {
       setIsSaving(false)
     }
   }
+
+  const handleUpdate = async (templateId: number) => {
+    if (!templateName.trim()) {
+      alert('템플릿 이름을 입력해주세요.')
+      return
+    }
+    setIsSaving(true)
+    try {
+      await templateService.updateTemplate(templateId, {
+        name: templateName,
+        items: buildItems([...commonItems, ...individualItems]),
+        deleted_item_ids: originalItemIds, // 기존 아이템 전부 삭제 후 새로 삽입
+      })
+      router.push('/template')
+    } catch (err) {
+      console.error('템플릿 수정 실패', err)
+      alert('템플릿 수정에 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+  
   const handleToggleCommonItem = (id: string) => {
     setCommonItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, isActive: !item.isActive } : item))
@@ -149,6 +178,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     allItemsMap,
     isSaving,
     handleSave,
+    handleUpdate,
     handleToggleCommonItem,
     handleDeleteCommonItem,
     handleAddCommonItem,

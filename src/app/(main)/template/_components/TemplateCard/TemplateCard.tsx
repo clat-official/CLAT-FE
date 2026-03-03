@@ -32,7 +32,7 @@ export default function TemplateCard({
   const router = useRouter()
 
   return (
-    <div className={cardStyle} onClick={() => router.push(`/template/${id}`)}>
+    <div className={cardStyle} onClick={() => router.push(`/template/${id}/edit`)}>
       <div className={cardHeaderStyle}>
         <Text variant="headingLg" as="h3">
           {title}

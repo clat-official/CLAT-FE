@@ -1,14 +1,14 @@
 import axiosInstance from '@/lib/api/axiosInstance'
-import { StringifyOptions } from 'querystring'
+import type { TemplateItem as EditorItem } from '@/app/(main)/template/_types/template'
 
-export interface TemplateItem {
+export interface TemplateItemDetail {
   id: number
   name: string
   item_type: string
   is_common: boolean
   include_in_message: boolean
+  is_default_attendance: boolean
   sort_order: number
-  options: string[]
 }
 
 export interface Template {
@@ -21,10 +21,12 @@ export interface Template {
 }
 
 export interface TemplateDetail extends Template {
-  items: TemplateItem[]
+  id: number
+  name: string
+  items: TemplateItemDetail[]
 }
 
-export interface CreateTEmplateItemDto {
+export interface CreateTemplateItemDto {
   name: string
   item_type: string
   is_common: boolean
@@ -35,7 +37,7 @@ export interface CreateTEmplateItemDto {
 
 export interface CreateTemplateDto {
   name: string
-  items: CreateTEmplateItemDto[]
+  items: CreateTemplateItemDto[]
 }
 
 export interface UpdateTemplateItemDto {
@@ -51,7 +53,36 @@ export interface UpdateTemplateItemDto {
 export interface UpdateTemplateDto {
   name?: string
   items?: UpdateTemplateItemDto[]
-  deleted_items_ids?: number[]
+  deleted_item_ids?: number[]
+}
+
+// API item_type → 에디터 itemType 매핑
+const API_TO_ITEM_TYPE: Record<string, EditorItem['itemType']> = {
+  TEXT: 'text',
+  NUMBER: 'number',
+  SELECT: 'choice',
+  COMPLETE: 'completion',
+}
+
+// API 응답 → useTemplateEditor 초기값 변환
+export const toEditorItems = (detail: TemplateDetail) => {
+  const sorted = [...detail.items].sort((a, b) => a.sort_order - b.sort_order)
+
+  const toItem = (item: TemplateItemDetail): EditorItem => ({
+    id: String(item.id),
+    label: item.name,
+    isActive: true,
+    isInMessage: item.include_in_message,
+    category: item.is_common ? 'common' : 'individual',
+    itemType: API_TO_ITEM_TYPE[item.item_type] ?? 'text',
+    locked: item.is_default_attendance || undefined,
+  })
+
+  return {
+    name: detail.name,
+    commonItems: sorted.filter((i) => i.is_common).map(toItem),
+    individualItems: sorted.filter((i) => !i.is_common).map(toItem),
+  }
 }
 
 export const templateService = {
@@ -62,7 +93,7 @@ export const templateService = {
   },
 
   // 상세 조회
-  async getTemplateDetail(id: number): Promise<TemplateDetail> {
+  async getTemplate(id: number): Promise<TemplateDetail> {
     const { data } = await axiosInstance.get(`/templates/${id}`)
     return data.data
   },
