@@ -31,8 +31,14 @@ export default function TemplateNewPage() {
         <Text variant="display" as="h1">
           수업 템플릿 생성
         </Text>
-        <Button variant="primary" size="sm" leftIcon={<SaveIcon width={16} height={16} />}>
-          저장
+        <Button
+          variant="primary"
+          size="sm"
+          leftIcon={<SaveIcon width={16} height={16} />}
+          onClick={editor.handleSave}
+          disabled={editor.isSaving}
+        >
+          {editor.isSaving ? '저장 중...' : '저장'}
         </Button>
       </div>
       <div className={pageStyle}>
@@ -72,10 +78,7 @@ export default function TemplateNewPage() {
             />
           </div>
           <div className={sectionBoxStyle}>
-            <MessagePreview
-              messageOrder={editor.messageOrder}
-              allItemsMap={editor.allItemsMap}
-            />
+            <MessagePreview messageOrder={editor.messageOrder} allItemsMap={editor.allItemsMap} />
           </div>
         </div>
       </div>

@@ -15,6 +15,8 @@ export interface Template {
   id: number
   name: string
   item_count: number
+  class_count: number
+  class_list: string[]
   created_at: string
 }
 

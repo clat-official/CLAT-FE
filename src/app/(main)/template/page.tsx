@@ -65,10 +65,10 @@ export default function TemplatePage() {
             key={template.id}
             id={template.id}
             title={template.name}
-            classCount={template.item_count}
-            classList={[]}
+            classCount={template.class_count}
+            classList={template.class_list}
             onDelete={(id) =>
-              setDeleteTarget({ id, title: template.name, classCount: template.item_count })
+              setDeleteTarget({ id, title: template.name, classCount: template.class_count })
             }
           />
         ))}
