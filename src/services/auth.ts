@@ -1,33 +1,71 @@
 import axiosInstance from '@/lib/api/axiosInstance'
-import { setCookie, deleteCookie } from 'cookies-next'
+import { setCookie, deleteCookie, getCookie } from 'cookies-next'
 
 interface LoginRequest {
   email: string
   password: string
 }
 
+interface AuthTokens {
+  access_token: string
+  refresh_token: string
+}
+
 interface LoginResponse {
-  accessToken: string
+  success: boolean
+  data: AuthTokens & {
+    user: {
+      id: number
+      email: string
+      name: string
+      created_at: string
+    }
+  }
+}
+
+interface RefreshResponse {
+  success: boolean
+  data: AuthTokens
+}
+
+const setTokens = (accessToken: string, refreshToken: string) => {
+  setCookie('accessToken', accessToken, { maxAge: 60 * 60 * 24 * 7, path: '/' })
+  setCookie('refreshToken', refreshToken, { maxAge: 60 * 60 * 24 * 7, path: '/' })
+  localStorage.setItem('accessToken', accessToken)
+}
+
+const clearTokens = () => {
+  deleteCookie('accessToken', { path: '/' })
+  deleteCookie('refreshToken', { path: '/' })
+  localStorage.removeItem('accessToken')
 }
 
 export const auth = {
-  async login({ email, password }: LoginRequest): Promise<LoginResponse> {
+  async login({ email, password }: LoginRequest) {
     const { data } = await axiosInstance.post<LoginResponse>('/auth/login', { email, password })
-
-    // 미들웨어용 쿠키 저장
-    setCookie('accessToken', data.accessToken, {
-      maxAge: 60 * 60 * 24 * 7, // 7일
-      path: '/',
-    })
-    // Axios 인터셉터용 localStorage 저장
-    localStorage.setItem('accessToken', data.accessToken)
-
-    return data
+    setTokens(data.data.access_token, data.data.refresh_token)
+    return data.data.user
   },
 
-  logout() {
-    localStorage.removeItem('accessToken')
-    deleteCookie('accessToken', { path: '/' })
-    window.location.href = '/login'
+  async logout() {
+    const refreshToken = getCookie('refreshToken')
+    try {
+      await axiosInstance.post('/auth/logout', { refresh_token: refreshToken })
+    } finally {
+      // API 실패해도 클라이언트 토큰은 반드시 삭제
+      clearTokens()
+      window.location.href = '/login'
+    }
+  },
+
+  async refresh() {
+    const refreshToken = getCookie('refreshToken')
+    const { data } = await axiosInstance.post<RefreshResponse>('/auth/refresh', {
+      refresh_token: refreshToken,
+    })
+    setTokens(data.data.access_token, data.data.refresh_token)
+    return data.data.access_token
   },
 }
+
+export { setTokens, clearTokens }
