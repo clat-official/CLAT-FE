@@ -1,5 +1,6 @@
 import { recipe } from '@vanilla-extract/recipes'
 import { colors } from '@/styles/tokens/colors'
+import { sq } from 'date-fns/locale'
 
 export const buttonRecipe = recipe({
   base: {
@@ -112,6 +113,14 @@ export const buttonRecipe = recipe({
       md: { padding: '12px 24px', fontSize: '14px', fontWeight: '600', borderRadius: '8px' },
       lg: { padding: '16px 24px', fontSize: '16px', fontWeight: '600', borderRadius: '12px' },
     },
+    shape: {
+      square: {},
+      capsule: {
+        height: '48px',
+        borderRadius: '999px',
+        padding: '0 32px',
+      },
+    },
     fullWidth: {
       true: { width: '100%' },
     },
@@ -119,5 +128,6 @@ export const buttonRecipe = recipe({
   defaultVariants: {
     variant: 'primary',
     size: 'md',
+    shape: 'square',
   },
 })

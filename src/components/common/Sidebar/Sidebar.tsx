@@ -13,7 +13,7 @@ import HomeIcon from '@/assets/icons/icon-home.svg'
 import EditIcon from '@/assets/icons/icon-edit.svg'
 import UsersIcon from '@/assets/icons/icon-users.svg'
 import ClipboardIcon from '@/assets/icons/icon-clipboard.svg'
-import LogoIcon from '@/assets/logo/logo.svg'
+import LogoIcon from '@/assets/logo/logo-symbol.svg'
 import LogoutIcon from '@/assets/icons/icon-logout.svg'
 
 const NAV_ITEMS = [
