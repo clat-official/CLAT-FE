@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { auth } from '@/services/auth'
 import {
   containerStyle,
   loginBoxStyle,
@@ -20,10 +22,32 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleLogin = (e: React.FormEvent) => {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const passwordRef = useRef<HTMLInputElement>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: authService.login(email, password) 연동
-    console.log('Login attempt:', { email, password })
+    setError(null)
+    setIsLoading(true)
+
+    try {
+      await auth.login({ email, password })
+
+      // redirect 파라미터가 상대경로인 경우에만 사용, 아니면 홈으로
+      const redirect = searchParams.get('redirect')
+      const safeRedirect =
+        redirect && redirect.startsWith('/') && !redirect.startsWith('//') ? redirect : '/'
+      router.push(safeRedirect)
+    } catch (err: any) {
+      const message = err.response?.data?.message ?? '이메일 또는 비밀번호를 확인해주세요.'
+      setError(message)
+      passwordRef.current?.focus()
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -45,13 +69,16 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             type="email"
+            autoComplete="email"
           />
           <Input
             placeholder="비밀번호"
             shape="capsule"
+            ref={passwordRef}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             type="password"
+            autoComplete="current-password"
           />
           <Button
             variant="primary"
@@ -60,10 +87,16 @@ export default function LoginPage() {
             fullWidth
             type="submit"
             className={submitButtonStyle}
-            disabled={!email || !password}
+            disabled={!email || !password || isLoading}
           >
-            로그인
+            {isLoading ? '로그인 중...' : '로그인'}
           </Button>
+
+          {error && (
+            <Text variant="bodyMd" color="error500">
+              {error}
+            </Text>
+          )}
         </form>
 
         {/* 하단 링크 */}
