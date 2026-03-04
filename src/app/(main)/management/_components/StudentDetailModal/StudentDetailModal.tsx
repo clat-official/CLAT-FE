@@ -5,7 +5,7 @@ import Modal from '@/components/common/Modal'
 import Text from '@/components/common/Text'
 import { studentService } from '@/services/student'
 import { useToastStore } from '@/stores/toastStore'
-import type { StudentDetail } from '@/types/student'
+import type { StudentDetail, IncompleteItem } from '@/types/student'
 import CloseIcon from '@/assets/icons/icon-close.svg'
 import CheckIcon from '@/assets/icons/icon-check.svg'
 import {
@@ -60,7 +60,9 @@ export default function StudentDetailModal({
         prev
           ? {
               ...prev,
-              incomplete_items: prev.incomplete_items.filter((i: any) => i.id !== itemId),
+              incomplete_items: prev.incomplete_items.filter(
+                (i) => i.lesson_student_data_id !== itemId
+              ),
               stats: {
                 ...prev.stats,
                 total_incomplete_items: prev.stats.total_incomplete_items - 1,
@@ -80,13 +82,17 @@ export default function StudentDetailModal({
     <Modal isOpen={!!studentId} onClose={onClose} size="md">
       {isLoading || !detail ? (
         <div style={{ padding: '40px', textAlign: 'center' }}>
-          <Text variant="bodyMd" color="gray500">불러오는 중...</Text>
+          <Text variant="bodyMd" color="gray500">
+            불러오는 중...
+          </Text>
         </div>
       ) : (
         <>
           {/* 헤더 */}
           <div className={headerStyle}>
-            <Text variant="headingLg" as="h2">{detail.name}</Text>
+            <Text variant="headingLg" as="h2">
+              {detail.name}
+            </Text>
             <button className={closeButtonStyle} onClick={onClose}>
               <CloseIcon width={24} height={24} />
             </button>
@@ -94,7 +100,9 @@ export default function StudentDetailModal({
 
           {/* 기본 정보 */}
           <div className={sectionStyle}>
-            <Text variant="headingMd" as="h3" className={sectionTitleStyle}>기본 정보</Text>
+            <Text variant="headingMd" as="h3" className={sectionTitleStyle}>
+              기본 정보
+            </Text>
             <div>
               <div className={infoRowStyle}>
                 <span className={infoLabelStyle}>학생 전화번호</span>
@@ -118,7 +126,9 @@ export default function StudentDetailModal({
 
           {/* 통계 요약 */}
           <div className={sectionStyle}>
-            <Text variant="headingMd" as="h3" className={sectionTitleStyle}>통계 요약</Text>
+            <Text variant="headingMd" as="h3" className={sectionTitleStyle}>
+              통계 요약
+            </Text>
             <div className={statsGridStyle}>
               <div className={statCardStyle}>
                 <span className={statLabelStyle}>완료율</span>
@@ -140,19 +150,25 @@ export default function StudentDetailModal({
           {/* 추적 항목 */}
           <div className={sectionStyle}>
             <Text variant="headingMd" as="h3" className={sectionTitleStyle}>
-              추적 항목{' '}
-              <span style={{ color: '#3B51CC' }}>{detail.incomplete_items.length}</span>
+              추적 항목 <span style={{ color: '#3B51CC' }}>{detail.incomplete_items.length}</span>
             </Text>
             <div className={trackingListStyle}>
               {detail.incomplete_items.length === 0 ? (
-                <Text variant="bodyMd" color="gray500">미완료 항목이 없어요.</Text>
+                <Text variant="bodyMd" color="gray500">
+                  미완료 항목이 없어요.
+                </Text>
               ) : (
-                detail.incomplete_items.map((item: any) => (
-                  <div key={item.id} className={trackingItemStyle}>
-                    <span className={trackingLabelStyle}>{item.label ?? item.name}</span>
+                detail.incomplete_items.map((item: IncompleteItem) => (
+                  <div key={item.lesson_student_data_id} className={trackingItemStyle}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span className={trackingLabelStyle}>{item.item_name}</span>
+                      <span style={{ fontSize: '12px', color: '#9492A9' }}>
+                        {item.lesson_date} · {item.class_name}
+                      </span>
+                    </div>
                     <button
                       className={completeButtonStyle}
-                      onClick={() => handleComplete(item.id)}
+                      onClick={() => handleComplete(item.lesson_student_data_id)}
                     >
                       <CheckIcon width={16} height={16} />
                       완료 처리

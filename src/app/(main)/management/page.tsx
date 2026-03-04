@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState, useEffect } from 'react'
 import Text from '@/components/common/Text'
 import useDisclosure from '@/hooks/useDisclosure'
-import { MOCK_CLASSES } from '@/mocks/management'
+import { classService, type Class } from '@/services/class'
 import Button from '@/components/common/Button'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
 import UploadIcon from '@/assets/icons/icon-upload.svg'
@@ -35,6 +35,8 @@ const FILTER_OPTIONS = [
   { label: '종료', value: 'ended' },
 ]
 
+const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
+
 function ManagementContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -46,6 +48,9 @@ function ManagementContent() {
   const addToast = useToastStore((s) => s.addToast)
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null)
 
+  const formatSchedule = (schedules: { day_of_week: number }[]) =>
+    schedules.map((s) => DAY_NAMES[s.day_of_week]).join('·')
+
   useEffect(() => {
     if (tab !== 'students') return
     setIsLoadingStudents(true)
@@ -56,11 +61,18 @@ function ManagementContent() {
       .finally(() => setIsLoadingStudents(false))
   }, [tab])
 
-  const filteredClasses = MOCK_CLASSES.filter((cls) => {
-    if (filter === 'active') return !cls.isEnded
-    if (filter === 'ended') return cls.isEnded
-    return true
-  })
+  const [classes, setClasses] = useState<Class[]>([])
+  const [isLoadingClasses, setIsLoadingClasses] = useState(false)
+
+  useEffect(() => {
+    if (tab !== 'class') return
+    setIsLoadingClasses(true)
+    classService
+      .getClasses(filter === 'all' ? undefined : { status: filter as 'active' | 'ended' })
+      .then((res) => setClasses(res.data))
+      .catch((err) => console.error('반 목록 조회 실패', err))
+      .finally(() => setIsLoadingClasses(false))
+  }, [tab, filter])
 
   const addClass = useDisclosure()
   const addStudent = useDisclosure()
@@ -131,8 +143,16 @@ function ManagementContent() {
             />
           </div>
           <div className={gridStyle}>
-            {filteredClasses.map((cls) => (
-              <ClassCard key={cls.id} {...cls} />
+            {classes.map((cls) => (
+              <ClassCard
+                key={cls.id}
+                id={cls.id}
+                name={cls.name}
+                academyName={cls.academy_name}
+                schedule={formatSchedule(cls.schedules)}
+                studentCount={cls.student_count}
+                isEnded={!!cls.ended_at}
+              />
             ))}
             <AddCard
               icon={<PlusCircleIcon width={36} height={36} />}
@@ -143,8 +163,23 @@ function ManagementContent() {
             <ClassFormModal
               isOpen={addClass.isOpen}
               onClose={addClass.close}
-              onConfirm={(data) => {
-                console.log('새 반 추가:', data)
+              onConfirm={async (data) => {
+                try {
+                  await classService.createClass({
+                    academy_name: data.academyName,
+                    name: data.name,
+                    day_of_week: data.dayOfWeek,
+                  })
+                  const res = await classService.getClasses(
+                    filter === 'all' ? undefined : { status: filter as 'active' | 'ended' }
+                  )
+                  setClasses(res.data)
+                  addClass.close()
+                  addToast({ variant: 'success', message: '반이 생성됐어요.' })
+                } catch (err) {
+                  console.error('반 생성 실패', err)
+                  addToast({ variant: 'error', message: '반 생성에 실패했어요.' })
+                }
               }}
               mode="add"
             />

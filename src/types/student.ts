@@ -22,6 +22,14 @@ export interface Student {
   remaining_task_count: number
 }
 
+export interface IncompleteItem {
+  lesson_student_data_id: number
+  item_name: string
+  lesson_date: string
+  class_name: string
+  template_name: string
+}
+
 export interface StudentDetail {
   id: number
   name: string
@@ -30,5 +38,5 @@ export interface StudentDetail {
   school_name: string
   classes: StudentClass[]
   stats: StudentStats
-  incomplete_items: any[]
+  incomplete_items: IncompleteItem[]
 }
