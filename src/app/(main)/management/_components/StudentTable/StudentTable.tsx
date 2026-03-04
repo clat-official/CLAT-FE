@@ -23,8 +23,17 @@ interface MiddleColumn {
 
 interface StudentTableProps {
   students: Student[]
-  middleColumn: MiddleColumn
+  middleColumns: MiddleColumn[]
   onDelete: (id: number) => void
+}
+
+// 고정 컬럼 수: 학생, 학생 전화, 학부모 전화, 학교, 완료율
+const FIXED_COLUMN_COUNT = 5
+
+function getCellPaddingRight(totalColumns: number): number {
+  if (totalColumns <= 5) return 44
+  if (totalColumns <= 6) return 28
+  return 16
 }
 
 function getProgressColor(rate: number): string {
@@ -33,14 +42,23 @@ function getProgressColor(rate: number): string {
   return colors.error500
 }
 
-export default function StudentTable({ students, middleColumn, onDelete }: StudentTableProps) {
+export default function StudentTable({ students, middleColumns, onDelete }: StudentTableProps) {
+  const totalColumns = FIXED_COLUMN_COUNT + middleColumns.length
+  const cellPaddingRight = getCellPaddingRight(totalColumns)
+
   return (
-    <table className={tableStyle}>
+    <table
+      className={tableStyle}
+      style={{ '--cell-padding-right': `${cellPaddingRight}px` } as React.CSSProperties}
+    >
       <colgroup>
         <col style={{ width: '120px' }} />
         <col style={{ width: '180px' }} />
         <col style={{ width: '180px' }} />
-        <col />
+        {middleColumns.map((_, i) => (
+          <col key={i} />
+        ))}
+        <col style={{ width: '120px' }} />
         <col style={{ width: '460px' }} />
       </colgroup>
       <thead>
@@ -48,30 +66,40 @@ export default function StudentTable({ students, middleColumn, onDelete }: Stude
           <th className={thStyle}>학생</th>
           <th className={thStyle}>학생 전화</th>
           <th className={thStyle}>학부모 전화</th>
-          <th className={thStyle}>{middleColumn.header}</th>
+          {middleColumns.map((col) => (
+            <th key={col.header} className={thStyle}>
+              {col.header}
+            </th>
+          ))}
+          <th className={thStyle}>학교</th>
           <th className={thStyle}>완료율</th>
         </tr>
       </thead>
       <tbody>
         {students.map((student) => {
-          const color = getProgressColor(student.completionRate)
+          const color = getProgressColor(student.completion_rate)
           return (
             <tr key={student.id}>
               <td className={tdStyle}>{student.name}</td>
-              <td className={tdStyle}>{student.studentPhone}</td>
-              <td className={tdStyle}>{student.parentPhone}</td>
-              {middleColumn.render(student)}
+              <td className={tdStyle}>{student.phone}</td>
+              <td className={tdStyle}>{student.parent_phone}</td>
+              {middleColumns.map((col) => (
+                <td key={col.header} className={tdStyle}>
+                  {col.render(student)}
+                </td>
+              ))}
+              <td className={tdStyle}>{student.school_name ?? '-'}</td>
               <td className={tdStyle} style={{ padding: 0 }}>
                 <div className={completionCellStyle}>
                   <div className={progressTrackStyle}>
                     <div
                       className={progressBarStyle}
-                      style={{ width: `${student.completionRate}%`, backgroundColor: color }}
+                      style={{ width: `${student.completion_rate}%`, backgroundColor: color }}
                     />
                   </div>
-                  <span className={percentTextStyle}>{student.completionRate}%</span>
+                  <span className={percentTextStyle}>{student.completion_rate}%</span>
                   <span className={remainingTextStyle} style={{ color }}>
-                    {student.remaining}개 남음
+                    {student.remaining_task_count ?? '-'}개 남음
                   </span>
                   <button className={deleteButtonStyle} onClick={() => onDelete(student.id)}>
                     <TrashIcon width={20} height={20} />
