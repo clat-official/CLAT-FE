@@ -4,7 +4,6 @@ import { CreateTemplateItemDto, templateService } from '@/services/template'
 import type { TemplateItem } from '@/app/(main)/template/_types/template'
 import { INITIAL_COMMON_ITEMS, INITIAL_INDIVIDUAL_ITEMS } from '@/mocks/template'
 import { useToastStore } from '@/stores/toastStore'
-import { add } from 'date-fns'
 
 interface InitialData {
   name?: string
@@ -78,6 +77,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     } catch (err) {
       console.error('템플릿 저장 실패', err)
       addToast({ variant: 'error', message: '템플릿 저장에 실패했어요.' })
+      router.push('/template')
     } finally {
       setIsSaving(false)
     }

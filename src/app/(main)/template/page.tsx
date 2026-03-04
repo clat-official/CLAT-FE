@@ -10,7 +10,6 @@ import DeleteConfirmModal from './_components/DeleteConfirmModal/DeleteConfirmMo
 import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
 import { gridStyle } from './template.css'
 import { templateService, type Template } from '@/services/template'
-import { MOCK_TEMPLATES } from '@/mocks/template'
 
 type DeleteTarget = {
   id: number
