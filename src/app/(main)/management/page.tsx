@@ -1,10 +1,10 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import Text from '@/components/common/Text'
 import useDisclosure from '@/hooks/useDisclosure'
-import { MOCK_CLASSES, MOCK_ALL_STUDENTS } from '@/mocks/management'
+import { MOCK_CLASSES } from '@/mocks/management'
 import Button from '@/components/common/Button'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
 import UploadIcon from '@/assets/icons/icon-upload.svg'
@@ -21,10 +21,12 @@ import {
 } from './management.css'
 import ClassFormModal from './_components/ClassFormModal/ClassFormModal'
 import StudentTable from './_components/StudentTable/StudentTable'
-import { tdStyle } from './_components/StudentTable/StudentTable.css'
 import AddStudentFormModal from './_components/AddStudentFormModal/AddStudentFormModal'
 import BulkUploadModal from './_components/BulkUploadModal/BulkUploadModal'
 import ConfirmModal from '@/components/common/ConfirmModal'
+import { studentService } from '@/services/student'
+import type { Student } from '@/types/student'
+import { useToastStore } from '@/stores/toastStore'
 
 const FILTER_OPTIONS = [
   { label: '전체', value: 'all' },
@@ -32,12 +34,25 @@ const FILTER_OPTIONS = [
   { label: '종료', value: 'ended' },
 ]
 
-
 function ManagementContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tab = searchParams.get('tab') ?? 'class'
   const [filter, setFilter] = useState('all')
+
+  const [students, setStudents] = useState<Student[]>([])
+  const [isLoadingStudents, setIsLoadingStudents] = useState(false)
+  const addToast = useToastStore((s) => s.addToast)
+
+  useEffect(() => {
+    if (tab !== 'students') return
+    setIsLoadingStudents(true)
+    studentService
+      .getStudents()
+      .then((res) => setStudents(res.data))
+      .catch((err) => console.error('학생 목록 조회 실패', err))
+      .finally(() => setIsLoadingStudents(false))
+  }, [tab])
 
   const filteredClasses = MOCK_CLASSES.filter((cls) => {
     if (filter === 'active') return !cls.isEnded
@@ -49,6 +64,20 @@ function ManagementContent() {
   const addStudent = useDisclosure()
   const bulkUpload = useDisclosure()
   const [deleteStudentTarget, setDeleteStudentTarget] = useState<number | null>(null)
+
+  const handleDeleteStudent = async () => {
+    if (!deleteStudentTarget) return
+    try {
+      await studentService.deleteStudent(deleteStudentTarget)
+      setStudents((prev) => prev.filter((s) => s.id !== deleteStudentTarget))
+      addToast({ variant: 'success', message: '학생이 삭제됐어요.' })
+    } catch (err) {
+      console.error('학생 삭제 실패', err)
+      addToast({ variant: 'error', message: '학생 삭제에 실패했어요.' })
+    } finally {
+      setDeleteStudentTarget(null)
+    }
+  }
 
   return (
     <>
@@ -130,29 +159,34 @@ function ManagementContent() {
           <AddStudentFormModal
             isOpen={addStudent.isOpen}
             onClose={addStudent.close}
-            onConfirm={(data) => {
-              console.log('새 학생 추가:', data)
+            onConfirm={async (data) => {
+              try {
+                const newStudent = await studentService.createStudent(data)
+                setStudents((prev) => [...prev, newStudent])
+                addStudent.close()
+                addToast({ variant: 'success', message: '학생이 등록됐어요.' })
+              } catch (err) {
+                console.error('학생 등록 실패', err)
+                addToast({ variant: 'error', message: '학생 등록에 실패했어요.' })
+              }
             }}
           />
           <StudentTable
-            students={MOCK_ALL_STUDENTS}
-            middleColumn={{
-              header: '소속 반',
-              render: (student) => (
-                <td className={tdStyle}>{student.classes?.join(', ') ?? '-'}</td>
-              ),
-            }}
+            students={students}
+            middleColumns={[
+              {
+                header: '소속 반',
+                render: (student) => student.classes.map((c) => c.name).join(', ') || '-',
+              },
+            ]}
             onDelete={(id) => setDeleteStudentTarget(id)}
           />
 
           <ConfirmModal
             isOpen={!!deleteStudentTarget}
             onClose={() => setDeleteStudentTarget(null)}
-            onConfirm={() => {
-              console.log('학생 삭제', deleteStudentTarget)
-              setDeleteStudentTarget(null)
-            }}
-            title={`'${MOCK_ALL_STUDENTS.find((s) => s.id === deleteStudentTarget)?.name}' 학생을 삭제할까요?`}
+            onConfirm={handleDeleteStudent}
+            title={`'${students.find((s) => s.id === deleteStudentTarget)?.name}' 학생을 삭제할까요?`}
             descriptions={['삭제 후에는 복구할 수 없어요.']}
             confirmLabel="삭제"
             confirmVariant="danger"

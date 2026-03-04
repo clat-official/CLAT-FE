@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
 import Button from '@/components/common/Button'
 import Modal from '@/components/common/Modal'
 import useToggleArray from '@/hooks/useToggleArray'
-import { MOCK_CLASS_NAMES } from '@/mocks/management'
+import { classService, type Class } from '@/services/class'
 import {
   fieldGroupStyle,
   fieldStyle,
@@ -21,9 +21,10 @@ interface AddStudentFormModalProps {
   onClose: () => void
   onConfirm: (data: {
     name: string
-    studentPhone: string
-    parentPhone: string
-    classes: string[]
+    phone: string
+    parent_phone: string
+    school_name: string
+    class_ids: number[]
   }) => void
 }
 
@@ -33,30 +34,44 @@ export default function AddStudentFormModal({
   onConfirm,
 }: AddStudentFormModalProps) {
   const [name, setName] = useState('')
-  const [studentPhone, setStudentPhone] = useState('')
+  const [phone, setPhone] = useState('')
   const [parentPhone, setParentPhone] = useState('')
-  const { items: selectedClasses, toggle: toggleClass, reset: resetClasses } = useToggleArray<string>()
+  const [schoolName, setSchoolName] = useState('')
+  const [classes, setClasses] = useState<Class[]>([])
+  const { items: selectedClassIds, toggle: toggleClass, reset: resetClasses } = useToggleArray<number>()
+
+  useEffect(() => {
+    if (!isOpen) return
+    classService.getClasses({ status: 'active' })
+      .then((res) => setClasses(res.data))
+      .catch((err) => console.error('반 목록 조회 실패', err))
+  }, [isOpen])
 
   const handleClose = () => {
     setName('')
-    setStudentPhone('')
+    setPhone('')
     setParentPhone('')
+    setSchoolName('')
     resetClasses()
     onClose()
   }
 
   const handleConfirm = () => {
     if (!name.trim()) return
-    onConfirm({ name, studentPhone, parentPhone, classes: selectedClasses })
+    onConfirm({
+      name,
+      phone,
+      parent_phone: parentPhone,
+      school_name: schoolName,
+      class_ids: selectedClassIds,
+    })
     handleClose()
   }
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
       <div style={{ marginBottom: '24px' }}>
-        <Text variant="headingLg" as="h2">
-          학생 등록
-        </Text>
+        <Text variant="headingLg" as="h2">학생 등록</Text>
       </div>
       <div className={fieldGroupStyle}>
         <div className={fieldStyle}>
@@ -67,39 +82,33 @@ export default function AddStudentFormModal({
         </div>
         <div className={fieldStyle}>
           <span className={labelStyle}>학생 전화번호</span>
-          <Input
-            variant="gray"
-            value={studentPhone}
-            onChange={(e) => setStudentPhone(e.target.value)}
-          />
+          <Input variant="gray" value={phone} onChange={(e) => setPhone(e.target.value)} />
         </div>
         <div className={fieldStyle}>
           <span className={labelStyle}>학부모 전화번호</span>
-          <Input
-            variant="gray"
-            value={parentPhone}
-            onChange={(e) => setParentPhone(e.target.value)}
-          />
+          <Input variant="gray" value={parentPhone} onChange={(e) => setParentPhone(e.target.value)} />
+        </div>
+        <div className={fieldStyle}>
+          <span className={labelStyle}>학교명</span>
+          <Input variant="gray" value={schoolName} onChange={(e) => setSchoolName(e.target.value)} />
         </div>
         <div className={fieldStyle}>
           <span className={labelStyle}>소속 반</span>
           <div className={classChipGroupStyle}>
-            {MOCK_CLASS_NAMES.map((cls) => (
+            {classes.map((cls) => (
               <button
-                key={cls}
-                className={classChipRecipe({ selected: selectedClasses.includes(cls) })}
-                onClick={() => toggleClass(cls)}
+                key={cls.id}
+                className={classChipRecipe({ selected: selectedClassIds.includes(cls.id) })}
+                onClick={() => toggleClass(cls.id)}
               >
-                {cls}
+                {cls.name}
               </button>
             ))}
           </div>
         </div>
       </div>
       <div className={actionsStyle}>
-        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>
-          취소
-        </Button>
+        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>취소</Button>
         <Button
           variant="primary"
           size="lg"

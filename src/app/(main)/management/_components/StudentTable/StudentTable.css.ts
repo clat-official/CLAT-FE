@@ -12,7 +12,7 @@ export const tableStyle = style({
 export const thStyle = style({
   height: '40px',
   paddingLeft: '16px',
-  paddingRight: '48px',
+  paddingRight: 'var(--cell-padding-right, 48px)',
   backgroundColor: colors.gray50,
   color: colors.gray900,
   fontSize: fontStyles.titleSm.fontSize,
@@ -32,7 +32,7 @@ export const thStyle = style({
 export const tdStyle = style({
   height: '40px',
   paddingLeft: '16px',
-  paddingRight: '48px',
+  paddingRight: 'var(--cell-padding-right, 48px)',
   color: colors.gray700,
   fontSize: fontStyles.bodyMd.fontSize,
   fontWeight: fontStyles.bodyMd.fontWeight,

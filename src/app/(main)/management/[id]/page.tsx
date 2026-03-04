@@ -16,7 +16,7 @@ import PlusIcon from '@/assets/icons/icon-plus.svg'
 import AddStudentModal from './_components/AddStudentModal/AddStudentModal'
 import ConfirmModal from '@/components/common/ConfirmModal'
 import ClassFormModal from '../_components/ClassFormModal/ClassFormModal'
-import { tdStyle } from '../_components/StudentTable/StudentTable.css'
+
 import { MOCK_CLASS, MOCK_CLASS_STUDENTS } from '@/mocks/management'
 
 export default function ClassDetailPage() {
@@ -99,10 +99,12 @@ export default function ClassDetailPage() {
         </div>
         <StudentTable
           students={MOCK_CLASS_STUDENTS}
-          middleColumn={{
-            header: '메모',
-            render: (student) => <td className={tdStyle}>{student.memo ?? ''}</td>,
-          }}
+          middleColumns={[
+            {
+              header: '메모',
+              render: (student) => student.memo ?? '',
+            },
+          ]}
           onDelete={(id) => setDeleteStudentTarget(id)}
         />
       </section>
