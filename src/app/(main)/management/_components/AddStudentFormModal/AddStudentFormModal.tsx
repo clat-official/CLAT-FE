@@ -16,34 +16,56 @@ import {
   actionsStyle,
 } from './AddStudentFormModal.css'
 
+interface StudentFormData {
+  name: string
+  phone: string
+  parent_phone: string
+  school_name: string
+  class_ids: number[]
+}
+
 interface AddStudentFormModalProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: (data: {
-    name: string
-    phone: string
-    parent_phone: string
-    school_name: string
-    class_ids: number[]
-  }) => void
+  onConfirm: (data: StudentFormData) => void
+  mode?: 'add' | 'edit'
+  defaultValues?: Partial<StudentFormData>
 }
 
 export default function AddStudentFormModal({
   isOpen,
   onClose,
   onConfirm,
+  mode = 'add',
+  defaultValues,
 }: AddStudentFormModalProps) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [parentPhone, setParentPhone] = useState('')
   const [schoolName, setSchoolName] = useState('')
   const [classes, setClasses] = useState<Class[]>([])
-  const { items: selectedClassIds, toggle: toggleClass, reset: resetClasses } = useToggleArray<number>()
+  const {
+    items: selectedClassIds,
+    toggle: toggleClass,
+    reset: resetClasses,
+    set: setSelectedClassIds,
+  } = useToggleArray<number>()
 
   useEffect(() => {
     if (!isOpen) return
-    classService.getClasses({ status: 'active' })
-      .then((res) => setClasses(res.data))
+    classService
+      .getClasses()
+      .then((res) => {
+        setClasses(res.data)
+        // classes 로드 후 defaultValues 적용
+        if (defaultValues) {
+          setName(defaultValues.name ?? '')
+          setPhone(defaultValues.phone ?? '')
+          setParentPhone(defaultValues.parent_phone ?? '')
+          setSchoolName(defaultValues.school_name ?? '')
+          setSelectedClassIds(defaultValues.class_ids ?? [])
+        }
+      })
       .catch((err) => console.error('반 목록 조회 실패', err))
   }, [isOpen])
 
@@ -71,7 +93,9 @@ export default function AddStudentFormModal({
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
       <div style={{ marginBottom: '24px' }}>
-        <Text variant="headingLg" as="h2">학생 등록</Text>
+        <Text variant="headingLg" as="h2">
+          {mode === 'add' ? '학생 등록' : '학생 정보 수정'}
+        </Text>
       </div>
       <div className={fieldGroupStyle}>
         <div className={fieldStyle}>
@@ -86,11 +110,19 @@ export default function AddStudentFormModal({
         </div>
         <div className={fieldStyle}>
           <span className={labelStyle}>학부모 전화번호</span>
-          <Input variant="gray" value={parentPhone} onChange={(e) => setParentPhone(e.target.value)} />
+          <Input
+            variant="gray"
+            value={parentPhone}
+            onChange={(e) => setParentPhone(e.target.value)}
+          />
         </div>
         <div className={fieldStyle}>
           <span className={labelStyle}>학교명</span>
-          <Input variant="gray" value={schoolName} onChange={(e) => setSchoolName(e.target.value)} />
+          <Input
+            variant="gray"
+            value={schoolName}
+            onChange={(e) => setSchoolName(e.target.value)}
+          />
         </div>
         <div className={fieldStyle}>
           <span className={labelStyle}>소속 반</span>
@@ -108,7 +140,9 @@ export default function AddStudentFormModal({
         </div>
       </div>
       <div className={actionsStyle}>
-        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>취소</Button>
+        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>
+          취소
+        </Button>
         <Button
           variant="primary"
           size="lg"
@@ -116,7 +150,7 @@ export default function AddStudentFormModal({
           disabled={!name.trim()}
           onClick={handleConfirm}
         >
-          등록하기
+          {mode === 'add' ? '등록하기' : '저장'}
         </Button>
       </div>
     </Modal>

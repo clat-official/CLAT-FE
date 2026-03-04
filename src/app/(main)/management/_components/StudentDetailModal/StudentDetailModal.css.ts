@@ -31,16 +31,6 @@ export const sectionTitleStyle = style({
   marginBottom: '12px',
 })
 
-export const infoRowStyle = style({
-  display: 'flex',
-  alignItems: 'center',
-  padding: '14px 16px',
-  backgroundColor: colors.background,
-  borderRadius: '8px',
-  marginBottom: '8px',
-  gap: '16px',
-})
-
 export const infoLabelStyle = style({
   fontSize: fontStyles.bodyMd.fontSize,
   fontWeight: fontStyles.bodyMd.fontWeight,
