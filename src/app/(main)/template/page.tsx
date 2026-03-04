@@ -69,7 +69,7 @@ export default function TemplatePage() {
             id={template.id}
             title={template.name}
             classCount={template.class_count}
-            classList={template.class_list}
+            classList={template.class_list.map((c) => c.name)}
             onDelete={(id) =>
               setDeleteTarget({ id, title: template.name, classCount: template.class_count })
             }

@@ -11,12 +11,17 @@ export interface TemplateItemDetail {
   sort_order: number
 }
 
+export interface TemplateClass {
+  id: number
+  name: string
+}
+
 export interface Template {
   id: number
   name: string
   item_count: number
   class_count: number
-  class_list: string[]
+  class_list: TemplateClass[]
   created_at: string
 }
 
