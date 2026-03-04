@@ -16,6 +16,7 @@ import PlusIcon from '@/assets/icons/icon-plus.svg'
 import AddStudentModal from './_components/AddStudentModal/AddStudentModal'
 import ConfirmModal from '@/components/common/ConfirmModal'
 import ClassFormModal from '../_components/ClassFormModal/ClassFormModal'
+import StudentDetailModal from '../_components/StudentDetailModal/StudentDetailModal'
 
 import { MOCK_CLASS, MOCK_CLASS_STUDENTS } from '@/mocks/management'
 
@@ -26,6 +27,7 @@ export default function ClassDetailPage() {
   const endClass = useDisclosure()
   const deleteClass = useDisclosure()
   const editClass = useDisclosure()
+  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
@@ -106,6 +108,7 @@ export default function ClassDetailPage() {
             },
           ]}
           onDelete={(id) => setDeleteStudentTarget(id)}
+          onRowClick={(id) => setSelectedStudentId(id)}
         />
       </section>
 
@@ -165,6 +168,10 @@ export default function ClassDetailPage() {
           confirmVariant="danger"
         />
       </div>
+      <StudentDetailModal
+        studentId={selectedStudentId}
+        onClose={() => setSelectedStudentId(null)}
+      />
     </div>
   )
 }
