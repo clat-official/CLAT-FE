@@ -3,6 +3,8 @@ import { useRouter } from 'next/navigation'
 import { CreateTemplateItemDto, templateService } from '@/services/template'
 import type { TemplateItem } from '@/app/(main)/template/_types/template'
 import { INITIAL_COMMON_ITEMS, INITIAL_INDIVIDUAL_ITEMS } from '@/mocks/template'
+import { useToastStore } from '@/stores/toastStore'
+import { add } from 'date-fns'
 
 interface InitialData {
   name?: string
@@ -12,6 +14,7 @@ interface InitialData {
 
 export default function useTemplateEditor(initial: InitialData = {}) {
   const router = useRouter()
+  const addToast = useToastStore((s) => s.addToast)
   const [isSaving, setIsSaving] = useState(false)
 
   const initCommon = initial.commonItems ?? INITIAL_COMMON_ITEMS
@@ -61,7 +64,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
 
   const handleSave = async () => {
     if (!templateName.trim()) {
-      alert('템플릿 이름을 입력해주세요.')
+      addToast({ variant: 'warning', message: '템플릿 이름을 입력해주세요.' })
       return
     }
     setIsSaving(true)
@@ -70,10 +73,11 @@ export default function useTemplateEditor(initial: InitialData = {}) {
         name: templateName,
         items: buildItems([...commonItems, ...individualItems]),
       })
+      addToast({ variant: 'success', message: '템플릿이 저장됐어요.' })
       router.push('/template')
     } catch (err) {
       console.error('템플릿 저장 실패', err)
-      alert('템플릿 저장에 실패했습니다. 다시 시도해주세요.')
+      addToast({ variant: 'error', message: '템플릿 저장에 실패했어요.' })
     } finally {
       setIsSaving(false)
     }
@@ -81,7 +85,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
 
   const handleUpdate = async (templateId: number) => {
     if (!templateName.trim()) {
-      alert('템플릿 이름을 입력해주세요.')
+      addToast({ variant: 'warning', message: '템플릿 이름을 입력해주세요.' })
       return
     }
     setIsSaving(true)
@@ -91,15 +95,16 @@ export default function useTemplateEditor(initial: InitialData = {}) {
         items: buildItems([...commonItems, ...individualItems]),
         deleted_item_ids: originalItemIds, // 기존 아이템 전부 삭제 후 새로 삽입
       })
+      addToast({ variant: 'success', message: '템플릿이 수정됐어요.' })
       router.push('/template')
     } catch (err) {
       console.error('템플릿 수정 실패', err)
-      alert('템플릿 수정에 실패했습니다. 다시 시도해주세요.')
+      addToast({ variant: 'error', message: '템플릿 수정에 실패했어요.' })
     } finally {
       setIsSaving(false)
     }
   }
-  
+
   const handleToggleCommonItem = (id: string) => {
     setCommonItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, isActive: !item.isActive } : item))

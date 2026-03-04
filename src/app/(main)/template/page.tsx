@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useToastStore } from '@/stores/toastStore'
 import Text from '@/components/common/Text'
 import AddCard from '@/components/common/AddCard'
 import TemplateCard from './_components/TemplateCard/TemplateCard'
@@ -19,6 +20,7 @@ type DeleteTarget = {
 
 export default function TemplatePage() {
   const router = useRouter()
+  const addToast = useToastStore((s) => s.addToast)
   const [templates, setTemplates] = useState<Template[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null)
@@ -43,8 +45,10 @@ export default function TemplatePage() {
     try {
       await templateService.deleteTemplate(deleteTarget.id)
       setTemplates((prev) => prev.filter((t) => t.id !== deleteTarget.id))
+      addToast({ variant: 'success', message: '템플릿이 삭제되었어요.' })
     } catch (err) {
       console.error('템플릿 삭제 실패', err)
+      addToast({ variant: 'error', message: '템플릿 삭제에 실패했어요.' })
     } finally {
       setDeleteTarget(null)
     }
