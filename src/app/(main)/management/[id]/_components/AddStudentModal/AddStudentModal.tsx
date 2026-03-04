@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
 import Button from '@/components/common/Button'
@@ -8,7 +8,8 @@ import Modal from '@/components/common/Modal'
 import CheckIcon from '@/assets/icons/icon-check.svg'
 import { colors } from '@/styles/tokens/colors'
 import useToggleArray from '@/hooks/useToggleArray'
-import { MOCK_CANDIDATE_STUDENTS } from '@/mocks/management'
+import { studentService } from '@/services/student'
+import type { Student } from '@/types/student'
 import {
   titleStyle,
   searchWrapperStyle,
@@ -29,10 +30,16 @@ interface AddStudentModalProps {
 
 export default function AddStudentModal({ isOpen, onClose, onConfirm }: AddStudentModalProps) {
   const [search, setSearch] = useState('')
+  const [candidates, setCandidates] = useState<Student[]>([])
   const { items: selectedIds, toggle: toggleSelect, reset: resetIds } = useToggleArray<number>()
 
-  const filtered = MOCK_CANDIDATE_STUDENTS.filter((s) =>
-    s.name.includes(search) || s.phone.includes(search)
+  useEffect(() => {
+    if (!isOpen) return
+    studentService.getStudents().then((res) => setCandidates(res.data))
+  }, [isOpen])
+
+  const filtered = candidates.filter(
+    (s) => s.name.includes(search) || s.phone.includes(search)
   )
 
   const handleClose = () => {
