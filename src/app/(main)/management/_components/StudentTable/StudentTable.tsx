@@ -25,6 +25,7 @@ interface StudentTableProps {
   students: Student[]
   middleColumns: MiddleColumn[]
   onDelete: (id: number) => void
+  onRowClick?: (id: number) => void
 }
 
 // 고정 컬럼 수: 학생, 학생 전화, 학부모 전화, 학교, 완료율
@@ -42,7 +43,7 @@ function getProgressColor(rate: number): string {
   return colors.error500
 }
 
-export default function StudentTable({ students, middleColumns, onDelete }: StudentTableProps) {
+export default function StudentTable({ students, middleColumns, onDelete, onRowClick }: StudentTableProps) {
   const totalColumns = FIXED_COLUMN_COUNT + middleColumns.length
   const cellPaddingRight = getCellPaddingRight(totalColumns)
 
@@ -79,7 +80,11 @@ export default function StudentTable({ students, middleColumns, onDelete }: Stud
         {students.map((student) => {
           const color = getProgressColor(student.completion_rate)
           return (
-            <tr key={student.id}>
+            <tr
+              key={student.id}
+              onClick={() => onRowClick?.(student.id)}
+              style={{ cursor: onRowClick ? 'pointer' : 'default' }}
+            >
               <td className={tdStyle}>{student.name}</td>
               <td className={tdStyle}>{student.phone}</td>
               <td className={tdStyle}>{student.parent_phone}</td>

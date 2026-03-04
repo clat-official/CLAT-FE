@@ -52,4 +52,10 @@ export const studentService = {
   async deleteStudent(id: number): Promise<void> {
     await axiosInstance.delete(`/students/${id}`)
   },
+
+  async completeItem(itemId: number): Promise<void> {
+    await axiosInstance.patch(`/lesson-student-data/${itemId}/complete`, {
+      is_completed: true,
+    })
+  },
 }
