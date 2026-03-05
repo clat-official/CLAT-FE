@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { startOfWeek, addWeeks, subWeeks, format, addDays, isSameDay } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -20,7 +20,7 @@ import {
   navButtonStyle,
   weekNavStyle,
 } from './lesson.css'
-import { MOCK_LESSONS } from '@/mocks/lesson'
+import { lessonService, type LessonSummary } from '@/services/lesson'
 
 const DAYS_KO = ['월', '화', '수', '목', '금', '토', '일']
 
@@ -29,6 +29,17 @@ export default function LessonPage() {
   const [currentWeek, setCurrentWeek] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [isAddLessonOpen, setIsAddLessonOpen] = useState(false)
+  const [lessons, setLessons] = useState<LessonSummary[]>([])
+  const [isLoadingLessons, setIsLoadingLessons] = useState(false)
+
+  useEffect(() => {
+    setIsLoadingLessons(true)
+    lessonService
+      .getLessons(format(selectedDate, 'yyyy-MM-dd'))
+      .then((res) => setLessons(res.data))
+      .catch((err) => console.error('수업 목록 조회 실패', err))
+      .finally(() => setIsLoadingLessons(false))
+  }, [selectedDate])
 
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 })
 
@@ -81,11 +92,17 @@ export default function LessonPage() {
         <Text variant="headingMd">{selectedLabel}</Text>
       </div>
       <div className={lessonGridStyle}>
-        {MOCK_LESSONS.map((lesson) => (
+        {lessons.map((lesson) => (
           <LessonCard
-            key={lesson.id}
-            {...lesson}
-            onClick={() => router.push(`/lesson/${lesson.id}`)}
+            key={lesson.lesson_record_id}
+            academyName={lesson.academy_name}
+            templateName={lesson.template_name}
+            className={lesson.class_name}
+            progress={lesson.progress_rate}
+            totalStudents={0}
+            inputCount={0}
+            isDone={lesson.status === 'SAVED'}
+            onClick={() => router.push(`/lesson/${lesson.lesson_record_id}`)}
           />
         ))}
         <AddCard
@@ -98,7 +115,11 @@ export default function LessonPage() {
         <AddLessonModal
           isOpen={isAddLessonOpen}
           onClose={() => setIsAddLessonOpen(false)}
-          onConfirm={(id) => console.log('수업 추가', id)}
+          onConfirm={(classId) => {
+            router.push(
+              `/lesson/new?class_id=${classId}&date=${format(selectedDate, 'yyyy-MM-dd')}`
+            )
+          }}
           selectedDate={selectedDate}
         />
       </div>
