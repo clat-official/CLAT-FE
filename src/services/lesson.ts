@@ -8,6 +8,7 @@ export interface LessonSummary {
   template_id: number
   template_name: string
   progress_rate: number
+  total_students: number
   status: 'DRAFT' | 'SAVED'
   is_adhoc: boolean
 }

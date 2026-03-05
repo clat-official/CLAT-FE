@@ -99,8 +99,8 @@ export default function LessonPage() {
             templateName={lesson.template_name}
             className={lesson.class_name}
             progress={lesson.progress_rate}
-            totalStudents={0}
-            inputCount={0}
+            totalStudents={lesson.total_students}
+            inputCount={Math.round((lesson.total_students * lesson.progress_rate) / 100)}
             isDone={lesson.status === 'SAVED'}
             onClick={() => router.push(`/lesson/${lesson.lesson_record_id}`)}
           />
