@@ -12,6 +12,20 @@ export interface LessonSummary {
   is_adhoc: boolean
 }
 
+export interface LessonDetail {
+  id: number
+  class_id: number
+  class_name: string
+  academy_name: string
+  template_id: number
+  template_name: string
+  lesson_date: string
+  status: 'DRAFT' | 'SAVED'
+  is_adhoc: boolean
+  common_data: CommonDataItem[]
+  student_data: StudentData[]
+}
+
 export interface LessonListResponse {
   data: LessonSummary[]
   meta: { total: number }
@@ -56,7 +70,7 @@ export const lessonService = {
     return data.data
   },
 
-  async getLesson(id: number): Promise<any> {
+  async getLesson(id: number): Promise<LessonDetail> {
     const { data } = await axiosInstance.get(`/lessons/${id}`)
     return data.data
   },

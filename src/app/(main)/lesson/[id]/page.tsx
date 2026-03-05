@@ -1,5 +1,6 @@
 'use client'
 
+import { use } from 'react'
 import { useRouter } from 'next/navigation'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
@@ -10,6 +11,7 @@ import MessageIcon from '@/assets/icons/icon-message.svg'
 import LessonTable from './_components/LessonTableSection/LessonTableSection'
 import CommonContent from './_components/CommonContent/CommonContent'
 import ProgressBar from './_components/ProgressBar/ProgressBar'
+import MessagePreview from './_components/MessagePreview/MessagePreview'
 import {
   pageStyle,
   headerStyle,
@@ -17,29 +19,49 @@ import {
   sectionStyle,
   templateSectionStyle,
   templateLabelRowStyle,
-  templateChipGroupStyle,
-  templateChipRecipe,
   backButtonStyle,
   headerLeftStyle,
   headerButtonGroupStyle,
 } from './lessonDetail.css'
-import MessagePreview from './_components/MessagePreview/MessagePreview'
-import { MOCK_LESSON_TEMPLATES, MOCK_COMMON_ITEMS } from '@/mocks/lesson'
-import useLessonDetail, { DEFAULT_LESSON_CONTEXT } from '@/hooks/useLessonDetail'
+import useLessonDetail from '@/hooks/useLessonDetail'
+import { lessonService } from '@/services/lesson'
+import { useToastStore } from '@/stores/toastStore'
+import { format } from 'date-fns'
+import { ko } from 'date-fns/locale'
 
-export default function LessonDetailPage() {
+export default function LessonDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
+  const lessonId = Number(id)
   const router = useRouter()
+  const addToast = useToastStore((s) => s.addToast)
+
   const {
-    selectedTemplateId,
-    setSelectedTemplateId,
+    lesson,
+    template,
     commonValues,
     setCommonValues,
     students,
     setStudents,
     messagePreview,
     inputCount,
+    isLoading,
     handleExcelDownload,
-  } = useLessonDetail()
+  } = useLessonDetail(lessonId)
+
+  const handleSave = async () => {
+    try {
+      await lessonService.saveLesson(lessonId)
+      addToast({ variant: 'success', message: '저장됐어요.' })
+    } catch {
+      addToast({ variant: 'error', message: '저장에 실패했어요.' })
+    }
+  }
+
+  if (isLoading || !lesson || !template) return null
+
+  const commonItems = template.items
+    .filter((i) => i.is_common)
+    .map((i) => ({ id: i.id, label: i.name }))
 
   return (
     <div className={pageStyle}>
@@ -50,7 +72,7 @@ export default function LessonDetailPage() {
             <ArrowLeftIcon width={24} height={24} />
           </button>
           <Text variant="display" as="h1">
-            {DEFAULT_LESSON_CONTEXT.lessonDate} {DEFAULT_LESSON_CONTEXT.className}
+            {format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko })} {lesson.class_name}
           </Text>
         </div>
         <div className={headerButtonGroupStyle}>
@@ -62,42 +84,39 @@ export default function LessonDetailPage() {
           >
             엑셀 다운로드
           </Button>
-          <Button variant="primary" size="sm" leftIcon={<SaveIcon width={20} height={20} />}>
+          <Button
+            variant="primary"
+            size="sm"
+            leftIcon={<SaveIcon width={20} height={20} />}
+            onClick={handleSave}
+            disabled={lesson.status === 'SAVED'}
+          >
             저장
           </Button>
         </div>
       </div>
 
-      {/* 템플릿 선택 */}
+      {/* 템플릿 정보 */}
       <div className={templateSectionStyle}>
         <div className={templateLabelRowStyle}>
           <Text variant="headingMd">템플릿</Text>
           <Text variant="bodyMd" color="gray500">
-            오늘 수업에 적용할 템플릿을 선택해주세요
+            {template.name}
           </Text>
-        </div>
-        <div className={templateChipGroupStyle}>
-          {MOCK_LESSON_TEMPLATES.map((t) => (
-            <button
-              key={t.id}
-              className={templateChipRecipe({ selected: selectedTemplateId === t.id })}
-              onClick={() => setSelectedTemplateId(t.id)}
-            >
-              {t.name}
-            </button>
-          ))}
         </div>
       </div>
 
       {/* 공통 내용 */}
-      <div className={sectionStyle}>
-        <Text variant="headingMd">공통 내용</Text>
-        <CommonContent
-          items={MOCK_COMMON_ITEMS}
-          values={commonValues}
-          onChange={(id, value) => setCommonValues((prev) => ({ ...prev, [id]: value }))}
-        />
-      </div>
+      {commonItems.length > 0 && (
+        <div className={sectionStyle}>
+          <Text variant="headingMd">공통 내용</Text>
+          <CommonContent
+            items={commonItems}
+            values={commonValues}
+            onChange={(id, value) => setCommonValues((prev) => ({ ...prev, [id]: value }))}
+          />
+        </div>
+      )}
 
       {/* 개별 내용 */}
       <div className={sectionStyle}>
@@ -123,6 +142,12 @@ export default function LessonDetailPage() {
         onClose={messagePreview.close}
         commonValues={commonValues}
         students={students}
+        context={{
+          academyName: lesson.academy_name,
+          teacherName: '',
+          className: lesson.class_name,
+          lessonDate: format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko }),
+        }}
       />
     </div>
   )

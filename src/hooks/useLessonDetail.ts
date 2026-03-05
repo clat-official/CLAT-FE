@@ -1,51 +1,71 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { LessonStudent } from '@/types/lessonStudent'
-import type { MessageContext } from '@/lib/generateStudentMessage'
+import { lessonService, type LessonDetail } from '@/services/lesson'
+import { templateService, type TemplateDetail } from '@/services/template'
 import { exportLessonExcel } from '@/lib/exportExcel'
-import { MOCK_COMMON_ITEMS, MOCK_LESSON_STUDENTS } from '@/mocks/lesson'
 import useDisclosure from './useDisclosure'
 
-// API 연동 전까지 페이지 수준에서 주입되는 수업 컨텍스트
-export const DEFAULT_LESSON_CONTEXT: MessageContext = {
-  academyName: '엘리에듀학원',
-  teacherName: '윤준용',
-  className: '미적분 A반',
-  lessonDate: '2월 20일(금)',
-}
-
-export default function useLessonDetail() {
-  const [selectedTemplateId, setSelectedTemplateId] = useState(1)
+export default function useLessonDetail(lessonId: number) {
+  const [lesson, setLesson] = useState<LessonDetail | null>(null)
+  const [template, setTemplate] = useState<TemplateDetail | null>(null)
   const [commonValues, setCommonValues] = useState<Record<number, string>>({})
-  const [students, setStudents] = useState<LessonStudent[]>(MOCK_LESSON_STUDENTS)
+  const [students, setStudents] = useState<LessonStudent[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const messagePreview = useDisclosure()
 
-  const inputCount = students.filter(
-    (s) =>
-      s.attendance !== null &&
-      s.homework !== null &&
-      s.answerNote !== null &&
-      s.score !== '',
+  useEffect(() => {
+    if (!lessonId) return
+    setIsLoading(true)
+    lessonService
+      .getLesson(lessonId)
+      .then(async (data) => {
+        setLesson(data)
+        // common_data 초기값 세팅
+        const values: Record<number, string> = {}
+        data.common_data.forEach((item) => {
+          values[item.template_item_id] = item.value
+        })
+        setCommonValues(values)
+        // 템플릿 상세 조회
+        const tmpl = await templateService.getTemplate(data.template_id)
+        setTemplate(tmpl)
+      })
+      .finally(() => setIsLoading(false))
+  }, [lessonId])
+
+  const inputCount = students.filter((s) =>
+    s.attendance !== null &&
+    s.homework !== null &&
+    s.answerNote !== null &&
+    s.score !== ''
   ).length
 
   const handleExcelDownload = () => {
+    if (!lesson || !template) return
     exportLessonExcel({
-      title: `${DEFAULT_LESSON_CONTEXT.lessonDate} ${DEFAULT_LESSON_CONTEXT.className} 수업 결과`,
-      commonItems: MOCK_COMMON_ITEMS,
+      title: `${lesson.lesson_date} 수업 결과`,
+      commonItems: template.items.filter((i) => i.is_common).map((i) => ({ id: i.id, label: i.name })),
       commonValues,
       students,
-      context: DEFAULT_LESSON_CONTEXT,
+      context: {
+        academyName: '',
+        teacherName: '',
+        className: '',
+        lessonDate: lesson.lesson_date,
+      },
     })
   }
 
   return {
-    selectedTemplateId,
-    setSelectedTemplateId,
+    lesson,
+    template,
     commonValues,
     setCommonValues,
     students,
     setStudents,
     messagePreview,
     inputCount,
+    isLoading,
     handleExcelDownload,
   }
 }
