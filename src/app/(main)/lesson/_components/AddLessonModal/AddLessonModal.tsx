@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import Modal from '@/components/common/Modal'
 import Chip from '@/components/common/Chip'
-import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
+import { classService, type Class } from '@/services/class'
 import {
   headerStyle,
   classListStyle,
@@ -19,7 +19,10 @@ import {
   radioSelectedStyle,
   actionsStyle,
 } from './AddLessonModal.css'
-import { MOCK_LESSON_CLASSES } from '@/mocks/lesson'
+
+const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
+const formatSchedule = (schedules: { day_of_week: number }[]) =>
+  schedules.map((s) => DAY_NAMES[s.day_of_week]).join('·')
 
 interface AddLessonModalProps {
   isOpen: boolean
@@ -35,6 +38,14 @@ export default function AddLessonModal({
   selectedDate,
 }: AddLessonModalProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [classes, setClasses] = useState<Class[]>([])
+
+  useEffect(() => {
+    if (!isOpen) return
+    classService.getClasses({ status: 'active' })
+      .then((res) => setClasses(res.data))
+      .catch((err) => console.error('반 목록 조회 실패', err))
+  }, [isOpen])
 
   const handleClose = () => {
     setSelectedId(null)
@@ -50,7 +61,7 @@ export default function AddLessonModal({
         </Text>
       </div>
       <div className={classListStyle}>
-        {MOCK_LESSON_CLASSES.map((cls) => {
+        {classes.map((cls) => {
           const isSelected = selectedId === cls.id
           return (
             <div
@@ -61,8 +72,8 @@ export default function AddLessonModal({
               <div className={`${radioStyle}${isSelected ? ` ${radioSelectedStyle}` : ''}`} />
               <span className={classNameStyle}>{cls.name}</span>
               <div className={classMetaStyle}>
-                <Chip label={cls.academyName} />
-                <Chip label={cls.schedule} />
+                <Chip label={cls.academy_name} />
+                <Chip label={formatSchedule(cls.schedules)} />
               </div>
             </div>
           )

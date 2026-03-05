@@ -4,7 +4,7 @@ import Dropdown from '@/components/common/Dropdown'
 import CloseIcon from '@/assets/icons/icon-close.svg'
 import { generateStudentMessage } from '@/lib/generateStudentMessage'
 import type { LessonStudent } from '@/types/lessonStudent'
-import { DEFAULT_LESSON_CONTEXT } from '@/hooks/useLessonDetail'
+import type { MessageContext } from '@/lib/generateStudentMessage'
 import {
   backdrop, drawer, drawerClosing, header, content,
   dropdownTrigger, messagePreview, closeButtonStyle,
@@ -15,10 +15,11 @@ interface MessagePreviewProps {
   onClose: () => void
   commonValues: Record<number, string>
   students: LessonStudent[]
+  context: MessageContext
 }
 
 export default function MessagePreview({
-  isOpen, onClose, commonValues, students
+  isOpen, onClose, commonValues, students, context
 }: MessagePreviewProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string>(String(students[0]?.id))
   const [isClosing, setIsClosing] = useState(false)
@@ -36,7 +37,6 @@ export default function MessagePreview({
     }
   }
 
-
   return (
     <div className={backdrop} onClick={handleClose}>
       <div
@@ -47,7 +47,7 @@ export default function MessagePreview({
         <div className={header}>
           <Text variant="headingMd">문자 미리보기</Text>
           <button onClick={handleClose} className={closeButtonStyle}>
-            <CloseIcon width={24} height={24}  />
+            <CloseIcon width={24} height={24} />
           </button>
         </div>
 
@@ -60,7 +60,7 @@ export default function MessagePreview({
           />
 
           <div className={messagePreview}>
-            {selectedStudent ? generateStudentMessage(selectedStudent, commonValues, DEFAULT_LESSON_CONTEXT) : ''}
+            {selectedStudent ? generateStudentMessage(selectedStudent, commonValues, context) : ''}
           </div>
         </div>
       </div>
