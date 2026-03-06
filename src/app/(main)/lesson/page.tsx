@@ -23,6 +23,7 @@ import {
 import { lessonService, type LessonSummary } from '@/services/lesson'
 
 const DAYS_KO = ['월', '화', '수', '목', '금', '토', '일']
+type DateStatus = 'done' | 'inProgress' | 'none'
 
 export default function LessonPage() {
   const router = useRouter()
@@ -31,7 +32,25 @@ export default function LessonPage() {
   const [isAddLessonOpen, setIsAddLessonOpen] = useState(false)
   const [lessons, setLessons] = useState<LessonSummary[]>([])
   const [isLoadingLessons, setIsLoadingLessons] = useState(false)
+  const [weekLessons, setWeekLessons] = useState<Record<string, LessonSummary[]>>({})
 
+  const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 })
+
+  // 주간 전체 상태 조회
+  useEffect(() => {
+    const dates = Array.from({ length: 7 }, (_, i) =>
+      format(addDays(weekStart, i), 'yyyy-MM-dd')
+    )
+    Promise.all(
+      dates.map((date) => lessonService.getLessons(date).then((res) => ({ date, data: res.data })))
+    ).then((results) => {
+      const map: Record<string, LessonSummary[]> = {}
+      results.forEach(({ date, data }) => { map[date] = data })
+      setWeekLessons(map)
+    })
+  }, [currentWeek])
+
+  // 선택된 날짜 수업 목록 조회
   useEffect(() => {
     setIsLoadingLessons(true)
     lessonService
@@ -41,7 +60,14 @@ export default function LessonPage() {
       .finally(() => setIsLoadingLessons(false))
   }, [selectedDate])
 
-  const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 })
+  const getDateStatus = (date: Date): DateStatus => {
+    const key = format(date, 'yyyy-MM-dd')
+    const dayLessons = weekLessons[key] ?? []
+    if (dayLessons.length === 0) return 'none'
+    if (dayLessons.every((l) => l.status === 'SAVED')) return 'done'
+    if (dayLessons.some((l) => l.lesson_record_id !== null)) return 'inProgress'
+    return 'none'
+  }
 
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(weekStart, i)
@@ -49,7 +75,7 @@ export default function LessonPage() {
       date: date.getDate(),
       day: DAYS_KO[i],
       fullDate: date,
-      status: 'none' as const, // 추후 API 연동 시 교체
+      status: getDateStatus(date),
     }
   })
 
@@ -58,11 +84,8 @@ export default function LessonPage() {
 
   return (
     <div className={pageStyle}>
-      <Text variant="display" as="h1">
-        수업 입력
-      </Text>
+      <Text variant="display" as="h1">수업 입력</Text>
 
-      {/* 주간 네비게이션 */}
       <div className={weekNavStyle}>
         <button className={navButtonStyle} onClick={() => setCurrentWeek(subWeeks(currentWeek, 1))}>
           <ArrowLeftIcon width={24} height={24} />
@@ -73,7 +96,6 @@ export default function LessonPage() {
         </button>
       </div>
 
-      {/* 날짜 카드 */}
       <div className={dateGridStyle}>
         {weekDays.map((item) => (
           <DateCard
@@ -87,7 +109,6 @@ export default function LessonPage() {
         ))}
       </div>
 
-      {/* 수업 목록 */}
       <div className={sectionTitleStyle}>
         <Text variant="headingMd">{selectedLabel}</Text>
       </div>
@@ -108,9 +129,7 @@ export default function LessonPage() {
                 if (recordId) {
                   router.push(`/lesson/${recordId}`)
                 } else {
-                  router.push(
-                    `/lesson/new?class_id=${lesson.class_id}&date=${format(selectedDate, 'yyyy-MM-dd')}&is_adhoc=false`
-                  )
+                  router.push(`/lesson/new?class_id=${lesson.class_id}&date=${format(selectedDate, 'yyyy-MM-dd')}&is_adhoc=false`)
                 }
               }}
             />
@@ -122,14 +141,11 @@ export default function LessonPage() {
           description="오늘 일정에 없는 반의 수업을 입력할 수 있어요"
           onClick={() => setIsAddLessonOpen(true)}
         />
-
         <AddLessonModal
           isOpen={isAddLessonOpen}
           onClose={() => setIsAddLessonOpen(false)}
           onConfirm={(classId) => {
-            router.push(
-              `/lesson/new?class_id=${classId}&date=${format(selectedDate, 'yyyy-MM-dd')}&is_adhoc=true`
-            )
+            router.push(`/lesson/new?class_id=${classId}&date=${format(selectedDate, 'yyyy-MM-dd')}&is_adhoc=true`)
           }}
           selectedDate={selectedDate}
         />
