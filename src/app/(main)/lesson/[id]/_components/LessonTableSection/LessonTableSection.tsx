@@ -1,6 +1,8 @@
 'use client'
 
 import CheckIcon from '@/assets/icons/icon-check.svg'
+import type { LessonStudent, Attendance, CompletionStatus } from '@/types/lessonStudent'
+import type { TemplateItemDetail } from '@/services/template'
 import {
   tableStyle,
   thStyle,
@@ -19,11 +21,10 @@ import {
   activeRowStyle,
 } from './LessonTable.css'
 
-import type { LessonStudent as Student, Attendance, CompletionStatus } from '@/types/lessonStudent'
-
 interface LessonTableSectionProps {
-  students: Student[]
-  onChange: (students: Student[]) => void
+  students: LessonStudent[]
+  templateItems: TemplateItemDetail[]
+  onChange: (students: LessonStudent[]) => void
 }
 
 function AttendanceCell({
@@ -82,23 +83,28 @@ function CompletionCell({
   )
 }
 
-export default function LessonTable({ students, onChange }: LessonTableSectionProps) {
-  const updateStudent = (id: number, field: keyof Student, value: unknown) => {
-    onChange(students.map((s) => (s.id === id ? { ...s, [field]: value } : s)))
+export default function LessonTable({ students, templateItems, onChange }: LessonTableSectionProps) {
+  const dynamicItems = templateItems.filter((i) => !i.is_common && !i.is_default_attendance)
+
+  const updateAttendance = (studentId: number, value: Attendance) => {
+    onChange(students.map((s) => s.id === studentId ? { ...s, attendance: value } : s))
+  }
+
+  const updateItem = (studentId: number, templateItemId: number, value: string, is_completed?: boolean | null) => {
+    onChange(students.map((s) => {
+      if (s.id !== studentId) return s
+      const items = s.items.map((item) =>
+        item.template_item_id === templateItemId
+          ? { ...item, value, is_completed: is_completed ?? item.is_completed }
+          : item
+      )
+      return { ...s, items }
+    }))
   }
 
   const allAttend = students.every((s) => s.attendance === '출석')
-  const allHomework = students.every((s) => s.homework === '완료')
-  const allAnswerNote = students.every((s) => s.answerNote === '완료')
-
   const handleAllAttend = (checked: boolean) => {
     onChange(students.map((s) => ({ ...s, attendance: checked ? '출석' : null })))
-  }
-  const handleAllHomework = (checked: boolean) => {
-    onChange(students.map((s) => ({ ...s, homework: checked ? '완료' : null })))
-  }
-  const handleAllAnswerNote = (checked: boolean) => {
-    onChange(students.map((s) => ({ ...s, answerNote: checked ? '완료' : null })))
   }
 
   return (
@@ -118,86 +124,57 @@ export default function LessonTable({ students, onChange }: LessonTableSectionPr
               </div>
             </div>
           </th>
-          <th className={thShrinkStyle}>
-            <div className={thInnerStyle}>
-              과제
-              <div
-                className={`${checkboxLabelStyle}${allHomework ? ` ${checkboxLabelActiveStyle}` : ''}`}
-                onClick={() => handleAllHomework(!allHomework)}
-              >
-                <CheckIcon width={14} height={14} />
-                전체 완료
-              </div>
-            </div>
-          </th>
-          <th className={thShrinkStyle}>
-            <div className={thInnerStyle}>
-              오답노트
-              <div
-                className={`${checkboxLabelStyle}${allAnswerNote ? ` ${checkboxLabelActiveStyle}` : ''}`}
-                onClick={() => handleAllAnswerNote(!allAnswerNote)}
-              >
-                <CheckIcon width={14} height={14} />
-                전체 완료
-              </div>
-            </div>
-          </th>
-          <th className={thShrinkStyle}>시험 점수</th>
-          <th className={thStyle}>메모</th>
+          {dynamicItems.map((item) => (
+            <th key={item.id} className={thShrinkStyle}>{item.name}</th>
+          ))}
         </tr>
       </thead>
       <tbody>
         {students.map((student) => (
-          <tr
-            key={student.id}
-            className={
-              student.attendance !== null &&
-              student.homework !== null &&
-              student.answerNote !== null &&
-              student.score !== ''
-                ? activeRowStyle
-                : undefined
-            }
-          >
+          <tr key={student.id}>
             <td className={tdCompactStyle}>
               <span className={nameCellStyle}>{student.name}</span>
             </td>
             <td className={tdCompactStyle}>
               <AttendanceCell
                 value={student.attendance}
-                onChange={(v) => updateStudent(student.id, 'attendance', v)}
+                onChange={(v) => updateAttendance(student.id, v)}
               />
             </td>
-            <td className={tdShrinkStyle}>
-              <CompletionCell
-                value={student.homework}
-                onChange={(v) => updateStudent(student.id, 'homework', v)}
-              />
-            </td>
-            <td className={tdShrinkStyle}>
-              <CompletionCell
-                value={student.answerNote}
-                onChange={(v) => updateStudent(student.id, 'answerNote', v)}
-              />
-            </td>
-            <td className={tdShrinkStyle}>
-              <div
-                contentEditable
-                suppressContentEditableWarning
-                className={cellEditableStyle}
-                onBlur={(e) => updateStudent(student.id, 'score', e.currentTarget.textContent ?? '')}
-                dangerouslySetInnerHTML={{ __html: student.score }}
-              />
-            </td>
-            <td className={tdStyle}>
-              <div
-                contentEditable
-                suppressContentEditableWarning
-                className={cellEditableStyle}
-                onBlur={(e) => updateStudent(student.id, 'memo', e.currentTarget.textContent ?? '')}
-                dangerouslySetInnerHTML={{ __html: student.memo }}
-              />
-            </td>
+            {dynamicItems.map((item) => {
+              const studentItem = student.items.find((i) => i.template_item_id === item.id)
+              if (item.item_type === 'COMPLETE') {
+                const status: CompletionStatus = studentItem?.is_completed === true
+                  ? '완료'
+                  : studentItem?.is_completed === false
+                  ? '미완료'
+                  : null
+                return (
+                  <td key={item.id} className={tdShrinkStyle}>
+                    <CompletionCell
+                      value={status}
+                      onChange={(v) => updateItem(
+                        student.id,
+                        item.id,
+                        v ?? '',
+                        v === '완료' ? true : v === '미완료' ? false : null
+                      )}
+                    />
+                  </td>
+                )
+              }
+              return (
+                <td key={item.id} className={tdStyle}>
+                  <div
+                    contentEditable
+                    suppressContentEditableWarning
+                    className={cellEditableStyle}
+                    onBlur={(e) => updateItem(student.id, item.id, e.currentTarget.textContent ?? '')}
+                    dangerouslySetInnerHTML={{ __html: studentItem?.value ?? '' }}
+                  />
+                </td>
+              )
+            })}
           </tr>
         ))}
       </tbody>

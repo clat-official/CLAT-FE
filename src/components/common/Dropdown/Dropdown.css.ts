@@ -14,6 +14,11 @@ export const containerStyle = style({
   display: 'inline-block',
 })
 
+export const containerFullWidthStyle = style({
+  display: 'block',
+  width: '100%',
+})
+
 export const triggerStyle = style({
   display: 'flex',
   alignItems: 'center',
@@ -33,13 +38,28 @@ export const triggerStyle = style({
   },
 })
 
+export const triggerNoBorderStyle = style({
+  border: 'none',
+  backgroundColor: colors.white,
+  selectors: {
+    '&:hover': {
+      backgroundColor: colors.gray50,
+    },
+  },
+})
+
+export const triggerFullWidthStyle = style({
+  width: '100%',
+  justifyContent: 'space-between',
+})
+
 export const triggerActiveStyle = style({
   color: colors.primary500,
 })
 
 export const menuStyle = style({
   position: 'absolute',
-  top: 'calc(100% + 4px)',
+  top: 'calc(100% + 8px)',
   left: 0,
   backgroundColor: colors.white,
   border: `1px solid ${colors.gray200}`,
@@ -48,6 +68,11 @@ export const menuStyle = style({
   minWidth: '100%',
   overflow: 'hidden',
   padding: '8px 0',
+})
+
+export const menuNoBorderStyle = style({
+  border: 'none',
+  boxShadow: `0 4px 16px rgba(0, 0, 0, 0.08)`,
 })
 
 export const menuLabelStyle = style({

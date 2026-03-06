@@ -12,6 +12,10 @@ import {
   optionSelectedStyle,
   chevronStyle,
   chevronOpenStyle,
+  triggerNoBorderStyle,
+  triggerFullWidthStyle,
+  containerFullWidthStyle,
+  menuNoBorderStyle,
 } from './Dropdown.css'
 
 interface DropdownOption {
@@ -26,6 +30,8 @@ interface DropdownProps {
   placeholder?: string
   menuLabel?: string
   triggerClassName?: string
+  noBorder?: boolean
+  fullWidth?: boolean
 }
 
 export default function Dropdown({
@@ -35,6 +41,8 @@ export default function Dropdown({
   placeholder = '선택',
   menuLabel,
   triggerClassName,
+  noBorder = false,
+  fullWidth = false,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -53,9 +61,20 @@ export default function Dropdown({
   }, [])
 
   return (
-    <div className={containerStyle} ref={containerRef}>
+    <div
+      className={[containerStyle, fullWidth ? containerFullWidthStyle : ''].join(' ').trim()}
+      ref={containerRef}
+    >
       <button
-        className={[triggerStyle, isSelected ? triggerActiveStyle : '', triggerClassName ?? ''].join(' ').trim()}
+        className={[
+          triggerStyle,
+          noBorder ? triggerNoBorderStyle : '',
+          fullWidth ? triggerFullWidthStyle : '',
+          isSelected ? triggerActiveStyle : '',
+          triggerClassName ?? '',
+        ]
+          .join(' ')
+          .trim()}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {selectedOption ? selectedOption.label : placeholder}
@@ -66,7 +85,7 @@ export default function Dropdown({
         />
       </button>
       {isOpen && (
-        <div className={menuStyle}>
+        <div className={[menuStyle, noBorder ? menuNoBorderStyle : ''].join(' ').trim()}>
           {menuLabel && <div className={menuLabelStyle}>{menuLabel}</div>}
           {options.map((opt) => (
             <div

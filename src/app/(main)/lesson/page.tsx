@@ -92,19 +92,30 @@ export default function LessonPage() {
         <Text variant="headingMd">{selectedLabel}</Text>
       </div>
       <div className={lessonGridStyle}>
-        {lessons.map((lesson) => (
-          <LessonCard
-            key={lesson.lesson_record_id}
-            academyName={lesson.academy_name}
-            templateName={lesson.template_name}
-            className={lesson.class_name}
-            progress={lesson.progress_rate}
-            totalStudents={0}
-            inputCount={0}
-            isDone={lesson.status === 'SAVED'}
-            onClick={() => router.push(`/lesson/${lesson.lesson_record_id}`)}
-          />
-        ))}
+        {lessons.map((lesson) => {
+          const recordId = lesson.lesson_record_id ?? lesson.id ?? null
+          return (
+            <LessonCard
+              key={recordId ?? lesson.class_id}
+              academyName={lesson.academy_name}
+              templateName={lesson.template_name}
+              className={lesson.class_name}
+              progress={lesson.progress_rate}
+              totalStudents={lesson.total_students}
+              inputCount={Math.round((lesson.total_students * lesson.progress_rate) / 100)}
+              isDone={recordId !== null}
+              onClick={() => {
+                if (recordId) {
+                  router.push(`/lesson/${recordId}`)
+                } else {
+                  router.push(
+                    `/lesson/new?class_id=${lesson.class_id}&date=${format(selectedDate, 'yyyy-MM-dd')}&is_adhoc=false`
+                  )
+                }
+              }}
+            />
+          )
+        })}
         <AddCard
           icon={<PlusCircleIcon width={36} height={36} />}
           label="다른 수업 추가"
@@ -117,7 +128,7 @@ export default function LessonPage() {
           onClose={() => setIsAddLessonOpen(false)}
           onConfirm={(classId) => {
             router.push(
-              `/lesson/new?class_id=${classId}&date=${format(selectedDate, 'yyyy-MM-dd')}`
+              `/lesson/new?class_id=${classId}&date=${format(selectedDate, 'yyyy-MM-dd')}&is_adhoc=true`
             )
           }}
           selectedDate={selectedDate}
