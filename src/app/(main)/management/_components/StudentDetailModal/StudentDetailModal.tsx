@@ -154,7 +154,7 @@ export default function StudentDetailModal({
                 <div className={statCardStyle}>
                   <span className={statLabelStyle}>완료율</span>
                   <span className={statValueStyle} style={{ color: '#1DAA7F' }}>
-                    {detail.stats.completion_rate}%
+                    {detail.stats.completion_rate * 100}%
                   </span>
                 </div>
                 <div className={statCardStyle}>

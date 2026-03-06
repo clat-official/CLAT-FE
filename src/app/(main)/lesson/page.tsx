@@ -64,7 +64,7 @@ export default function LessonPage() {
     const key = format(date, 'yyyy-MM-dd')
     const dayLessons = weekLessons[key] ?? []
     if (dayLessons.length === 0) return 'none'
-    if (dayLessons.every((l) => l.status === 'SAVED')) return 'done'
+    if (dayLessons.every((l) => l.progress_rate === 1)) return 'done'
     if (dayLessons.some((l) => l.lesson_record_id !== null)) return 'inProgress'
     return 'none'
   }
@@ -123,7 +123,7 @@ export default function LessonPage() {
               className={lesson.class_name}
               progress={lesson.progress_rate * 100}
               totalStudents={lesson.total_students}
-              inputCount={Math.round((lesson.total_students * lesson.progress_rate) / 100)}
+              inputCount={Math.round(lesson.total_students * lesson.progress_rate)}
               isDone={recordId !== null}
               onClick={() => {
                 if (recordId) {
