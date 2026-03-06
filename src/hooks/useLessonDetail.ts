@@ -79,12 +79,11 @@ export default function useLessonDetail(lessonId: number) {
                 return {
                   template_item_id: item.id,
                   value: existing?.value ?? '',
-                  // Fix #2: boolean 타입일 때만 저장값 사용, null/undefined면 null로 초기화
+                  // fix: boolean 타입일 때만 저장값 사용, null/undefined면 null로 초기화
                   // ?? 연산자는 false를 유효값으로 통과시키지만, 서버 응답에서
                   // is_completed 필드 자체가 누락되거나 null로 오는 경우를 명시적으로 처리
-                  is_completed: typeof existing?.is_completed === 'boolean'
-                    ? existing.is_completed
-                    : null,
+                  is_completed:
+                    typeof existing?.is_completed === 'boolean' ? existing.is_completed : null,
                 }
               }),
             }
@@ -116,6 +115,10 @@ export default function useLessonDetail(lessonId: number) {
 
   const handleExcelDownload = () => {
     if (!lesson || !template) return
+    const individualItems = template.items
+      .filter((i) => !i.is_common && i.item_type !== 'ATTENDANCE')
+      .map((i) => ({ id: i.id, label: i.name }))
+
     exportLessonExcel({
       title: `${format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko })} ${lesson.class_name} 수업 결과`,
       commonItems: template.items
@@ -123,6 +126,7 @@ export default function useLessonDetail(lessonId: number) {
         .map((i) => ({ id: i.id, label: i.name })),
       commonValues,
       students,
+      individualItems,
       context: {
         academyName: lesson.academy_name,
         teacherName: '',
