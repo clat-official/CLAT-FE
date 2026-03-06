@@ -84,7 +84,7 @@ function CompletionCell({
 }
 
 export default function LessonTable({ students, templateItems, onChange }: LessonTableSectionProps) {
-  const dynamicItems = templateItems.filter((i) => !i.is_common && !i.is_default_attendance)
+  const dynamicItems = templateItems.filter((i) => !i.is_common && i.item_type !== 'ATTENDANCE')
 
   const updateAttendance = (studentId: number, value: Attendance) => {
     onChange(students.map((s) => s.id === studentId ? { ...s, attendance: value } : s))

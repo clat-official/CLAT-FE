@@ -277,6 +277,7 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
         isOpen={messagePreview.isOpen}
         onClose={messagePreview.close}
         lessonId={lessonId}
+        lesson={lesson}
       />
     </div>
   )

@@ -9,6 +9,7 @@ interface InitialData {
   name?: string
   commonItems?: TemplateItem[]
   individualItems?: TemplateItem[]
+  attendanceItemIds?: number[]
 }
 
 export default function useTemplateEditor(initial: InitialData = {}) {
@@ -27,12 +28,12 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     ...initIndividual.map((i) => i.id),
   ])
 
-  const [originalItemIds] = useState<number[]>(
-    () =>
-      [...(initial.commonItems ?? []), ...(initial.individualItems ?? [])]
-        .map((item) => Number(item.id))
-        .filter((id) => !isNaN(id) && id > 0) // 새로 추가한 'c-xxx', 'i-xxx' 제외
-  )
+  const [originalItemIds] = useState<number[]>(() => {
+    const itemIds = [...(initial.commonItems ?? []), ...(initial.individualItems ?? [])]
+      .map((item) => Number(item.id))
+      .filter((id) => !isNaN(id) && id > 0) // 새로 추가한 'c-xxx', 'i-xxx' 제외
+    return [...itemIds, ...(initial.attendanceItemIds ?? [])]
+  })
 
   const allItemsMap = useMemo(() => {
     const map = new Map<string, TemplateItem>()
@@ -47,16 +48,26 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     choice: 'SELECT',
     completion: 'COMPLETE',
     inline: 'TEXT',
+    attendance: 'ATTENDANCE',
+  }
+
+  const ATTENDANCE_ITEM: CreateTemplateItemDto = {
+    name: '출결',
+    item_type: 'ATTENDANCE',
+    is_common: false,
+    include_in_message: true,
+    sort_order: 0,
+    options: [],
   }
 
   const buildItems = (items: TemplateItem[]): CreateTemplateItemDto[] =>
     items
-      .filter((item) => item.label.trim() !== '')
+      .filter((item) => item.label.trim() !== '' && item.itemType !== 'attendance')
       .map((item, index) => ({
         name: item.label,
         item_type: ITEM_TYPE_MAP[item.itemType],
         is_common: item.category === 'common',
-        include_in_message: item.isInMessage,
+        include_in_message: item.itemType === 'attendance' ? true : item.isInMessage,
         sort_order: index + 1,
         options: item.choices ?? [],
       }))
@@ -70,7 +81,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     try {
       await templateService.createTemplate({
         name: templateName,
-        items: buildItems([...commonItems, ...individualItems]),
+        items: [ATTENDANCE_ITEM, ...buildItems([...commonItems, ...individualItems])],
       })
       addToast({ variant: 'success', message: '템플릿이 저장됐어요.' })
       router.push('/template')
@@ -92,7 +103,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     try {
       await templateService.updateTemplate(templateId, {
         name: templateName,
-        items: buildItems([...commonItems, ...individualItems]),
+        items: [ATTENDANCE_ITEM, ...buildItems([...commonItems, ...individualItems])],
         deleted_item_ids: originalItemIds, // 기존 아이템 전부 삭제 후 새로 삽입
       })
       addToast({ variant: 'success', message: '템플릿이 수정됐어요.' })

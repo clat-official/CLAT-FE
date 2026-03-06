@@ -4,11 +4,12 @@ import type { TemplateItem as EditorItem } from '@/app/(main)/template/_types/te
 export interface TemplateItemDetail {
   id: number
   name: string
-  item_type: string
+  item_type: 'TEXT' | 'NUMBER' | 'SELECT' | 'COMPLETE' | 'ATTENDANCE'
   is_common: boolean
   include_in_message: boolean
   is_default_attendance: boolean
   sort_order: number
+  options?: string[]
 }
 
 export interface TemplateClass {
@@ -72,6 +73,10 @@ const API_TO_ITEM_TYPE: Record<string, EditorItem['itemType']> = {
 // API 응답 → useTemplateEditor 초기값 변환
 export const toEditorItems = (detail: TemplateDetail) => {
   const sorted = [...detail.items].sort((a, b) => a.sort_order - b.sort_order)
+  const nonAttendance = sorted.filter((i) => i.item_type !== 'ATTENDANCE')
+  const attendanceItemIds = sorted
+    .filter((i) => i.item_type === 'ATTENDANCE')
+    .map((i) => i.id)
 
   const toItem = (item: TemplateItemDetail): EditorItem => ({
     id: String(item.id),
@@ -80,13 +85,13 @@ export const toEditorItems = (detail: TemplateDetail) => {
     isInMessage: item.include_in_message,
     category: item.is_common ? 'common' : 'individual',
     itemType: API_TO_ITEM_TYPE[item.item_type] ?? 'text',
-    locked: item.is_default_attendance || undefined,
   })
 
   return {
     name: detail.name,
-    commonItems: sorted.filter((i) => i.is_common).map(toItem),
-    individualItems: sorted.filter((i) => !i.is_common).map(toItem),
+    commonItems: nonAttendance.filter((i) => i.is_common).map(toItem),
+    individualItems: nonAttendance.filter((i) => !i.is_common).map(toItem),
+    attendanceItemIds,
   }
 }
 

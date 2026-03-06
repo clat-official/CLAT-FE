@@ -14,6 +14,17 @@ import {
 } from '../template-form.css'
 import SaveIcon from '@/assets/icons/icon-save.svg'
 import useTemplateEditor from '@/hooks/useTemplateEditor'
+import type { TemplateItem } from '../_types/template'
+
+const ATTENDANCE_DISPLAY: TemplateItem = {
+  id: '__attendance__',
+  label: '출결 *',
+  isActive: true,
+  isInMessage: true,
+  locked: true,
+  category: 'individual',
+  itemType: 'attendance',
+}
 
 export default function TemplateNewPage() {
   const editor = useTemplateEditor()
@@ -60,9 +71,13 @@ export default function TemplateNewPage() {
               <ContentSection
                 title="개별 내용"
                 description="학생마다 다르게 전달할 내용이에요"
-                items={editor.individualItems}
-                onToggle={editor.handleToggleIndividualItem}
-                onDelete={editor.handleDeleteIndividualItem}
+                items={[ATTENDANCE_DISPLAY, ...editor.individualItems]}
+                onToggle={(id) => {
+                  if (id !== '__attendance__') editor.handleToggleIndividualItem(id)
+                }}
+                onDelete={(id) => {
+                  if (id !== '__attendance__') editor.handleDeleteIndividualItem(id)
+                }}
                 onAdd={editor.handleAddIndividualItem}
               />
             </div>

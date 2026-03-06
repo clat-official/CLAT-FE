@@ -15,6 +15,8 @@ export interface Class {
 }
 
 export interface ClassDetail extends Class {
+  status: '진행 중' | '종료'
+  templates: { id: number; name: string }[]
   students: Student[]
 }
 
