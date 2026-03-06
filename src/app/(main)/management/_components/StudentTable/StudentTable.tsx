@@ -38,9 +38,10 @@ function getCellPaddingRight(totalColumns: number): number {
   return 16
 }
 
-function getProgressColor(rate: number): string {
-  if (rate >= 70) return colors.success500
-  if (rate >= 40) return colors.warning500
+function getProgressColor(rate: number, totalIncomplete: number): string {
+  if (rate === 0 && totalIncomplete === 0) return colors.gray500
+  if (rate >= 0.7) return colors.success500
+  if (rate >= 0.4) return colors.warning500
   return colors.error500
 }
 
@@ -84,7 +85,7 @@ export default function StudentTable({
       </thead>
       <tbody>
         {students.map((student) => {
-          const color = getProgressColor(student.completion_rate * 100)
+          const color = getProgressColor(student.completion_rate, student.total_incomplete_items)
           return (
             <tr
               key={student.id}
@@ -111,7 +112,11 @@ export default function StudentTable({
                   </div>
                   <span className={percentTextStyle}>{student.completion_rate * 100}%</span>
                   <span className={remainingTextStyle} style={{ color }}>
-                    {student.total_incomplete_items ?? '-'}개 남음
+                    {student.completion_rate === 1
+                      ? '모두 완료'
+                      : student.completion_rate === 0 && student.total_incomplete_items === 0
+                        ? null
+                        : `${student.total_incomplete_items}개 남음`}
                   </span>
                   <button
                     className={deleteButtonStyle}

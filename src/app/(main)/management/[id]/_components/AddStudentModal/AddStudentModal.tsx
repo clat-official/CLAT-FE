@@ -26,9 +26,15 @@ interface AddStudentModalProps {
   isOpen: boolean
   onClose: () => void
   onConfirm: (studentIds: number[]) => void
+  currentStudentIds?: number[]
 }
 
-export default function AddStudentModal({ isOpen, onClose, onConfirm }: AddStudentModalProps) {
+export default function AddStudentModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  currentStudentIds = []
+}: AddStudentModalProps) {
   const [search, setSearch] = useState('')
   const [candidates, setCandidates] = useState<Student[]>([])
   const { items: selectedIds, toggle: toggleSelect, reset: resetIds } = useToggleArray<number>()
@@ -38,9 +44,10 @@ export default function AddStudentModal({ isOpen, onClose, onConfirm }: AddStude
     studentService.getStudents().then((res) => setCandidates(res.data))
   }, [isOpen])
 
-  const filtered = candidates.filter(
-    (s) => s.name.includes(search) || s.phone.includes(search)
-  )
+  // filtered 수정 — 이미 소속된 학생 제외
+  const filtered = candidates
+    .filter((s) => !currentStudentIds.includes(s.id))
+    .filter((s) => s.name.includes(search) || s.phone.includes(search))
 
   const handleClose = () => {
     setSearch('')
@@ -85,7 +92,9 @@ export default function AddStudentModal({ isOpen, onClose, onConfirm }: AddStude
         )}
       </div>
       <div className={actionsStyle}>
-        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>취소</Button>
+        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>
+          취소
+        </Button>
         <Button
           variant="primary"
           size="lg"
