@@ -27,6 +27,8 @@ import {
   trackingItemStyle,
   trackingLabelStyle,
   completeButtonStyle,
+  completeCheckIconStyle,
+  scrollBodyStyle,
 } from './StudentDetailModal.css'
 
 interface StudentDetailModalProps {
@@ -106,6 +108,7 @@ export default function StudentDetailModal({
               </button>
             </div>
 
+            <div className={scrollBodyStyle}>
             {/* 기본 정보 */}
             <div className={sectionStyle}>
               <div
@@ -196,13 +199,14 @@ export default function StudentDetailModal({
                         className={completeButtonStyle}
                         onClick={() => handleComplete(item.lesson_student_data_id)}
                       >
-                        <CheckIcon width={16} height={16} />
+                        <CheckIcon width={16} height={16} className={completeCheckIconStyle} />
                         완료 처리
                       </button>
                     </div>
                   ))
                 )}
               </div>
+            </div>
             </div>
           </>
         )}

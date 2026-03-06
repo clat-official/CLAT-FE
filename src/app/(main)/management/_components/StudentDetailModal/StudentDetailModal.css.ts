@@ -123,13 +123,30 @@ export const trackingLabelStyle = style({
   lineHeight: '140%',
 })
 
+export const scrollBodyStyle = style({
+  overflowY: 'auto',
+  flex: 1,
+  selectors: {
+    '&::-webkit-scrollbar': {
+      width: '6px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'transparent',
+      borderRadius: '3px',
+    },
+    '&:hover::-webkit-scrollbar-thumb': {
+      backgroundColor: colors.gray200,
+    },
+  },
+})
+
 export const completeButtonStyle = style({
   display: 'flex',
   alignItems: 'center',
   gap: '4px',
   fontSize: fontStyles.labelSm.fontSize,
   fontWeight: fontStyles.labelSm.fontWeight,
-  color: colors.gray600,
+  color: colors.gray500,
   backgroundColor: colors.white,
   border: 'none',
   borderRadius: '4px',
@@ -140,6 +157,18 @@ export const completeButtonStyle = style({
   selectors: {
     '&:hover': {
       backgroundColor: colors.success50,
+      color: colors.success500,
+    },
+    '&:active': {
+      backgroundColor: colors.success200,
+    },
+  },
+})
+
+export const completeCheckIconStyle = style({
+  color: colors.gray100,
+  selectors: {
+    [`${completeButtonStyle}:hover &`]: {
       color: colors.success500,
     },
   },

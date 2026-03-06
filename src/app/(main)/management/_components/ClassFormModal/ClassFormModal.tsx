@@ -110,7 +110,7 @@ export default function ClassFormModal({
           disabled={!academyName.trim() || !name.trim() || selectedDays.length === 0}
           onClick={handleConfirm}
         >
-          {mode === 'add' ? '등록하기' : '저장'}
+          {mode === 'add' ? '추가' : '저장'}
         </Button>
       </div>
     </Modal>

@@ -34,6 +34,7 @@ export const modalRecipe = recipe({
         width: '640px',
         borderRadius: '24px',
         padding: '48px',
+        maxHeight: '90vh',
       },
     },
   },
