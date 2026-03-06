@@ -102,7 +102,9 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
         >
           <ArrowLeftIcon width={24} height={24} />
         </button>
-        <Text variant="display" as="h1">{classDetail.name}</Text>
+        <Text variant="display" as="h1">
+          {classDetail.name}
+        </Text>
       </div>
 
       {/* 반 정보 */}
@@ -128,7 +130,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
                   name: data.name,
                   day_of_week: data.dayOfWeek,
                 })
-                setClassDetail((prev) => prev ? { ...prev, ...updated } : prev)
+                setClassDetail((prev) => (prev ? { ...prev, ...updated } : prev))
                 editClass.close()
                 addToast({ variant: 'success', message: '반 정보가 수정됐어요.' })
               } catch {
@@ -153,7 +155,14 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
 
       {/* 학생 명단 */}
       <section>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '24px',
+          }}
+        >
           <Text variant="headingMd">학생 명단</Text>
           <Button
             variant="primary"
@@ -182,12 +191,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
         </div>
         <StudentTable
           students={students}
-          middleColumns={[
-            {
-              header: '메모',
-              render: (student) => student.memo ?? '',
-            },
-          ]}
+          middleColumns={[]}
           onDelete={(id) => setDeleteStudentTarget(id)}
           onRowClick={(id) => setSelectedStudentId(id)}
         />
