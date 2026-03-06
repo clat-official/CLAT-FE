@@ -90,6 +90,13 @@ export default function AddStudentFormModal({
     handleClose()
   }
 
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11)
+    if (digits.length < 4) return digits
+    if (digits.length < 8) return `${digits.slice(0, 3)}-${digits.slice(3)}`
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
       <div style={{ marginBottom: '24px' }}>
@@ -106,14 +113,20 @@ export default function AddStudentFormModal({
         </div>
         <div className={fieldStyle}>
           <span className={labelStyle}>학생 전화번호</span>
-          <Input variant="gray" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <Input
+            variant="gray"
+            value={phone}
+            placeholder="숫자만 입력"
+            onChange={(e) => setPhone(formatPhone(e.target.value))}
+          />
         </div>
         <div className={fieldStyle}>
           <span className={labelStyle}>학부모 전화번호</span>
           <Input
             variant="gray"
             value={parentPhone}
-            onChange={(e) => setParentPhone(e.target.value)}
+            placeholder="숫자만 입력"
+            onChange={(e) => setParentPhone(formatPhone(e.target.value))}
           />
         </div>
         <div className={fieldStyle}>

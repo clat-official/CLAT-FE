@@ -38,9 +38,7 @@ export default function AddStudentModal({ isOpen, onClose, onConfirm }: AddStude
     studentService.getStudents().then((res) => setCandidates(res.data))
   }, [isOpen])
 
-  const filtered = candidates.filter(
-    (s) => s.name.includes(search) || s.phone.includes(search)
-  )
+  const filtered = candidates.filter((s) => s.name.includes(search) || s.phone.includes(search))
 
   const handleClose = () => {
     setSearch('')
@@ -85,7 +83,9 @@ export default function AddStudentModal({ isOpen, onClose, onConfirm }: AddStude
         )}
       </div>
       <div className={actionsStyle}>
-        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>취소</Button>
+        <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>
+          취소
+        </Button>
         <Button
           variant="primary"
           size="lg"
