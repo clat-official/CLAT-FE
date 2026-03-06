@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { colors } from '@/styles/tokens/colors'
+
 import useDisclosure from '@/hooks/useDisclosure'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
@@ -20,6 +20,7 @@ import StudentDetailModal from '../_components/StudentDetailModal/StudentDetailM
 import { classService, type ClassDetail } from '@/services/class'
 import { useToastStore } from '@/stores/toastStore'
 import type { Student } from '@/types/student'
+import { backButtonStyle } from '../management.css'
 
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
 const formatSchedule = (schedules: { day_of_week: number }[]) =>
@@ -96,10 +97,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
     <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
       {/* 헤더 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <button
-          onClick={() => router.back()}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: colors.gray500 }}
-        >
+        <button onClick={() => router.back()} className={backButtonStyle}>
           <ArrowLeftIcon width={24} height={24} />
         </button>
         <Text variant="display" as="h1">

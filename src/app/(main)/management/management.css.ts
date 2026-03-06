@@ -40,3 +40,17 @@ export const gridStyle = style({
   ...cardGridResponsive,
   gridAutoRows: 'minmax(190px, auto)',
 })
+
+export const backButtonStyle = style({
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  color: colors.gray500,
+  display: 'flex',
+  alignItems: 'center',
+  selectors: {
+    '&:hover': {
+      color: colors.gray700,
+    },
+  },
+})

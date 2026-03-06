@@ -1,7 +1,10 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
+import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
+import SaveIcon from '@/assets/icons/icon-save.svg'
 import TemplateName from '../_components/TemplateName/TemplateName'
 import ContentSection from '../_components/ContentSection/ContentSection'
 import MessageSettings from '../_components/MessageSettings/MessageSettings'
@@ -11,8 +14,10 @@ import {
   leftSectionStyle,
   rightSectionStyle,
   sectionBoxStyle,
+  formHeaderStyle,
+  formHeaderLeftStyle,
+  formBackButtonStyle,
 } from '../template-form.css'
-import SaveIcon from '@/assets/icons/icon-save.svg'
 import useTemplateEditor from '@/hooks/useTemplateEditor'
 import type { TemplateItem } from '../_types/template'
 
@@ -27,21 +32,20 @@ const ATTENDANCE_DISPLAY: TemplateItem = {
 }
 
 export default function TemplateNewPage() {
+  const router = useRouter()
   const editor = useTemplateEditor()
 
   return (
     <>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '32px',
-        }}
-      >
-        <Text variant="display" as="h1">
-          수업 템플릿 생성
-        </Text>
+      <div className={formHeaderStyle}>
+        <div className={formHeaderLeftStyle}>
+          <button className={formBackButtonStyle} onClick={() => router.push('/template')}>
+            <ArrowLeftIcon width={24} height={24} />
+          </button>
+          <Text variant="display" as="h1">
+            수업 템플릿 생성
+          </Text>
+        </div>
         <Button
           variant="primary"
           size="sm"

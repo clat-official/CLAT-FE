@@ -46,4 +46,9 @@ export const formBackButtonStyle = style({
   color: colors.gray500,
   display: 'flex',
   alignItems: 'center',
+  selectors: {
+    '&:hover': {
+      color: colors.gray700,
+    },
+  },
 })
