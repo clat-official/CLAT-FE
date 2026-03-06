@@ -70,6 +70,10 @@ export default function StudentDetailModal({
                 ...prev.stats,
                 total_incomplete_items: prev.stats.total_incomplete_items - 1,
                 total_complete_items: prev.stats.total_complete_items + 1,
+
+                completion_rate:
+                  (prev.stats.total_complete_items + 1) /
+                  (prev.stats.total_complete_items + 1 + prev.stats.total_incomplete_items - 1),
               },
             }
           : prev
@@ -154,12 +158,12 @@ export default function StudentDetailModal({
                 <div className={statCardStyle}>
                   <span className={statLabelStyle}>완료율</span>
                   <span className={statValueStyle} style={{ color: '#1DAA7F' }}>
-                    {detail.stats.completion_rate * 100}%
+                    {Math.round(detail.stats.completion_rate * 100)}%
                   </span>
                 </div>
                 <div className={statCardStyle}>
                   <span className={statLabelStyle}>완료</span>
-                  <span className={statValueStyle}>{detail.stats.total_complete_items}회</span>
+                  <span className={statValueStyle}>{detail.stats.total_complete_items}개</span>
                 </div>
                 <div className={statCardStyle}>
                   <span className={statLabelStyle}>미완료</span>
@@ -171,7 +175,8 @@ export default function StudentDetailModal({
             {/* 미완료 항목 */}
             <div className={sectionStyle}>
               <Text variant="headingMd" as="h3" className={sectionTitleStyle}>
-                미완료 항목 <span style={{ color: '#3B51CC' }}>{detail.incomplete_items.length}</span>
+                미완료 항목{' '}
+                <span style={{ color: '#3B51CC' }}>{detail.incomplete_items.length}</span>
               </Text>
               <div className={trackingListStyle}>
                 {detail.incomplete_items.length === 0 ? (
