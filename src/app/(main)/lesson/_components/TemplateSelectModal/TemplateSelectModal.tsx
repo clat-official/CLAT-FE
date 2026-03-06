@@ -94,21 +94,29 @@ export default function TemplateSelectModal({
                 <>
                   <div className={currentTemplateNameStyle}>{currentDetail.name}</div>
                   <div className={itemChipGroupStyle}>
-                    {currentDetail.items.map((item) => (
-                      <Chip
-                        key={item.id}
-                        label={item.name}
-                        variant={item.is_common ? 'active' : 'default'}
-                      />
-                    ))}
+                    {currentDetail.items
+                      .filter((item) => item.item_type !== 'ATTENDANCE')
+                      .map((item) => (
+                        <Chip
+                          key={item.id}
+                          label={item.name}
+                          variant={item.is_common ? 'active' : 'default'}
+                        />
+                      ))}
                   </div>
                 </>
               ) : (
-                <Text variant="bodyMd" color="gray500">-</Text>
+                <Text variant="bodyMd" color="gray500">
+                  -
+                </Text>
               )}
             </div>
 
-            <ArrowRightIcon width={20} height={20} style={{ color: '#9492A9', flexShrink: 0, marginTop: '28px' }} />
+            <ArrowRightIcon
+              width={20}
+              height={20}
+              style={{ color: '#9492A9', flexShrink: 0, marginTop: '28px' }}
+            />
 
             <div className={templateColStyle}>
               <span className={templateColTitleStyle}>변경 후</span>
@@ -122,13 +130,15 @@ export default function TemplateSelectModal({
               />
               {selectedDetail && (
                 <div className={itemChipGroupStyle}>
-                  {selectedDetail.items.map((item) => (
-                    <Chip
-                      key={item.id}
-                      label={item.name}
-                      variant={item.is_common ? 'active' : 'default'}
-                    />
-                  ))}
+                  {selectedDetail.items
+                    .filter((item) => item.item_type !== 'ATTENDANCE')
+                    .map((item) => (
+                      <Chip
+                        key={item.id}
+                        label={item.name}
+                        variant={item.is_common ? 'active' : 'default'}
+                      />
+                    ))}
                 </div>
               )}
             </div>

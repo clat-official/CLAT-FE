@@ -44,8 +44,10 @@ export default function useLessonDetail(lessonId: number) {
           const tmpl = await templateService.getTemplate(data.template_id)
           setTemplate(tmpl)
 
-          const attendanceItem = tmpl.items.find((i) => i.is_default_attendance)
-          const individualItems = tmpl.items.filter((i) => !i.is_common && !i.is_default_attendance)
+          const attendanceItem = tmpl.items.find((i) => i.item_type === 'ATTENDANCE')
+          const individualItems = tmpl.items.filter(
+            (i) => !i.is_common && i.item_type !== 'ATTENDANCE'
+          )
           const classStudents = await classService.getClassStudents(data.class_id, data.lesson_date)
           const studentDataMap = new Map(data.student_data.map((sd) => [sd.student_id, sd.items]))
 
@@ -60,7 +62,8 @@ export default function useLessonDetail(lessonId: number) {
           const initialized: LessonStudent[] = baseStudents.map((s) => {
             const existingItems = studentDataMap.get(s.id) ?? []
             const attendanceRaw = attendanceItem
-              ? (existingItems.find((ei) => ei.template_item_id === attendanceItem.id)?.value ?? null)
+              ? (existingItems.find((ei) => ei.template_item_id === attendanceItem.id)?.value ??
+                null)
               : null
             const attendance: LessonStudent['attendance'] =
               attendanceRaw === '출석' || attendanceRaw === '지각' || attendanceRaw === '결석'

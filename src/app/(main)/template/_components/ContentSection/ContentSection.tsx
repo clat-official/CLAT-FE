@@ -94,11 +94,6 @@ export default function ContentSection({
           const state = item.isActive ? 'active' : 'inactive'
           return (
             <div key={item.id} className={itemVariants[state]}>
-              {!item.locked && (
-                <button className={checkButtonVariants[state]} onClick={() => onToggle(item.id)}>
-                  <CheckIcon width={14} height={14} />
-                </button>
-              )}
               {item.id === editingId ? (
                 <input
                   className={itemInputVariants[state]}

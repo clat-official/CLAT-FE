@@ -146,8 +146,8 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
         <ClassInfoTable
           academyName={classDetail.academy_name}
           schedule={formatSchedule(classDetail.schedules)}
-          time="-"
-          template="-"
+          status={classDetail.status}
+          templates={classDetail.templates ?? []}
         />
       </section>
 

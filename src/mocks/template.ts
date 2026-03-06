@@ -17,9 +17,8 @@ export const INITIAL_COMMON_ITEMS: TemplateItem[] = [
 ]
 
 export const INITIAL_INDIVIDUAL_ITEMS: TemplateItem[] = [
-  { id: 'i-1', label: '출결 *', isActive: true, isInMessage: true, locked: true, category: 'individual', itemType: 'completion' },
-  { id: 'i-2', label: '시험 점수', isActive: true, isInMessage: true, category: 'individual', itemType: 'number' },
-  { id: 'i-3', label: '과제', isActive: false, isInMessage: true, category: 'individual', itemType: 'completion' },
-  { id: 'i-4', label: '반평균', isActive: true, isInMessage: true, category: 'individual', itemType: 'number' },
-  { id: 'i-5', label: '오답노트', isActive: true, isInMessage: true, category: 'individual', itemType: 'completion' },
+  { id: 'i-1', label: '시험 점수', isActive: true, isInMessage: true, category: 'individual', itemType: 'number' },
+  { id: 'i-2', label: '과제', isActive: false, isInMessage: true, category: 'individual', itemType: 'completion' },
+  { id: 'i-3', label: '반평균', isActive: true, isInMessage: true, category: 'individual', itemType: 'number' },
+  { id: 'i-4', label: '오답노트', isActive: true, isInMessage: true, category: 'individual', itemType: 'completion' },
 ]

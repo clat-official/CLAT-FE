@@ -1,5 +1,5 @@
 export type ItemCategory = 'common' | 'individual'
-export type ItemType = 'number' | 'text' | 'choice' | 'completion' | 'inline'
+export type ItemType = 'number' | 'text' | 'choice' | 'completion' | 'inline' | 'attendance'
 
 export interface TemplateItem {
   id: string

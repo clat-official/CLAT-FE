@@ -4,10 +4,18 @@ import { useEffect, useState } from 'react'
 import Text from '@/components/common/Text'
 import Dropdown from '@/components/common/Dropdown'
 import CloseIcon from '@/assets/icons/icon-close.svg'
-import { lessonService } from '@/services/lesson'
+import { lessonService, type LessonDetail } from '@/services/lesson'
+import { format } from 'date-fns'
+import { ko } from 'date-fns/locale'
 import {
-  backdrop, drawer, drawerClosing, header, content,
-  dropdownTrigger, messagePreview, closeButtonStyle,
+  backdrop,
+  drawer,
+  drawerClosing,
+  header,
+  content,
+  dropdownTrigger,
+  messagePreview,
+  closeButtonStyle,
 } from './MessagePreview.css'
 
 interface PreviewStudent {
@@ -22,9 +30,10 @@ interface MessagePreviewProps {
   isOpen: boolean
   onClose: () => void
   lessonId: number
+  lesson: LessonDetail
 }
 
-export default function MessagePreview({ isOpen, onClose, lessonId }: MessagePreviewProps) {
+export default function MessagePreview({ isOpen, onClose, lessonId, lesson }: MessagePreviewProps) {
   const [students, setStudents] = useState<PreviewStudent[]>([])
   const [selectedStudentId, setSelectedStudentId] = useState<string>('')
   const [isClosing, setIsClosing] = useState(false)
@@ -52,6 +61,10 @@ export default function MessagePreview({ isOpen, onClose, lessonId }: MessagePre
     }
   }
 
+  const formatMessage = (message: string) => {
+    return `안녕하세요, ${lesson.academy_name} 강사입니다.\n\n${lesson.class_name} ${format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko })} 수업 결과를 안내드립니다.\n\n${message}\n\n감사합니다.`
+  }
+
   return (
     <div className={backdrop} onClick={handleClose}>
       <div
@@ -75,7 +88,7 @@ export default function MessagePreview({ isOpen, onClose, lessonId }: MessagePre
             noBorder
           />
           <div className={messagePreview}>
-            {selectedStudent?.message ?? ''}
+            {selectedStudent ? formatMessage(selectedStudent.message) : ''}
           </div>
         </div>
       </div>

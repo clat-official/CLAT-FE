@@ -21,8 +21,19 @@ import {
 } from '../../template-form.css'
 import useTemplateEditor from '@/hooks/useTemplateEditor'
 import { templateService, toEditorItems } from '@/services/template'
+import type { TemplateItem } from '../../_types/template'
 
 type EditorInitialData = Parameters<typeof useTemplateEditor>[0]
+
+const ATTENDANCE_DISPLAY: TemplateItem = {
+  id: '__attendance__',
+  label: '출결 *',
+  isActive: true,
+  isInMessage: true,
+  locked: true,
+  category: 'individual',
+  itemType: 'attendance',
+}
 
 function TemplateEditForm({ id, initialData }: { id: number; initialData: EditorInitialData }) {
   const router = useRouter()
@@ -68,9 +79,13 @@ function TemplateEditForm({ id, initialData }: { id: number; initialData: Editor
               <ContentSection
                 title="개별 내용"
                 description="학생마다 다르게 전달할 내용이에요"
-                items={editor.individualItems}
-                onToggle={editor.handleToggleIndividualItem}
-                onDelete={editor.handleDeleteIndividualItem}
+                items={[ATTENDANCE_DISPLAY, ...editor.individualItems]}
+                onToggle={(id) => {
+                  if (id !== '__attendance__') editor.handleToggleIndividualItem(id)
+                }}
+                onDelete={(id) => {
+                  if (id !== '__attendance__') editor.handleDeleteIndividualItem(id)
+                }}
                 onAdd={editor.handleAddIndividualItem}
               />
             </div>
