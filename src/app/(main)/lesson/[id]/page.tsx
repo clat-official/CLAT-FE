@@ -86,7 +86,8 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
             ...s.items.map((item) => ({
               template_item_id: item.template_item_id,
               value: item.value,
-              is_completed: item.is_completed ?? false,
+              // Fix #2: null(미선택)은 null 그대로 전송, ?? false 제거
+              is_completed: item.is_completed ?? undefined,
             })),
           ],
         })),

@@ -79,7 +79,12 @@ export default function useLessonDetail(lessonId: number) {
                 return {
                   template_item_id: item.id,
                   value: existing?.value ?? '',
-                  is_completed: existing?.is_completed ?? null,
+                  // Fix #2: boolean 타입일 때만 저장값 사용, null/undefined면 null로 초기화
+                  // ?? 연산자는 false를 유효값으로 통과시키지만, 서버 응답에서
+                  // is_completed 필드 자체가 누락되거나 null로 오는 경우를 명시적으로 처리
+                  is_completed: typeof existing?.is_completed === 'boolean'
+                    ? existing.is_completed
+                    : null,
                 }
               }),
             }
