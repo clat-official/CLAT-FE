@@ -54,7 +54,7 @@ export default function AddStudentFormModal({
   useEffect(() => {
     if (!isOpen) return
     classService
-      .getClasses()
+      .getClasses({ status: 'active' })
       .then((res) => {
         setClasses(res.data)
         // classes 로드 후 defaultValues 적용
