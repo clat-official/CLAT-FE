@@ -109,7 +109,7 @@ export default function StudentTable({
                   </div>
                   <span className={percentTextStyle}>{student.completion_rate * 100}%</span>
                   <span className={remainingTextStyle} style={{ color }}>
-                    {student.remaining_task_count ?? '-'}개 남음
+                    {student.total_incomplete_items ?? '-'}개 남음
                   </span>
                   <button className={deleteButtonStyle} onClick={() => onDelete(student.id)}>
                     <TrashIcon width={20} height={20} />
