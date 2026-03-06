@@ -9,6 +9,14 @@ export const tableStyle = style({
   overflow: 'hidden',
 })
 
+export const trStyle = style({
+  selectors: {
+    '&:hover': {
+      backgroundColor: colors.gray50,
+    },
+  },
+})
+
 export const thStyle = style({
   height: '40px',
   paddingLeft: '16px',

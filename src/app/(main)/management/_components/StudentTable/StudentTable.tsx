@@ -6,6 +6,7 @@ import { colors } from '@/styles/tokens/colors'
 import type { Student } from '@/types/student'
 import {
   tableStyle,
+  trStyle,
   thStyle,
   tdStyle,
   completionCellStyle,
@@ -87,6 +88,7 @@ export default function StudentTable({
           return (
             <tr
               key={student.id}
+              className={trStyle}
               onClick={() => onRowClick?.(student.id)}
               style={{ cursor: onRowClick ? 'pointer' : 'default' }}
             >
@@ -111,7 +113,13 @@ export default function StudentTable({
                   <span className={remainingTextStyle} style={{ color }}>
                     {student.total_incomplete_items ?? '-'}개 남음
                   </span>
-                  <button className={deleteButtonStyle} onClick={() => onDelete(student.id)}>
+                  <button
+                    className={deleteButtonStyle}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDelete(student.id)
+                    }}
+                  >
                     <TrashIcon width={20} height={20} />
                   </button>
                 </div>
