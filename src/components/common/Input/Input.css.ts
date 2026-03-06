@@ -38,6 +38,16 @@ export const inputRecipe = recipe({
         border: `1px solid ${colors.gray50}`,
       },
     },
+    hasError: {
+      true: {
+        borderColor: colors.error500,
+        selectors: {
+          '&:focus': {
+            borderColor: colors.error500,
+          },
+        },
+      },
+    },
     shape: {
       square: {
         height: '48px',

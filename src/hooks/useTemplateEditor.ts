@@ -16,6 +16,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   const router = useRouter()
   const addToast = useToastStore((s) => s.addToast)
   const [isSaving, setIsSaving] = useState(false)
+  const [hasNameError, setHasNameError] = useState(false)
 
   const initCommon = initial.commonItems ?? INITIAL_COMMON_ITEMS
   const initIndividual = initial.individualItems ?? INITIAL_INDIVIDUAL_ITEMS
@@ -31,7 +32,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   const [originalItemIds] = useState<number[]>(() => {
     const itemIds = [...(initial.commonItems ?? []), ...(initial.individualItems ?? [])]
       .map((item) => Number(item.id))
-      .filter((id) => !isNaN(id) && id > 0) // 새로 추가한 'c-xxx', 'i-xxx' 제외
+      .filter((id) => !isNaN(id) && id > 0)
     return [...itemIds, ...(initial.attendanceItemIds ?? [])]
   })
 
@@ -72,11 +73,18 @@ export default function useTemplateEditor(initial: InitialData = {}) {
         options: item.choices ?? [],
       }))
 
+  const handleTemplateNameChange = (value: string) => {
+    setTemplateName(value)
+    if (hasNameError && value.trim()) setHasNameError(false)
+  }
+
   const handleSave = async () => {
     if (!templateName.trim()) {
       addToast({ variant: 'warning', message: '템플릿 이름을 입력해주세요.' })
+      setHasNameError(true)
       return
     }
+    setHasNameError(false)
     setIsSaving(true)
     try {
       await templateService.createTemplate({
@@ -97,14 +105,16 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   const handleUpdate = async (templateId: number) => {
     if (!templateName.trim()) {
       addToast({ variant: 'warning', message: '템플릿 이름을 입력해주세요.' })
+      setHasNameError(true)
       return
     }
+    setHasNameError(false)
     setIsSaving(true)
     try {
       await templateService.updateTemplate(templateId, {
         name: templateName,
         items: [ATTENDANCE_ITEM, ...buildItems([...commonItems, ...individualItems])],
-        deleted_item_ids: originalItemIds, // 기존 아이템 전부 삭제 후 새로 삽입
+        deleted_item_ids: originalItemIds,
       })
       addToast({ variant: 'success', message: '템플릿이 수정됐어요.' })
       router.push('/template')
@@ -188,6 +198,8 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   return {
     templateName,
     setTemplateName,
+    hasNameError,
+    handleTemplateNameChange,
     commonItems,
     individualItems,
     messageOrder,

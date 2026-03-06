@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Modal from '@/components/common/Modal'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
@@ -37,6 +38,7 @@ export default function TemplateSelectModal({
   title = '템플릿 선택',
   confirmLabel = '확인',
 }: TemplateSelectModalProps) {
+  const router = useRouter()
   const [templates, setTemplates] = useState<Template[]>([])
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [currentDetail, setCurrentDetail] = useState<TemplateDetail | null>(null)
@@ -106,9 +108,7 @@ export default function TemplateSelectModal({
                   </div>
                 </>
               ) : (
-                <Text variant="bodyMd" color="gray500">
-                  -
-                </Text>
+                <Text variant="bodyMd" color="gray500">-</Text>
               )}
             </div>
 
@@ -146,17 +146,24 @@ export default function TemplateSelectModal({
         ) : (
           // 최초 선택 모드 - 칩 목록
           <>
-            <div className={chipGroupStyle}>
-              {templates.map((t) => (
-                <button
-                  key={t.id}
-                  className={chipButtonRecipe({ selected: selectedId === t.id })}
-                  onClick={() => handleSelect(String(t.id))}
-                >
-                  {t.name}
-                </button>
-              ))}
-            </div>
+            {templates.length === 0 ? (
+              <div style={{ padding: '24px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <Text variant="bodyMd" color="gray500">등록된 템플릿이 없어요.</Text>
+                <Text variant="bodyMd" color="gray500">템플릿을 먼저 만들어주세요.</Text>
+              </div>
+            ) : (
+              <div className={chipGroupStyle}>
+                {templates.map((t) => (
+                  <button
+                    key={t.id}
+                    className={chipButtonRecipe({ selected: selectedId === t.id })}
+                    onClick={() => handleSelect(String(t.id))}
+                  >
+                    {t.name}
+                  </button>
+                ))}
+              </div>
+            )}
             {selectedDetail && (
               <div className={itemChipGroupStyle}>
                 {selectedDetail.items.map((item) => (
@@ -172,18 +179,26 @@ export default function TemplateSelectModal({
         )}
 
         <div className={actionsStyle}>
-          <Button variant="ghost" size="md" fullWidth onClick={handleClose}>
-            취소
-          </Button>
-          <Button
-            variant="primary"
-            size="md"
-            fullWidth
-            onClick={handleConfirm}
-            disabled={!selectedId || isLoading}
-          >
-            {confirmLabel}
-          </Button>
+          {templates.length === 0 && !currentTemplateId ? (
+            <Button variant="primary" size="md" fullWidth onClick={() => router.push('/template/new')}>
+              템플릿 만들러 가기
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" size="md" fullWidth onClick={handleClose}>
+                취소
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                fullWidth
+                onClick={handleConfirm}
+                disabled={!selectedId || isLoading}
+              >
+                {confirmLabel}
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </Modal>
