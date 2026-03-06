@@ -19,7 +19,7 @@ export interface Student {
   memo?: string
   classes: StudentClass[]
   completion_rate: number
-  remaining_task_count: number
+  total_incomplete_items: number
 }
 
 export interface IncompleteItem {

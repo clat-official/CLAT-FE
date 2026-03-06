@@ -43,7 +43,12 @@ function getProgressColor(rate: number): string {
   return colors.error500
 }
 
-export default function StudentTable({ students, middleColumns, onDelete, onRowClick }: StudentTableProps) {
+export default function StudentTable({
+  students,
+  middleColumns,
+  onDelete,
+  onRowClick,
+}: StudentTableProps) {
   const totalColumns = FIXED_COLUMN_COUNT + middleColumns.length
   const cellPaddingRight = getCellPaddingRight(totalColumns)
 
@@ -78,7 +83,7 @@ export default function StudentTable({ students, middleColumns, onDelete, onRowC
       </thead>
       <tbody>
         {students.map((student) => {
-          const color = getProgressColor(student.completion_rate)
+          const color = getProgressColor(student.completion_rate * 100)
           return (
             <tr
               key={student.id}
@@ -99,12 +104,12 @@ export default function StudentTable({ students, middleColumns, onDelete, onRowC
                   <div className={progressTrackStyle}>
                     <div
                       className={progressBarStyle}
-                      style={{ width: `${student.completion_rate}%`, backgroundColor: color }}
+                      style={{ width: `${student.completion_rate * 100}%`, backgroundColor: color }}
                     />
                   </div>
-                  <span className={percentTextStyle}>{student.completion_rate}%</span>
+                  <span className={percentTextStyle}>{student.completion_rate * 100}%</span>
                   <span className={remainingTextStyle} style={{ color }}>
-                    {student.remaining_task_count ?? '-'}개 남음
+                    {student.total_incomplete_items ?? '-'}개 남음
                   </span>
                   <button className={deleteButtonStyle} onClick={() => onDelete(student.id)}>
                     <TrashIcon width={20} height={20} />

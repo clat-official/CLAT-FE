@@ -60,13 +60,13 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
   const handleSave = async () => {
     if (!lesson || !template) return
     try {
-      const attendanceItem = template.items.find((i) => i.is_default_attendance)
+      const attendanceItem = template.items.find((i) => i.item_type === 'ATTENDANCE')
       await lessonService.updateLesson({
         lesson_id: lessonId,
         class_id: lesson.class_id,
         lesson_date: lesson.lesson_date,
         template_id: lesson.template_id,
-        status: 'DRAFT',
+        status: 'SAVED',
         common_data: Object.entries(commonValues).map(([id, value]) => ({
           template_item_id: Number(id),
           value,
@@ -114,7 +114,7 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
         class_id: lesson.class_id,
         lesson_date: lesson.lesson_date,
         template_id: targetId,
-        status: 'DRAFT',
+        status: 'SAVED',
         common_data: [],
         student_data: students.map((s) => ({ student_id: s.id, items: [] })),
       })

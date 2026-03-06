@@ -131,9 +131,9 @@ export const completeButtonStyle = style({
   fontWeight: fontStyles.labelSm.fontWeight,
   color: colors.gray600,
   backgroundColor: colors.white,
-  border: `1px solid ${colors.gray100}`,
-  borderRadius: '6px',
-  padding: '6px 12px',
+  border: 'none',
+  borderRadius: '4px',
+  padding: '4px 8px',
   cursor: 'pointer',
   letterSpacing: '-0.03em',
   lineHeight: '140%',
@@ -141,7 +141,6 @@ export const completeButtonStyle = style({
     '&:hover': {
       backgroundColor: colors.success50,
       color: colors.success500,
-      borderColor: colors.success200,
     },
   },
 })

@@ -154,7 +154,7 @@ export default function StudentDetailModal({
                 <div className={statCardStyle}>
                   <span className={statLabelStyle}>완료율</span>
                   <span className={statValueStyle} style={{ color: '#1DAA7F' }}>
-                    {detail.stats.completion_rate}%
+                    {detail.stats.completion_rate * 100}%
                   </span>
                 </div>
                 <div className={statCardStyle}>
@@ -168,10 +168,10 @@ export default function StudentDetailModal({
               </div>
             </div>
 
-            {/* 추적 항목 */}
+            {/* 미완료 항목 */}
             <div className={sectionStyle}>
               <Text variant="headingMd" as="h3" className={sectionTitleStyle}>
-                추적 항목 <span style={{ color: '#3B51CC' }}>{detail.incomplete_items.length}</span>
+                미완료 항목 <span style={{ color: '#3B51CC' }}>{detail.incomplete_items.length}</span>
               </Text>
               <div className={trackingListStyle}>
                 {detail.incomplete_items.length === 0 ? (
