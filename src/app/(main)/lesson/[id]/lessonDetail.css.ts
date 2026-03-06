@@ -134,3 +134,24 @@ export const templateChipRecipe = recipe({
     selected: false,
   },
 })
+
+export const templateChipButtonStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px',
+  padding: '8px 12px',
+  borderRadius: '8px',
+  border: 'none',
+  backgroundColor: colors.gray50,
+  color: colors.gray500,
+  fontSize: fontStyles.titleSm.fontSize,
+  fontWeight: fontStyles.titleSm.fontWeight,
+  cursor: 'pointer',
+  letterSpacing: '-0.03em',
+  lineHeight: '140%',
+  selectors: {
+    '&:hover': {
+      backgroundColor: colors.gray75,
+    },
+  },
+})

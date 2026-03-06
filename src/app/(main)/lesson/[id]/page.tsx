@@ -7,6 +7,8 @@ import Button from '@/components/common/Button'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import DownloadIcon from '@/assets/icons/icon-download.svg'
 import SaveIcon from '@/assets/icons/icon-save.svg'
+import EditIcon from '@/assets/icons/icon-edit.svg'
+import ChevronDownIcon from '@/assets/icons/icon-chevron-down.svg'
 import MessageIcon from '@/assets/icons/icon-message.svg'
 import LessonTable from './_components/LessonTableSection/LessonTableSection'
 import CommonContent from './_components/CommonContent/CommonContent'
@@ -24,6 +26,7 @@ import {
   backButtonStyle,
   headerLeftStyle,
   headerButtonGroupStyle,
+  templateChipButtonStyle,
 } from './lessonDetail.css'
 import useLessonDetail from '@/hooks/useLessonDetail'
 import useDisclosure from '@/hooks/useDisclosure'
@@ -142,6 +145,15 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
           <Text variant="display" as="h1">
             {format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko })} {lesson.class_name}
           </Text>
+          <Button
+            variant="ghost"
+            size="sm"
+            rightIcon={<ChevronDownIcon width={20} height={20} />}
+            onClick={templateModal.open}
+            className={templateChipButtonStyle}
+          >
+            {template.name}
+          </Button>
         </div>
         <div className={headerButtonGroupStyle}>
           <Button
@@ -159,19 +171,6 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
             onClick={handleSave}
           >
             저장
-          </Button>
-        </div>
-      </div>
-
-      {/* 템플릿 정보 */}
-      <div className={templateSectionStyle}>
-        <div className={templateLabelRowStyle}>
-          <Text variant="headingMd">템플릿</Text>
-          <Text variant="bodyMd" color="gray500">
-            {template.name}
-          </Text>
-          <Button variant="ghost" size="sm" onClick={templateModal.open}>
-            변경
           </Button>
         </div>
       </div>
@@ -224,8 +223,9 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
         isOpen={templateModal.isOpen}
         onClose={templateModal.close}
         onConfirm={handleTemplateSelect}
+        currentTemplateId={lesson.template_id}
         title="템플릿 변경"
-        confirmLabel="변경"
+        confirmLabel="확인"
       />
 
       <ConfirmModal
@@ -238,6 +238,7 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
         title="템플릿을 변경할까요?"
         descriptions={['템플릿을 변경하면 입력한 내용이 모두 사라져요.']}
         confirmLabel="변경"
+        confirmVariant="danger"
       />
     </div>
   )
