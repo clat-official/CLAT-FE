@@ -166,6 +166,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
           <AddStudentModal
             isOpen={addStudent.isOpen}
             onClose={addStudent.close}
+            currentStudentIds={students.map((s) => s.id)}
             onConfirm={async (ids) => {
               try {
                 await classService.addStudents(classId, ids)
