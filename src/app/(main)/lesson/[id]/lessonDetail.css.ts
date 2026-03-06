@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, keyframes } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
 import { colors } from '@/styles/tokens/colors'
 import { fontStyles } from '@/styles/tokens/typography'
@@ -71,6 +71,37 @@ export const templateLabelRowStyle = style({
 export const templateChipGroupStyle = style({
   display: 'flex',
   gap: '8px',
+})
+
+const shimmer = keyframes({
+  '0%, 100%': { opacity: 1 },
+  '50%': { opacity: 0.4 },
+})
+
+export const skeletonSectionStyle = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
+})
+
+export const skeletonTableStyle = style({
+  width: '100%',
+  borderRadius: '8px',
+  overflow: 'hidden',
+  border: `1px solid ${colors.gray100}`,
+  display: 'flex',
+  flexDirection: 'column',
+})
+
+export const skeletonRowStyle = style({
+  height: '48px',
+  backgroundColor: colors.gray100,
+  animation: `${shimmer} 1.5s ease-in-out infinite`,
+  selectors: {
+    '& + &': {
+      borderTop: `1px solid ${colors.white}`,
+    },
+  },
 })
 
 export const templateChipRecipe = recipe({

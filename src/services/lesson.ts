@@ -1,7 +1,8 @@
 import axiosInstance from '@/lib/api/axiosInstance'
 
 export interface LessonSummary {
-  lesson_record_id: number
+  id?: number | null
+  lesson_record_id: number | null
   class_id: number
   class_name: string
   academy_name: string
@@ -59,6 +60,9 @@ export interface CreateLessonDto {
 }
 
 export interface UpdateLessonDto {
+  lesson_id: number
+  class_id: number
+  lesson_date: string
   template_id?: number
   status?: 'DRAFT' | 'SAVED'
   common_data: CommonDataItem[]
@@ -76,13 +80,13 @@ export const lessonService = {
     return data.data
   },
 
-  async createLesson(dto: CreateLessonDto): Promise<any> {
+  async createLesson(dto: CreateLessonDto): Promise<LessonDetail> {
     const { data } = await axiosInstance.post('/lessons', dto)
     return data.data
   },
 
-  async updateLesson(id: number, dto: UpdateLessonDto): Promise<any> {
-    const { data } = await axiosInstance.put(`/lessons/${id}`, dto)
+  async updateLesson(dto: UpdateLessonDto): Promise<LessonDetail> {
+    const { data } = await axiosInstance.post('/lessons', dto)
     return data.data
   },
 

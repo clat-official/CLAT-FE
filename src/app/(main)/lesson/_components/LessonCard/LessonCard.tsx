@@ -35,7 +35,7 @@ export default function LessonCard({
     <div className={cardStyle}>
       <div className={chipGroupStyle}>
         <Chip label={academyName} />
-        <Chip variant="active" label={templateName} />
+        {templateName && <Chip variant="active" label={templateName} />}
       </div>
       <Text variant="headingLg">{className}</Text>
       <div className={progressWrapperStyle}>

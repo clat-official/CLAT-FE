@@ -71,9 +71,11 @@ export const classService = {
   },
 
   // 소속 학생 목록 조회
-  async getClassStudents(id: number): Promise<Student[]> {
-    const { data } = await axiosInstance.get(`/classes/${id}/students`)
-    return data.data
+  async getClassStudents(id: number, date?: string): Promise<Student[]> {
+    const { data } = await axiosInstance.get(`/classes/${id}/students`, {
+      params: date ? { date } : undefined,
+    })
+    return data.data.data
   },
 
   // 학생 추가
