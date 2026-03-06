@@ -101,7 +101,13 @@ export default function useLessonDetail(lessonId: number) {
     }
   }, [lessonId, refreshKey])
 
-  const inputCount = students.filter((s) => s.attendance !== null).length
+  const inputCount = students.filter((s) => {
+    if (s.attendance === null) return false
+    return s.items.every((item) => {
+      if (item.is_completed !== null) return item.is_completed !== null
+      return item.value.trim() !== ''
+    })
+  }).length
 
   const handleExcelDownload = () => {
     if (!lesson || !template) return

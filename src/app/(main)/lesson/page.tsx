@@ -121,7 +121,7 @@ export default function LessonPage() {
               academyName={lesson.academy_name}
               templateName={lesson.template_name}
               className={lesson.class_name}
-              progress={lesson.progress_rate}
+              progress={lesson.progress_rate * 100}
               totalStudents={lesson.total_students}
               inputCount={Math.round((lesson.total_students * lesson.progress_rate) / 100)}
               isDone={recordId !== null}
