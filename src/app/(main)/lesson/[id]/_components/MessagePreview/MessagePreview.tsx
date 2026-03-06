@@ -1,32 +1,47 @@
-import { useState } from 'react'
+'use client'
+
+import { useEffect, useState } from 'react'
 import Text from '@/components/common/Text'
 import Dropdown from '@/components/common/Dropdown'
 import CloseIcon from '@/assets/icons/icon-close.svg'
-import { generateStudentMessage } from '@/lib/generateStudentMessage'
-import type { LessonStudent } from '@/types/lessonStudent'
-import type { MessageContext } from '@/lib/generateStudentMessage'
+import { lessonService } from '@/services/lesson'
 import {
   backdrop, drawer, drawerClosing, header, content,
   dropdownTrigger, messagePreview, closeButtonStyle,
 } from './MessagePreview.css'
 
+interface PreviewStudent {
+  student_id: number
+  student_name: string
+  phone: string
+  parent_phone: string
+  message: string
+}
+
 interface MessagePreviewProps {
   isOpen: boolean
   onClose: () => void
-  commonValues: Record<number, string>
-  students: LessonStudent[]
-  context: MessageContext
+  lessonId: number
 }
 
-export default function MessagePreview({
-  isOpen, onClose, commonValues, students, context
-}: MessagePreviewProps) {
-  const [selectedStudentId, setSelectedStudentId] = useState<string>(String(students[0]?.id))
+export default function MessagePreview({ isOpen, onClose, lessonId }: MessagePreviewProps) {
+  const [students, setStudents] = useState<PreviewStudent[]>([])
+  const [selectedStudentId, setSelectedStudentId] = useState<string>('')
   const [isClosing, setIsClosing] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) return
+    lessonService.previewLesson(lessonId).then((res) => {
+      setStudents(res.data)
+      if (res.data.length > 0) {
+        setSelectedStudentId(String(res.data[0].student_id))
+      }
+    })
+  }, [isOpen, lessonId])
 
   if (!isOpen && !isClosing) return null
 
-  const selectedStudent = students.find(s => String(s.id) === selectedStudentId)
+  const selectedStudent = students.find((s) => String(s.student_id) === selectedStudentId)
 
   const handleClose = () => setIsClosing(true)
 
@@ -53,14 +68,14 @@ export default function MessagePreview({
 
         <div className={content}>
           <Dropdown
-            options={students.map(s => ({ label: s.name, value: String(s.id) }))}
+            options={students.map((s) => ({ label: s.student_name, value: String(s.student_id) }))}
             value={selectedStudentId}
             onChange={setSelectedStudentId}
             triggerClassName={dropdownTrigger}
+            noBorder
           />
-
           <div className={messagePreview}>
-            {selectedStudent ? generateStudentMessage(selectedStudent, commonValues, context) : ''}
+            {selectedStudent?.message ?? ''}
           </div>
         </div>
       </div>

@@ -15,84 +15,87 @@ export default function useLessonDetail(lessonId: number) {
   const [students, setStudents] = useState<LessonStudent[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [error, setError] = useState<'TEMPLATE_NOT_FOUND' | null>(null)
   const messagePreview = useDisclosure()
 
-  const refetch = () => setRefreshKey((k) => k + 1)
+  const refetch = () => {
+    setError(null)
+    setRefreshKey((k) => k + 1)
+  }
 
   useEffect(() => {
     if (!lessonId) return
     setIsLoading(true)
     let cancelled = false
 
-    lessonService.getLesson(lessonId).then(async (data) => {
-      if (cancelled) return
-      setLesson(data)
+    lessonService
+      .getLesson(lessonId)
+      .then(async (data) => {
+        if (cancelled) return
+        setLesson(data)
 
-      // common_data 초기값 세팅
-      const values: Record<number, string> = {}
-      data.common_data.forEach((item) => {
-        values[item.template_item_id] = item.value
-      })
-      setCommonValues(values)
+        const values: Record<number, string> = {}
+        data.common_data.forEach((item) => {
+          values[item.template_item_id] = item.value
+        })
+        setCommonValues(values)
 
-      // 템플릿 상세 조회
-      const tmpl = await templateService.getTemplate(data.template_id)
-      setTemplate(tmpl)
+        try {
+          const tmpl = await templateService.getTemplate(data.template_id)
+          setTemplate(tmpl)
 
-      // 출결 아이템
-      const attendanceItem = tmpl.items.find((i) => i.is_default_attendance)
+          const attendanceItem = tmpl.items.find((i) => i.is_default_attendance)
+          const individualItems = tmpl.items.filter((i) => !i.is_common && !i.is_default_attendance)
+          const classStudents = await classService.getClassStudents(data.class_id, data.lesson_date)
+          const studentDataMap = new Map(data.student_data.map((sd) => [sd.student_id, sd.items]))
 
-      // 동적 아이템 목록 (개별, 출결 제외)
-      const individualItems = tmpl.items.filter((i) => !i.is_common && !i.is_default_attendance)
+          const validStudentIds =
+            data.student_data.length > 0
+              ? new Set(data.student_data.map((sd) => sd.student_id))
+              : null
+          const baseStudents = validStudentIds
+            ? classStudents.filter((s) => validStudentIds.has(s.id))
+            : classStudents
 
-      // 반 소속 학생 목록 조회 (레슨 날짜 기준)
-      const classStudents = await classService.getClassStudents(data.class_id, data.lesson_date)
+          const initialized: LessonStudent[] = baseStudents.map((s) => {
+            const existingItems = studentDataMap.get(s.id) ?? []
+            const attendanceRaw = attendanceItem
+              ? (existingItems.find((ei) => ei.template_item_id === attendanceItem.id)?.value ?? null)
+              : null
+            const attendance: LessonStudent['attendance'] =
+              attendanceRaw === '출석' || attendanceRaw === '지각' || attendanceRaw === '결석'
+                ? attendanceRaw
+                : null
 
-      // student_data를 Map으로 변환
-      const studentDataMap = new Map(
-        data.student_data.map((sd) => [sd.student_id, sd.items])
-      )
-
-      // 레슨에 기존 student_data가 있으면 해당 학생만 사용
-      // (레슨 날짜 기준 반 소속 검증 에러 방지)
-      const validStudentIds = data.student_data.length > 0
-        ? new Set(data.student_data.map((sd) => sd.student_id))
-        : null
-      const baseStudents = validStudentIds
-        ? classStudents.filter((s) => validStudentIds.has(s.id))
-        : classStudents
-
-      // LessonStudent 초기화
-      const initialized: LessonStudent[] = baseStudents.map((s) => {
-        const existingItems = studentDataMap.get(s.id) ?? []
-
-        // 출결 복원
-        const attendanceRaw = attendanceItem
-          ? existingItems.find((ei) => ei.template_item_id === attendanceItem.id)?.value ?? null
-          : null
-        const attendance: LessonStudent['attendance'] =
-          attendanceRaw === '출석' || attendanceRaw === '지각' || attendanceRaw === '결석'
-            ? attendanceRaw
-            : null
-
-        return {
-          id: s.id,
-          name: s.name,
-          attendance,
-          items: individualItems.map((item) => {
-            const existing = existingItems.find((ei) => ei.template_item_id === item.id)
             return {
-              template_item_id: item.id,
-              value: existing?.value ?? '',
-              is_completed: existing?.is_completed ?? null,
+              id: s.id,
+              name: s.name,
+              attendance,
+              items: individualItems.map((item) => {
+                const existing = existingItems.find((ei) => ei.template_item_id === item.id)
+                return {
+                  template_item_id: item.id,
+                  value: existing?.value ?? '',
+                  is_completed: existing?.is_completed ?? null,
+                }
+              }),
             }
-          }),
+          })
+          setStudents(initialized)
+        } catch (err: any) {
+          if (cancelled) return
+          if (err?.response?.data?.error?.code === 'TEMPLATE_NOT_FOUND') {
+            setError('TEMPLATE_NOT_FOUND')
+          }
         }
       })
-      setStudents(initialized)
-    }).finally(() => { if (!cancelled) setIsLoading(false) })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false)
+      })
 
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [lessonId, refreshKey])
 
   const inputCount = students.filter((s) => s.attendance !== null).length
@@ -101,7 +104,9 @@ export default function useLessonDetail(lessonId: number) {
     if (!lesson || !template) return
     exportLessonExcel({
       title: `${format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko })} ${lesson.class_name} 수업 결과`,
-      commonItems: template.items.filter((i) => i.is_common).map((i) => ({ id: i.id, label: i.name })),
+      commonItems: template.items
+        .filter((i) => i.is_common)
+        .map((i) => ({ id: i.id, label: i.name })),
       commonValues,
       students,
       context: {
@@ -117,6 +122,7 @@ export default function useLessonDetail(lessonId: number) {
     lesson,
     setLesson,
     template,
+    error,
     commonValues,
     setCommonValues,
     students,

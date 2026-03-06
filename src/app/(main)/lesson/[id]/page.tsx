@@ -7,7 +7,6 @@ import Button from '@/components/common/Button'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import DownloadIcon from '@/assets/icons/icon-download.svg'
 import SaveIcon from '@/assets/icons/icon-save.svg'
-import EditIcon from '@/assets/icons/icon-edit.svg'
 import ChevronDownIcon from '@/assets/icons/icon-chevron-down.svg'
 import MessageIcon from '@/assets/icons/icon-message.svg'
 import LessonTable from './_components/LessonTableSection/LessonTableSection'
@@ -21,8 +20,6 @@ import {
   headerStyle,
   footerStyle,
   sectionStyle,
-  templateSectionStyle,
-  templateLabelRowStyle,
   backButtonStyle,
   headerLeftStyle,
   headerButtonGroupStyle,
@@ -44,6 +41,7 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
   const {
     lesson,
     template,
+    error,
     commonValues,
     setCommonValues,
     students,
@@ -63,7 +61,6 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
     if (!lesson || !template) return
     try {
       const attendanceItem = template.items.find((i) => i.is_default_attendance)
-
       await lessonService.updateLesson({
         lesson_id: lessonId,
         class_id: lesson.class_id,
@@ -94,7 +91,6 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
           ],
         })),
       })
-
       addToast({ variant: 'success', message: '저장됐어요.' })
     } catch {
       addToast({ variant: 'error', message: '저장에 실패했어요.' })
@@ -107,15 +103,17 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
     confirmModal.open()
   }
 
-  const handleTemplateChange = async () => {
-    if (!lesson || !pendingTemplateId) return
+  const handleTemplateChange = async (templateId?: number) => {
+    const targetId = templateId ?? pendingTemplateId
+    if (!lesson || !targetId) return
     confirmModal.close()
+    templateModal.close()
     try {
       await lessonService.updateLesson({
         lesson_id: lessonId,
         class_id: lesson.class_id,
         lesson_date: lesson.lesson_date,
-        template_id: pendingTemplateId,
+        template_id: targetId,
         status: 'DRAFT',
         common_data: [],
         student_data: students.map((s) => ({ student_id: s.id, items: [] })),
@@ -128,7 +126,54 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
     }
   }
 
-  if (isLoading || !lesson || !template) return null
+  if (isLoading || !lesson) return null
+
+  // 템플릿 삭제된 경우
+  if (error === 'TEMPLATE_NOT_FOUND') {
+    return (
+      <div className={pageStyle}>
+        <div className={headerStyle}>
+          <div className={headerLeftStyle}>
+            <button onClick={() => router.push('/lesson')} className={backButtonStyle}>
+              <ArrowLeftIcon width={24} height={24} />
+            </button>
+            <Text variant="display" as="h1">
+              {format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko })}{' '}
+              {lesson.class_name}
+            </Text>
+          </div>
+        </div>
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '16px',
+            minHeight: 'calc(100vh - 300px)',
+          }}
+        >
+          <Text variant="headingMd">템플릿이 삭제됐어요</Text>
+          <Text variant="bodyLg" color="gray500">
+            다른 템플릿을 선택해주세요
+          </Text>
+          <Button variant="primary" size="md" onClick={templateModal.open}>
+            템플릿 선택
+          </Button>
+        </div>
+        <TemplateSelectModal
+          isOpen={templateModal.isOpen}
+          onClose={templateModal.close}
+          onConfirm={handleTemplateChange}
+          title="템플릿 선택"
+          confirmLabel="선택"
+        />
+      </div>
+    )
+  }
+
+  if (!template) return null
 
   const commonItems = template.items
     .filter((i) => i.is_common)
@@ -206,19 +251,6 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
         </Button>
       </div>
 
-      <MessagePreview
-        isOpen={messagePreview.isOpen}
-        onClose={messagePreview.close}
-        commonValues={commonValues}
-        students={students}
-        context={{
-          academyName: lesson.academy_name,
-          teacherName: '',
-          className: lesson.class_name,
-          lessonDate: format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko }),
-        }}
-      />
-
       <TemplateSelectModal
         isOpen={templateModal.isOpen}
         onClose={templateModal.close}
@@ -234,11 +266,17 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
           confirmModal.close()
           setPendingTemplateId(null)
         }}
-        onConfirm={handleTemplateChange}
+        onConfirm={() => handleTemplateChange()}
         title="템플릿을 변경할까요?"
         descriptions={['템플릿을 변경하면 입력한 내용이 모두 사라져요.']}
         confirmLabel="변경"
         confirmVariant="danger"
+      />
+
+      <MessagePreview
+        isOpen={messagePreview.isOpen}
+        onClose={messagePreview.close}
+        lessonId={lessonId}
       />
     </div>
   )

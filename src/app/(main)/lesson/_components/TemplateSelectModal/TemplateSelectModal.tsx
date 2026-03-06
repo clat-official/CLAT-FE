@@ -15,6 +15,8 @@ import {
   templateColStyle,
   templateColTitleStyle,
   itemChipGroupStyle,
+  chipGroupStyle,
+  chipButtonRecipe,
   currentTemplateNameStyle,
 } from './TemplateSelectModal.css'
 
@@ -79,19 +81,48 @@ export default function TemplateSelectModal({
     .map((t) => ({ label: t.name, value: String(t.id) }))
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size="md">
+    <Modal isOpen={isOpen} onClose={handleClose} size={currentTemplateId ? 'md' : 'sm'}>
       <div className={modalContentStyle}>
-        <Text variant="headingLg">{title}</Text>
+        <Text variant="headingMd">{title}</Text>
 
-        <div className={templateCompareStyle}>
-          {/* 현재 */}
-          <div className={templateColStyle}>
-            <span className={templateColTitleStyle}>현재</span>
-            {currentDetail ? (
-              <>
-                <div className={currentTemplateNameStyle}>{currentDetail.name}</div>
+        {currentTemplateId ? (
+          // 변경 모드 - 현재 vs 변경 후 비교
+          <div className={templateCompareStyle}>
+            <div className={templateColStyle}>
+              <span className={templateColTitleStyle}>현재</span>
+              {currentDetail ? (
+                <>
+                  <div className={currentTemplateNameStyle}>{currentDetail.name}</div>
+                  <div className={itemChipGroupStyle}>
+                    {currentDetail.items.map((item) => (
+                      <Chip
+                        key={item.id}
+                        label={item.name}
+                        variant={item.is_common ? 'active' : 'default'}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <Text variant="bodyMd" color="gray500">-</Text>
+              )}
+            </div>
+
+            <ArrowRightIcon width={20} height={20} style={{ color: '#9492A9', flexShrink: 0, marginTop: '28px' }} />
+
+            <div className={templateColStyle}>
+              <span className={templateColTitleStyle}>변경 후</span>
+              <Dropdown
+                options={dropdownOptions}
+                value={selectedId ? String(selectedId) : ''}
+                onChange={handleSelect}
+                placeholder="템플릿 선택"
+                fullWidth
+                noBorder
+              />
+              {selectedDetail && (
                 <div className={itemChipGroupStyle}>
-                  {currentDetail.items.map((item) => (
+                  {selectedDetail.items.map((item) => (
                     <Chip
                       key={item.id}
                       label={item.name}
@@ -99,32 +130,23 @@ export default function TemplateSelectModal({
                     />
                   ))}
                 </div>
-              </>
-            ) : (
-              <Text variant="bodyMd" color="gray500">
-                -
-              </Text>
-            )}
+              )}
+            </div>
           </div>
-
-          {/* 화살표 */}
-          <ArrowRightIcon
-            width={20}
-            height={20}
-            style={{ color: '#9492A9', flexShrink: 0, marginTop: '28px' }}
-          />
-
-          {/* 변경 후 */}
-          <div className={templateColStyle}>
-            <span className={templateColTitleStyle}>변경 후</span>
-            <Dropdown
-              options={dropdownOptions}
-              value={selectedId ? String(selectedId) : ''}
-              onChange={handleSelect}
-              placeholder="템플릿 선택"
-              fullWidth
-              noBorder
-            />
+        ) : (
+          // 최초 선택 모드 - 칩 목록
+          <>
+            <div className={chipGroupStyle}>
+              {templates.map((t) => (
+                <button
+                  key={t.id}
+                  className={chipButtonRecipe({ selected: selectedId === t.id })}
+                  onClick={() => handleSelect(String(t.id))}
+                >
+                  {t.name}
+                </button>
+              ))}
+            </div>
             {selectedDetail && (
               <div className={itemChipGroupStyle}>
                 {selectedDetail.items.map((item) => (
@@ -136,16 +158,16 @@ export default function TemplateSelectModal({
                 ))}
               </div>
             )}
-          </div>
-        </div>
+          </>
+        )}
 
         <div className={actionsStyle}>
-          <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>
+          <Button variant="ghost" size="md" fullWidth onClick={handleClose}>
             취소
           </Button>
           <Button
             variant="primary"
-            size="lg"
+            size="md"
             fullWidth
             onClick={handleConfirm}
             disabled={!selectedId || isLoading}
