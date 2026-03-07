@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { auth } from '@/services/auth'
 import {
@@ -17,7 +17,7 @@ import Text from '@/components/common/Text/Text'
 import Logo from '@/assets/logo/logo-full.svg'
 import { colors } from '@/styles/tokens/colors'
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -110,5 +110,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   )
 }

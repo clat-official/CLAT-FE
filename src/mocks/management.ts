@@ -32,11 +32,11 @@ export const MOCK_CLASSES = [
 export const MOCK_ALL_STUDENTS: Student[] = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
   name: '홍길동',
-  studentPhone: '010-1234-5678',
-  parentPhone: '010-1234-5678',
-  completionRate: i === 1 ? 87 : i === 2 ? 17 : 47,
-  remaining: i === 1 ? 1 : i === 2 ? 5 : 3,
-  classes: ['미적분 A반', '미적분 B반'],
+  phone: '010-1234-5678',
+  parent_phone: '010-1234-5678',
+  completion_rate: 0,
+  total_incomplete_items: 0,
+  classes: [],
 }))
 
 export const MOCK_CLASS = {
@@ -51,11 +51,11 @@ export const MOCK_CLASS = {
 export const MOCK_CLASS_STUDENTS: Student[] = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
   name: '홍길동',
-  studentPhone: '010-1234-5678',
-  parentPhone: '010-1234-5678',
-  completionRate: 47,
-  remaining: 3,
-  memo: '',
+  phone: '010-1234-5678',
+  parent_phone: '010-1234-5678',
+  completion_rate: 0,
+  total_incomplete_items: 0,
+  classes: [],
 }))
 
 // AddStudentModal에서 반에 추가할 수 있는 학생 목록

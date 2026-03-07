@@ -54,6 +54,7 @@ export const MOCK_LESSON_STUDENTS: LessonStudent[] = Array.from({ length: 6 }, (
   answerNote: null,
   score: '',
   memo: '',
+  items: [],
 }))
 
 // AddLessonModal에서 수업을 추가할 수 있는 반 목록
