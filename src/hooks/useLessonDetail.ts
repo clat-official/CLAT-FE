@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { LessonStudent } from '@/types/lessonStudent'
-import { lessonService, type LessonDetail, type LessonItemDetail } from '@/services/lesson'
+import { lessonService, type LessonDetail } from '@/services/lesson'
 import { classService } from '@/services/class'
 import { exportLessonExcel } from '@/lib/exportExcel'
 import { format } from 'date-fns'
@@ -32,32 +32,37 @@ export default function useLessonDetail(lessonId: number) {
         if (cancelled) return
         setLesson(data)
 
+        // 공통 값 매핑
         const values: Record<number, string> = {}
         data.common_data.forEach((item) => {
           values[item.template_item_id] = item.value
         })
         setCommonValues(values)
 
-        const attendanceItem = data.items.find((i) => i.item_type === 'ATTENDANCE')
         const individualItems = data.items.filter(
           (i) => !i.is_common && i.item_type !== 'ATTENDANCE'
         )
+        const attendanceItems = data.items.filter((i) => i.item_type === 'ATTENDANCE')
 
+        // 이름만 classStudents에서 가져오기
         const classStudents = await classService.getClassStudents(data.class_id, data.lesson_date)
-        const studentDataMap = new Map(data.student_data.map((sd) => [sd.student_id, sd.items]))
+        const nameMap = new Map(classStudents.map((s) => [s.id, s.name]))
 
-        const validStudentIds =
+        const baseStudentIds =
           data.student_data.length > 0
-            ? new Set(data.student_data.map((sd) => sd.student_id))
-            : null
-        const baseStudents = validStudentIds
-          ? classStudents.filter((s) => validStudentIds.has(s.id))
-          : classStudents
+            ? data.student_data.map((sd) => sd.student_id)
+            : classStudents.map((s) => s.id)
 
-        const initialized: LessonStudent[] = baseStudents.map((s) => {
-          const existingItems = studentDataMap.get(s.id) ?? []
+        const initialized: LessonStudent[] = baseStudentIds.map((studentId) => {
+          const sd = data.student_data.find((s) => s.student_id === studentId)
+          const sdItems = sd?.items ?? []
+
+          const attendanceItem =
+            attendanceItems.find((ai) => sdItems.some((si) => si.template_item_id === ai.id)) ??
+            attendanceItems[0]
+
           const attendanceRaw = attendanceItem
-            ? (existingItems.find((ei) => ei.template_item_id === attendanceItem.id)?.value ?? null)
+            ? (sdItems.find((si) => si.template_item_id === attendanceItem.id)?.value ?? null)
             : null
           const attendance: LessonStudent['attendance'] =
             attendanceRaw === '출석' || attendanceRaw === '지각' || attendanceRaw === '결석'
@@ -65,11 +70,11 @@ export default function useLessonDetail(lessonId: number) {
               : null
 
           return {
-            id: s.id,
-            name: s.name,
+            id: studentId,
+            name: nameMap.get(studentId) ?? '',
             attendance,
             items: individualItems.map((item) => {
-              const existing = existingItems.find((ei) => ei.template_item_id === item.id)
+              const existing = sdItems.find((si) => si.template_item_id === item.id)
               return {
                 template_item_id: item.id,
                 value: existing?.value ?? '',
@@ -79,7 +84,14 @@ export default function useLessonDetail(lessonId: number) {
             }),
           }
         })
+
         setStudents(initialized)
+      })
+      .catch((err: any) => {
+        if (cancelled) return
+        if (err?.response?.data?.error?.code === 'TEMPLATE_NOT_FOUND') {
+          setError('TEMPLATE_NOT_FOUND')
+        }
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false)
