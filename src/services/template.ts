@@ -33,6 +33,7 @@ export interface TemplateDetail extends Template {
 }
 
 export interface CreateTemplateItemDto {
+  id?: number
   name: string
   item_type: string
   is_common: boolean
@@ -84,6 +85,7 @@ export const toEditorItems = (detail: TemplateDetail) => {
     isInMessage: item.include_in_message,
     category: item.is_common ? 'common' : 'individual',
     itemType: API_TO_ITEM_TYPE[item.item_type] ?? 'text',
+    choices: item.options?.map((o: any) => (typeof o === 'string' ? o : o.label)) ?? [],
   })
 
   // 출결 아이템을 EditorItem으로 변환 (attendance 타입)
