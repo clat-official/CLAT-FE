@@ -14,6 +14,16 @@ export interface LessonSummary {
   is_adhoc: boolean
 }
 
+export interface LessonItemDetail {
+  id: number
+  name: string
+  item_type: 'TEXT' | 'NUMBER' | 'SELECT' | 'COMPLETE' | 'ATTENDANCE'
+  is_common: boolean
+  include_in_message: boolean
+  sort_order: number
+  options?: { id: number; label: string; sort_order: number }[]
+}
+
 export interface LessonDetail {
   id: number
   class_id: number
@@ -26,6 +36,7 @@ export interface LessonDetail {
   is_adhoc: boolean
   common_data: CommonDataItem[]
   student_data: StudentData[]
+  items: LessonItemDetail[]
 }
 
 export interface LessonListResponse {

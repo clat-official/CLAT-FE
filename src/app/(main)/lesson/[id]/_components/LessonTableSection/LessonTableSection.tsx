@@ -2,10 +2,9 @@
 
 import CheckIcon from '@/assets/icons/icon-check.svg'
 import type { LessonStudent, Attendance, CompletionStatus } from '@/types/lessonStudent'
-import type { TemplateItemDetail } from '@/services/template'
+import type { LessonItemDetail } from '@/services/lesson'
 import {
   tableStyle,
-  thStyle,
   tdStyle,
   thCompactStyle,
   tdCompactStyle,
@@ -23,7 +22,7 @@ import {
 
 interface LessonTableSectionProps {
   students: LessonStudent[]
-  templateItems: TemplateItemDetail[]
+  templateItems: LessonItemDetail[]
   onChange: (students: LessonStudent[]) => void
 }
 

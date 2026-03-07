@@ -40,7 +40,6 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
 
   const {
     lesson,
-    template,
     error,
     commonValues,
     setCommonValues,
@@ -58,9 +57,9 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
   const [pendingTemplateId, setPendingTemplateId] = useState<number | null>(null)
 
   const handleSave = async () => {
-    if (!lesson || !template) return
+    if (!lesson) return
     try {
-      const attendanceItem = template.items.find((i) => i.item_type === 'ATTENDANCE')
+      const attendanceItem = lesson.items.find((i) => i.item_type === 'ATTENDANCE')
       await lessonService.updateLesson({
         lesson_id: lessonId,
         class_id: lesson.class_id,
@@ -174,9 +173,7 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
     )
   }
 
-  if (!template) return null
-
-  const commonItems = template.items
+  const commonItems = lesson.items
     .filter((i) => i.is_common)
     .map((i) => ({ id: i.id, label: i.name }))
 
@@ -198,7 +195,7 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
             onClick={templateModal.open}
             className={templateChipButtonStyle}
           >
-            {template.name}
+            {lesson.template_name}
           </Button>
         </div>
         <div className={headerButtonGroupStyle}>
@@ -236,7 +233,7 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
       {/* 개별 내용 */}
       <div className={sectionStyle}>
         <Text variant="headingMd">개별 내용</Text>
-        <LessonTable students={students} templateItems={template.items} onChange={setStudents} />
+        <LessonTable students={students} templateItems={lesson.items} onChange={setStudents} />
       </div>
 
       {/* 하단 진행도 */}

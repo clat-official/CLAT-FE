@@ -24,18 +24,12 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   const [templateName, setTemplateName] = useState(initial.name ?? '')
   const [commonItems, setCommonItems] = useState<TemplateItem[]>(initCommon)
   const [individualItems, setIndividualItems] = useState<TemplateItem[]>(initIndividual)
+  const [deletedItemIds, setDeletedItemIds] = useState<number[]>([])
   const [messageOrder, setMessageOrder] = useState<string[]>([
     ...initCommon.map((i) => i.id),
     '__attendance__',
     ...initIndividual.map((i) => i.id),
   ])
-
-  const [originalItemIds] = useState<number[]>(() => {
-    const itemIds = [...(initial.commonItems ?? []), ...(initial.individualItems ?? [])]
-      .map((item) => Number(item.id))
-      .filter((id) => !isNaN(id) && id > 0)
-    return [...itemIds, ...(initial.attendanceItemIds ?? [])]
-  })
 
   const allItemsMap = useMemo(() => {
     const map = new Map<string, TemplateItem>()
@@ -75,14 +69,18 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   const buildItems = (items: TemplateItem[]): CreateTemplateItemDto[] =>
     items
       .filter((item) => item.label.trim() !== '' && item.itemType !== 'attendance')
-      .map((item, index) => ({
-        name: item.label,
-        item_type: ITEM_TYPE_MAP[item.itemType],
-        is_common: item.category === 'common',
-        include_in_message: item.itemType === 'attendance' ? true : item.isInMessage,
-        sort_order: index + 1,
-        options: item.choices ?? [],
-      }))
+      .map((item, index) => {
+        const numericId = Number(item.id)
+        return {
+          ...(numericId > 0 ? { id: numericId } : {}),
+          name: item.label,
+          item_type: ITEM_TYPE_MAP[item.itemType],
+          is_common: item.category === 'common',
+          include_in_message: item.isInMessage,
+          sort_order: index + 1,
+          options: item.choices ?? [],
+        }
+      })
 
   const handleTemplateNameChange = (value: string) => {
     setTemplateName(value)
@@ -125,7 +123,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
       await templateService.updateTemplate(templateId, {
         name: templateName,
         items: [ATTENDANCE_ITEM, ...buildItems([...commonItems, ...individualItems])],
-        deleted_item_ids: originalItemIds,
+        deleted_item_ids: deletedItemIds,
       })
       addToast({ variant: 'success', message: '템플릿이 수정됐어요.' })
       router.push('/template')
@@ -144,6 +142,8 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   }
 
   const handleDeleteCommonItem = (id: string) => {
+    const numericId = Number(id)
+    if (numericId > 0) setDeletedItemIds((prev) => [...prev, numericId])
     setCommonItems((prev) => prev.filter((item) => item.id !== id))
     setMessageOrder((prev) => prev.filter((orderId) => orderId !== id))
   }
@@ -176,6 +176,8 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   }
 
   const handleDeleteIndividualItem = (id: string) => {
+    const numericId = Number(id)
+    if (numericId > 0) setDeletedItemIds((prev) => [...prev, numericId])
     setIndividualItems((prev) => prev.filter((item) => item.id !== id))
     setMessageOrder((prev) => prev.filter((orderId) => orderId !== id))
   }
