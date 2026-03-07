@@ -73,10 +73,9 @@ const API_TO_ITEM_TYPE: Record<string, EditorItem['itemType']> = {
 // API 응답 → useTemplateEditor 초기값 변환
 export const toEditorItems = (detail: TemplateDetail) => {
   const sorted = [...detail.items].sort((a, b) => a.sort_order - b.sort_order)
+  const attendanceItems = sorted.filter((i) => i.item_type === 'ATTENDANCE')
+  const attendanceItemIds = attendanceItems.map((i) => i.id)
   const nonAttendance = sorted.filter((i) => i.item_type !== 'ATTENDANCE')
-  const attendanceItemIds = sorted
-    .filter((i) => i.item_type === 'ATTENDANCE')
-    .map((i) => i.id)
 
   const toItem = (item: TemplateItemDetail): EditorItem => ({
     id: String(item.id),
@@ -86,6 +85,16 @@ export const toEditorItems = (detail: TemplateDetail) => {
     category: item.is_common ? 'common' : 'individual',
     itemType: API_TO_ITEM_TYPE[item.item_type] ?? 'text',
   })
+
+  // 출결 아이템을 EditorItem으로 변환 (attendance 타입)
+  const attendanceEditorItems: EditorItem[] = attendanceItems.map((item) => ({
+    id: String(item.id),
+    label: item.name,
+    isActive: true,
+    isInMessage: item.include_in_message,
+    category: 'individual' as const,
+    itemType: 'attendance' as const,
+  }))
 
   return {
     name: detail.name,

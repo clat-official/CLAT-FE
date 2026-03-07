@@ -98,6 +98,7 @@ function SortableRow({ item, onToggle }: SortableRowProps) {
       <Toggle
         checked={item.isInMessage}
         onChange={() => onToggle(item.id)}
+        disabled={item.itemType === 'attendance'}
       />
     </div>
   )

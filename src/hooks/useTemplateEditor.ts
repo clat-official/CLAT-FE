@@ -26,6 +26,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   const [individualItems, setIndividualItems] = useState<TemplateItem[]>(initIndividual)
   const [messageOrder, setMessageOrder] = useState<string[]>([
     ...initCommon.map((i) => i.id),
+    '__attendance__',
     ...initIndividual.map((i) => i.id),
   ])
 
@@ -38,6 +39,16 @@ export default function useTemplateEditor(initial: InitialData = {}) {
 
   const allItemsMap = useMemo(() => {
     const map = new Map<string, TemplateItem>()
+    // 출결 고정 항목 추가
+    map.set('__attendance__', {
+      id: '__attendance__',
+      label: '출결',
+      isActive: true,
+      isInMessage: true,
+      locked: true,
+      category: 'individual',
+      itemType: 'attendance',
+    })
     for (const item of commonItems) map.set(item.id, item)
     for (const item of individualItems) map.set(item.id, item)
     return map
