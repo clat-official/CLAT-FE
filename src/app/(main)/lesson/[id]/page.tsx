@@ -246,7 +246,10 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
           variant="primary"
           size="sm"
           leftIcon={<MessageIcon width={20} height={20} />}
-          onClick={messagePreview.open}
+          onClick={async () => {
+            await handleSave()
+            messagePreview.open()
+          }}
         >
           문자 미리보기
         </Button>
