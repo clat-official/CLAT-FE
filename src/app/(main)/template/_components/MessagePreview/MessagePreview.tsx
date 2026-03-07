@@ -2,6 +2,7 @@
 
 import Text from '@/components/common/Text'
 import type { TemplateItem } from '../../_types/template'
+import { useUserStore } from '@/stores/userStore'
 import {
   sectionHeaderStyle,
   messageContainerStyle,
@@ -16,17 +17,21 @@ import {
 
 // 추후 온보딩 데이터로 교체
 const DUMMY_ACADEMY = '엘리에듀학원'
-const DUMMY_TEACHER = '윤준용'
 const DUMMY_CLASS = '미적분 A반'
 
 function getDummyValue(item: TemplateItem): string {
   if (item.category === 'common') return '입력 필요'
   switch (item.itemType) {
-    case 'number': return '87'
-    case 'text': return '입력 필요'
-    case 'choice': return item.choices?.[0] ?? '입력 필요'
-    case 'completion': return '완료'
-    default: return '입력 필요'
+    case 'number':
+      return '87'
+    case 'text':
+      return '입력 필요'
+    case 'choice':
+      return item.choices?.[0] ?? '입력 필요'
+    case 'completion':
+      return '완료'
+    default:
+      return '입력 필요'
   }
 }
 
@@ -39,15 +44,14 @@ interface MessagePreviewProps {
   allItemsMap: Map<string, TemplateItem>
 }
 
-export default function MessagePreview({
-  messageOrder,
-  allItemsMap,
-}: MessagePreviewProps) {
+export default function MessagePreview({ messageOrder, allItemsMap }: MessagePreviewProps) {
   const activeItems = messageOrder
     .map((id) => allItemsMap.get(id))
     .filter((item): item is TemplateItem => !!item && item.isActive && item.isInMessage)
 
   const today = formatDate(new Date())
+  const user = useUserStore((s) => s.user)
+  const teacherName = user?.name ?? '강사명'
 
   return (
     <div>
@@ -66,7 +70,7 @@ export default function MessagePreview({
           <div className={lineStyle}>
             <span>안녕하세요,</span>
             <span className={chipStyle}>{DUMMY_ACADEMY}</span>
-            <span className={chipStyle}>{DUMMY_TEACHER}</span>
+            <span className={chipStyle}>{teacherName}</span>
             <span>강사입니다.</span>
           </div>
 

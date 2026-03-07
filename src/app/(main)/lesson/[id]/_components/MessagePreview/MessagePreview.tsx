@@ -5,6 +5,7 @@ import Text from '@/components/common/Text'
 import Dropdown from '@/components/common/Dropdown'
 import CloseIcon from '@/assets/icons/icon-close.svg'
 import { lessonService, type LessonDetail } from '@/services/lesson'
+import { useUserStore } from '@/stores/userStore'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import {
@@ -37,6 +38,8 @@ export default function MessagePreview({ isOpen, onClose, lessonId, lesson }: Me
   const [students, setStudents] = useState<PreviewStudent[]>([])
   const [selectedStudentId, setSelectedStudentId] = useState<string>('')
   const [isClosing, setIsClosing] = useState(false)
+  const user = useUserStore((s) => s.user)
+  const teacherName = user?.name ? `${user.name} ` : ''
 
   useEffect(() => {
     if (!isOpen) return
@@ -62,7 +65,7 @@ export default function MessagePreview({ isOpen, onClose, lessonId, lesson }: Me
   }
 
   const formatMessage = (message: string) => {
-    return `안녕하세요, ${lesson.academy_name} 강사입니다.\n\n${lesson.class_name} ${format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko })} 수업 결과를 안내드립니다.\n\n${message}\n\n감사합니다.`
+    return `안녕하세요, ${lesson.academy_name} ${teacherName}강사입니다.\n\n${lesson.class_name} ${format(new Date(lesson.lesson_date), 'M월 d일(E)', { locale: ko })} 수업 결과를 안내드립니다.\n\n${message}\n\n감사합니다.`
   }
 
   return (
