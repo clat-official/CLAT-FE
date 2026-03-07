@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { auth } from '@/services/auth'
 import {
@@ -101,17 +100,13 @@ export default function LoginPage() {
 
         {/* 하단 링크 */}
         <div className={footerLinkStyle}>
-          <Link href="/signup">
-            <Text variant="bodyLg" color="gray500">
-              회원가입
-            </Text>
-          </Link>
+          <Text variant="bodyLg" color="gray300">
+            회원가입
+          </Text>
           <div style={{ width: 1, height: 16, backgroundColor: colors.gray300 }} />
-          <Link href="/find-password">
-            <Text variant="bodyLg" color="gray500">
-              비밀번호 찾기
-            </Text>
-          </Link>
+          <Text variant="bodyLg" color="gray300">
+            비밀번호 찾기
+          </Text>
         </div>
       </div>
     </div>
