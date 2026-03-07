@@ -28,6 +28,13 @@ export interface StudentListResponse {
   meta: { total: number }
 }
 
+export interface BulkCreateStudentDto {
+  name: string
+  phone: string
+  parent_phone: string
+  school_name: string
+}
+
 export const studentService = {
   async getStudents(params?: { search?: string; school?: string }): Promise<StudentListResponse> {
     const { data } = await axiosInstance.get('/students', { params })
@@ -56,6 +63,14 @@ export const studentService = {
   async completeItem(itemId: number): Promise<void> {
     await axiosInstance.patch(`/lesson-student-data/${itemId}/complete`, {
       is_completed: true,
+    })
+  },
+
+  async bulkCreateStudents(file: File): Promise<void> {
+    const formData = new FormData()
+    formData.append('file', file)
+    await axiosInstance.post('/students/bulk', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     })
   },
 }

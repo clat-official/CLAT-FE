@@ -191,7 +191,15 @@ function ManagementContent() {
           <BulkUploadModal
             isOpen={bulkUpload.isOpen}
             onClose={bulkUpload.close}
-            onConfirm={(file) => console.log('업로드', file)}
+            onConfirm={async (file) => {
+              try {
+                await studentService.bulkCreateStudents(file)
+                addToast({ variant: 'success', message: '학생이 등록됐어요.' })
+                studentService.getStudents().then((res) => setStudents(res.data))
+              } catch {
+                addToast({ variant: 'error', message: '엑셀 업로드에 실패했어요.' })
+              }
+            }}
           />
           <AddStudentFormModal
             isOpen={addStudent.isOpen}
