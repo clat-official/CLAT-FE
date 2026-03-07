@@ -20,6 +20,7 @@ const DUMMY_ACADEMY = '엘리에듀학원'
 const DUMMY_CLASS = '미적분 A반'
 
 function getDummyValue(item: TemplateItem): string {
+  if (item.itemType === 'attendance') return '출석'
   if (item.category === 'common') return '입력 필요'
   switch (item.itemType) {
     case 'number':
