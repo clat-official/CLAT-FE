@@ -1,14 +1,13 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import * as XLSX from 'xlsx'
 import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
 import Button from '@/components/common/Button'
 import Modal from '@/components/common/Modal'
 import useToggleArray from '@/hooks/useToggleArray'
 import { classService, type Class } from '@/services/class'
-import { studentService, type BulkCreateStudentDto } from '@/services/student'
+import { studentService } from '@/services/student'
 import { useToastStore } from '@/stores/toastStore'
 import {
   fieldGroupStyle,
@@ -106,48 +105,32 @@ export default function AddStudentFormModal({
   }
 
   const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('파일 선택됨', e.target.files?.[0])
     const file = e.target.files?.[0]
     if (!file) return
-
     try {
       setIsBulkLoading(true)
-      const buffer = await file.arrayBuffer()
-      const workbook = XLSX.read(buffer, { type: 'array' })
-      const sheet = workbook.Sheets[workbook.SheetNames[0]]
-      const rows: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1 })
-
-      // 헤더 제외, 최대 1000행
-      const dataRows = rows.slice(1, 1001).filter((row) => row[0])
-
-      const students: BulkCreateStudentDto[] = dataRows.map((row) => ({
-        name: String(row[0] ?? '').trim(),
-        phone: String(row[1] ?? '').trim(),
-        parent_phone: String(row[2] ?? '').trim(),
-        school_name: String(row[3] ?? '').trim(),
-      }))
-
-      if (students.length === 0) {
-        addToast({ variant: 'error', message: '등록할 학생 데이터가 없어요.' })
-        return
-      }
-
-      await studentService.bulkCreateStudents(students)
-      addToast({ variant: 'success', message: `${students.length}명의 학생이 등록됐어요.` })
+      await studentService.bulkCreateStudents(file)
+      addToast({ variant: 'success', message: '학생이 등록됐어요.' })
       onBulkConfirm?.()
       handleClose()
-    } catch (err) {
+    } catch {
       addToast({ variant: 'error', message: '엑셀 업로드에 실패했어요.' })
     } finally {
       setIsBulkLoading(false)
-      // input 초기화 (같은 파일 재업로드 가능하도록)
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
-      <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div
+        style={{
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <Text variant="headingLg" as="h2">
           {mode === 'add' ? '학생 등록' : '학생 정보 수정'}
         </Text>
