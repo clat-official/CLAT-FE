@@ -114,9 +114,11 @@ export default function StudentTable({
                   <span className={remainingTextStyle} style={{ color }}>
                     {student.completion_rate === 1
                       ? '모두 완료'
-                      : student.completion_rate === 0 && student.total_incomplete_items === 0
-                        ? null
-                        : `${student.total_incomplete_items}개 남음`}
+                      : student.total_incomplete_items == null
+                        ? '-'
+                        : student.total_incomplete_items === 0
+                          ? null
+                          : `${student.total_incomplete_items}개 남음`}
                   </span>
                   <button
                     className={deleteButtonStyle}
