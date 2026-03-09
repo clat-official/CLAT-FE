@@ -88,21 +88,17 @@ export const toEditorItems = (detail: TemplateDetail) => {
     choices: item.options?.map((o: any) => (typeof o === 'string' ? o : o.label)) ?? [],
   })
 
-  // 출결 아이템을 EditorItem으로 변환 (attendance 타입)
-  const attendanceEditorItems: EditorItem[] = attendanceItems.map((item) => ({
-    id: String(item.id),
-    label: item.name,
-    isActive: true,
-    isInMessage: item.include_in_message,
-    category: 'individual' as const,
-    itemType: 'attendance' as const,
-  }))
+  // sort_order 기준으로 messageOrder 복원 (출결은 __attendance__로 치환)
+  const messageOrder = sorted
+    .map((i) => (i.item_type === 'ATTENDANCE' ? '__attendance__' : String(i.id)))
+    .filter((id, index, self) => self.indexOf(id) === index) // 중복 제거
 
   return {
     name: detail.name,
     commonItems: nonAttendance.filter((i) => i.is_common).map(toItem),
     individualItems: nonAttendance.filter((i) => !i.is_common).map(toItem),
     attendanceItemIds,
+    messageOrder,
   }
 }
 

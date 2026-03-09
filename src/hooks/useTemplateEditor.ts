@@ -10,6 +10,7 @@ interface InitialData {
   commonItems?: TemplateItem[]
   individualItems?: TemplateItem[]
   attendanceItemIds?: number[]
+  messageOrder?: string[]
 }
 
 export default function useTemplateEditor(initial: InitialData = {}) {
@@ -25,15 +26,16 @@ export default function useTemplateEditor(initial: InitialData = {}) {
   const [commonItems, setCommonItems] = useState<TemplateItem[]>(initCommon)
   const [individualItems, setIndividualItems] = useState<TemplateItem[]>(initIndividual)
   const [deletedItemIds, setDeletedItemIds] = useState<number[]>([])
-  const [messageOrder, setMessageOrder] = useState<string[]>([
-    ...initCommon.map((i) => i.id),
-    '__attendance__',
-    ...initIndividual.map((i) => i.id),
-  ])
+  const [messageOrder, setMessageOrder] = useState<string[]>(
+    initial.messageOrder ?? [
+      ...initCommon.map((i) => i.id),
+      '__attendance__',
+      ...initIndividual.map((i) => i.id),
+    ]
+  )
 
   const allItemsMap = useMemo(() => {
     const map = new Map<string, TemplateItem>()
-    // 출결 고정 항목 추가
     map.set('__attendance__', {
       id: '__attendance__',
       label: '출결',
@@ -57,27 +59,19 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     attendance: 'ATTENDANCE',
   }
 
-  const ATTENDANCE_ITEM: CreateTemplateItemDto = {
-    name: '출결',
-    item_type: 'ATTENDANCE',
-    is_common: false,
-    include_in_message: true,
-    sort_order: 0,
-    options: [],
-  }
-
   const buildItems = (items: TemplateItem[]): CreateTemplateItemDto[] =>
     items
       .filter((item) => item.label.trim() !== '' && item.itemType !== 'attendance')
-      .map((item, index) => {
+      .map((item) => {
         const numericId = Number(item.id)
+        const sortOrder = messageOrder.indexOf(item.id)
         return {
           ...(numericId > 0 ? { id: numericId } : {}),
           name: item.label,
           item_type: ITEM_TYPE_MAP[item.itemType],
           is_common: item.category === 'common',
           include_in_message: item.isInMessage,
-          sort_order: index + 1,
+          sort_order: sortOrder >= 0 ? sortOrder : 999,
           options: item.choices ?? [],
         }
       })
@@ -95,6 +89,15 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     }
     setHasNameError(false)
     setIsSaving(true)
+    const attendanceSortOrder = messageOrder.indexOf('__attendance__')
+    const ATTENDANCE_ITEM: CreateTemplateItemDto = {
+      name: '출결',
+      item_type: 'ATTENDANCE',
+      is_common: false,
+      include_in_message: true,
+      sort_order: attendanceSortOrder >= 0 ? attendanceSortOrder : 0,
+      options: [],
+    }
     try {
       await templateService.createTemplate({
         name: templateName,
@@ -119,6 +122,15 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     }
     setHasNameError(false)
     setIsSaving(true)
+    const attendanceSortOrder = messageOrder.indexOf('__attendance__')
+    const ATTENDANCE_ITEM: CreateTemplateItemDto = {
+      name: '출결',
+      item_type: 'ATTENDANCE',
+      is_common: false,
+      include_in_message: true,
+      sort_order: attendanceSortOrder >= 0 ? attendanceSortOrder : 0,
+      options: [],
+    }
     try {
       await templateService.updateTemplate(templateId, {
         name: templateName,
