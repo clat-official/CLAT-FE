@@ -11,7 +11,3 @@ export const requiredMarkStyle = style({
   color: vars.color.semantic.error[500],
 })
 
-export const counterStyle = style({
-  alignSelf: 'flex-end',
-  color: vars.color.gray[500],
-})

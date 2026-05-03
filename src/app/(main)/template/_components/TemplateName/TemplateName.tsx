@@ -1,6 +1,6 @@
 import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
-import { sectionStyle, requiredMarkStyle, counterStyle } from './TemplateName.css'
+import { sectionStyle, requiredMarkStyle } from './TemplateName.css'
 
 const MAX_LENGTH = 20
 
@@ -22,10 +22,8 @@ export default function TemplateNameSection({ value, onChange, hasError }: Templ
         placeholder="예) 정규 수업 템플릿"
         hasError={hasError}
         maxLength={MAX_LENGTH}
+        suffix={`${value.length}/${MAX_LENGTH}`}
       />
-      <Text variant="bodyMd" as="span" className={counterStyle}>
-        {value.length}/{MAX_LENGTH}
-      </Text>
     </div>
   )
 }

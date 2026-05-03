@@ -1,6 +1,23 @@
+import { style } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
 import { colors } from '@/styles/tokens/colors'
 import { fontStyles } from '@/styles/tokens/typography'
+
+export const inputWrapper = style({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  width: '100%',
+})
+
+export const inputSuffix = style({
+  position: 'absolute',
+  right: '16px',
+  color: colors.gray300,
+  fontSize: fontStyles.bodyMd.fontSize,
+  fontWeight: fontStyles.bodyMd.fontWeight,
+  pointerEvents: 'none',
+})
 
 export const inputRecipe = recipe({
   base: {
