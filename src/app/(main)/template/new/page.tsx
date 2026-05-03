@@ -18,6 +18,7 @@ import { useToastStore } from '@/stores/toastStore'
 import {
   pageWrapperStyle,
   headerStyle,
+  headerLeftStyle,
   backButtonStyle,
   pageTitleStyle,
   contentStyle,
@@ -208,7 +209,7 @@ export default function TemplateNewPage() {
     <div className={pageWrapperStyle}>
       {/* 헤더 */}
       <div className={headerStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className={headerLeftStyle}>
           <button
             type="button"
             className={backButtonStyle}

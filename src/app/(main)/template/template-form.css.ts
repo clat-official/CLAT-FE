@@ -16,6 +16,12 @@ export const headerStyle = style({
   justifyContent: 'space-between',
 })
 
+export const headerLeftStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+})
+
 export const backButtonStyle = style({
   background: 'none',
   border: 'none',

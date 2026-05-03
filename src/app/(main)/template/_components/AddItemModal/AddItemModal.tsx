@@ -25,8 +25,11 @@ import {
   completionInfoTitleStyle,
   completionInfoListStyle,
   actionsStyle,
+  contentStyle,
+  requiredMarkStyle,
+  infoRowStyle,
+  infoIconStyle,
 } from './AddItemModal.css'
-import { colors } from '@/styles/tokens/colors'
 
 type ItemTypeId = 'number' | 'text' | 'choice' | 'completion'
 
@@ -103,11 +106,11 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="sm">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div className={contentStyle}>
         {/* 항목 이름 */}
         <div className={fieldStyle}>
           <span className={labelStyle}>
-            항목 이름 <span style={{ color: '#EF4453' }}>*</span>
+            항목 이름 <span className={requiredMarkStyle}>*</span>
           </span>
           <Input
             value={label}
@@ -122,7 +125,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
         {/* 항목 타입 */}
         <div className={fieldStyle}>
           <span className={labelStyle}>
-            항목 타입 <span style={{ color: '#EF4453' }}>*</span>
+            항목 타입 <span className={requiredMarkStyle}>*</span>
           </span>
           <div className={typeGridStyle}>
             {ITEM_TYPES.map((type) => {
@@ -151,7 +154,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
         {selectedType === 'choice' && (
           <div className={fieldStyle}>
             <span className={labelStyle}>
-              선택지 설정 <span style={{ color: '#EF4453' }}>*</span>
+              선택지 설정 <span className={requiredMarkStyle}>*</span>
             </span>
             <div className={tagInputContainerStyle}>
               {choices.map((choice, i) => (
@@ -176,8 +179,8 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
         {/* 완료형 안내 */}
         {selectedType === 'completion' && (
           <div className={completionInfoStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <InfoIcon width={16} height={16} style={{ color: colors.primary500 }} />
+            <div className={infoRowStyle}>
+              <InfoIcon width={16} height={16} className={infoIconStyle} />
               <span className={completionInfoTitleStyle}>완료형은 이런 기능을 지원해요</span>
             </div>
             <ul className={completionInfoListStyle}>

@@ -162,3 +162,23 @@ export const completionInfoListStyle = style({
   letterSpacing: '-0.03em',
   lineHeight: '140%',
 })
+
+export const contentStyle = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+})
+
+export const requiredMarkStyle = style({
+  color: colors.error500,
+})
+
+export const infoRowStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+})
+
+export const infoIconStyle = style({
+  color: colors.primary500,
+})
