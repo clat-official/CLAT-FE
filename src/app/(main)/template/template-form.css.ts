@@ -13,20 +13,21 @@ export const headerStyle = style({
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
+  justifyContent: 'space-between',
 })
 
 export const backButtonStyle = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
   background: 'none',
   border: 'none',
   cursor: 'pointer',
-  padding: '0',
-  color: colors.gray900,
-  width: '24px',
-  height: '24px',
-  flexShrink: 0,
+  color: colors.gray500,
+  display: 'flex',
+  alignItems: 'center',
+  selectors: {
+    '&:hover': {
+      color: colors.gray700,
+    },
+  },
 })
 
 export const pageTitleStyle = style({
