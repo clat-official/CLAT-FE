@@ -8,7 +8,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div style={{ display: 'flex' }}>
       <UserInitializer />
       <Sidebar />
-      <main style={{ marginLeft: '240px', flex: 1, minHeight: '100vh', padding: '48px 48px', backgroundColor: colors.background }}>
+      <main style={{ marginLeft: '240px', flex: 1, minWidth: 0, minHeight: '100vh', padding: '48px 48px', backgroundColor: colors.background }}>
         {children}
       </main>
       <ToastContainer />
