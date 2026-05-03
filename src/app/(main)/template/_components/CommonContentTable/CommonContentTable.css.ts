@@ -145,8 +145,8 @@ export const addRowButtonStyle = style({
   border: 'none',
   borderTop: `1px solid ${colors.gray100}`,
   cursor: 'pointer',
-  fontSize: fontStyles.bodyMd.fontSize,
-  fontWeight: fontStyles.bodyMd.fontWeight,
+  fontSize: fontStyles.titleSm.fontSize,
+  fontWeight: fontStyles.titleSm.fontWeight,
   color: colors.primary500,
   letterSpacing: '-0.03em',
   selectors: {
