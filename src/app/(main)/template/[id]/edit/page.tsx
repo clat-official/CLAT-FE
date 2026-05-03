@@ -47,7 +47,15 @@ import {
   individualBadgeStyle,
   notifItemNameStyle,
 } from '../../template-form.css'
+
 const MOCK_STUDENTS: LessonStudent[] = [{ id: 1, name: '홍길동', attendance: null, items: [] }]
+
+const EDITOR_TYPE_TO_INDIVIDUAL_ITEM_TYPE: Record<string, IndividualTemplateItem['item_type']> = {
+  number: 'SCORE',
+  text: 'TEXT',
+  choice: 'SELECT',
+  completion: 'COMPLETE',
+}
 
 type NotificationEntry = {
   id: string
@@ -104,6 +112,7 @@ function TemplateEditForm({
   initialName,
   initialAttendanceInMessage,
   initialAttendanceId,
+  initialNotificationOrder,
 }: {
   id: number
   initialName: string
@@ -111,6 +120,7 @@ function TemplateEditForm({
   initialIndividualItems: IndividualTemplateItem[]
   initialAttendanceInMessage: boolean
   initialAttendanceId: number | null
+  initialNotificationOrder: string[]
 }) {
   const router = useRouter()
   const addToast = useToastStore((s) => s.addToast)
@@ -123,12 +133,7 @@ function TemplateEditForm({
   const [isExitModalOpen, setIsExitModalOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [deletedItemIds, setDeletedItemIds] = useState<number[]>([])
-
-  const [notificationOrder, setNotificationOrder] = useState<string[]>(() => [
-    ...initialCommonItems.map((i) => i.id),
-    '__attendance__',
-    ...initialIndividualItems.map((i) => i.id),
-  ])
+  const [notificationOrder, setNotificationOrder] = useState<string[]>(initialNotificationOrder)
 
   useEffect(() => {
     setNotificationOrder((prev) => {
@@ -219,7 +224,7 @@ function TemplateEditForm({
     const dto: UpdateTemplateDto = {
       name: templateName.trim(),
       items: [
-        ...commonItems.map((item, i) => ({
+        ...commonItems.map((item) => ({
           ...(Number(item.id) > 0 ? { id: Number(item.id) } : {}),
           name: item.label,
           item_type: EDITOR_TO_API_ITEM_TYPE[item.itemType],
@@ -241,7 +246,7 @@ function TemplateEditForm({
               },
             ]
           : []),
-        ...individualItems.map((item, i) => ({
+        ...individualItems.map((item) => ({
           ...(Number(item.id) > 0 ? { id: Number(item.id) } : {}),
           name: item.name,
           item_type: item.item_type,
@@ -274,7 +279,6 @@ function TemplateEditForm({
 
   return (
     <div className={pageWrapperStyle}>
-      {/* 헤더 */}
       <div className={headerStyle}>
         <div className={headerLeftStyle}>
           <button
@@ -299,12 +303,10 @@ function TemplateEditForm({
       </div>
 
       <div className={contentStyle}>
-        {/* 템플릿 이름 */}
         <div className={templateNameWidthStyle}>
           <TemplateName value={templateName} onChange={setTemplateName} />
         </div>
 
-        {/* 공통 내용 */}
         <div className={sectionStyle}>
           <div className={sectionHeaderRowStyle}>
             <span className={sectionTitleStyle}>공통 내용</span>
@@ -335,7 +337,6 @@ function TemplateEditForm({
           />
         </div>
 
-        {/* 개별 내용 */}
         <div className={sectionStyle}>
           <div className={sectionHeaderRowStyle}>
             <span className={sectionTitleStyle}>개별 내용</span>
@@ -357,7 +358,6 @@ function TemplateEditForm({
           </div>
         </div>
 
-        {/* 알림톡 포함 항목 */}
         <div className={sectionStyle}>
           <div className={sectionHeaderRowStyle}>
             <span className={sectionTitleStyle}>알림톡 포함 항목</span>
@@ -365,7 +365,6 @@ function TemplateEditForm({
               수업 입력 항목과 별개로 알림톡 포함 여부 및 순서를 설정할 수 있어요
             </span>
           </div>
-
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={notificationOrder} strategy={verticalListSortingStrategy}>
               <div className={notificationListStyle}>
@@ -386,7 +385,6 @@ function TemplateEditForm({
         </div>
       </div>
 
-      {/* 이탈 확인 모달 */}
       <ConfirmModal
         isOpen={isExitModalOpen}
         onClose={() => setIsExitModalOpen(false)}
@@ -410,6 +408,7 @@ export default function TemplateEditPage({ params }: { params: Promise<{ id: str
   const [initialIndividualItems, setInitialIndividualItems] = useState<IndividualTemplateItem[]>([])
   const [initialAttendanceInMessage, setInitialAttendanceInMessage] = useState(false)
   const [initialAttendanceId, setInitialAttendanceId] = useState<number | null>(null)
+  const [initialNotificationOrder, setInitialNotificationOrder] = useState<string[]>([])
 
   useEffect(() => {
     templateService
@@ -422,7 +421,7 @@ export default function TemplateEditPage({ params }: { params: Promise<{ id: str
           editor.individualItems.map((item) => ({
             id: item.id,
             name: item.label,
-            item_type: (EDITOR_TO_API_ITEM_TYPE[item.itemType] ?? 'TEXT') as IndividualTemplateItem['item_type'],
+            item_type: EDITOR_TYPE_TO_INDIVIDUAL_ITEM_TYPE[item.itemType] ?? 'TEXT',
             isInMessage: item.isInMessage,
             choices: item.choices,
           }))
@@ -430,6 +429,8 @@ export default function TemplateEditPage({ params }: { params: Promise<{ id: str
         const attendanceItem = detail.items.find((i) => i.item_type === 'ATTENDANCE')
         setInitialAttendanceInMessage(attendanceItem?.include_in_message ?? false)
         setInitialAttendanceId(attendanceItem?.id ?? null)
+        // toEditorItems의 messageOrder로 초기 순서 세팅
+        setInitialNotificationOrder(editor.messageOrder)
         setIsLoading(false)
       })
       .catch(() => {
@@ -447,6 +448,7 @@ export default function TemplateEditPage({ params }: { params: Promise<{ id: str
       initialIndividualItems={initialIndividualItems}
       initialAttendanceInMessage={initialAttendanceInMessage}
       initialAttendanceId={initialAttendanceId}
+      initialNotificationOrder={initialNotificationOrder}
     />
   )
 }
