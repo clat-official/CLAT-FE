@@ -11,3 +11,12 @@ export interface TemplateItem {
   itemType: ItemType
   choices?: string[]
 }
+
+export type IndividualItemType = 'TEXT' | 'NUMBER' | 'SELECT' | 'COMPLETE'
+
+export interface IndividualTemplateItem {
+  id: string
+  name: string
+  item_type: IndividualItemType
+  choices?: string[]
+}
