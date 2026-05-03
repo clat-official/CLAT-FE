@@ -37,6 +37,8 @@ const ITEM_TYPES: Array<{ id: ItemTypeId; name: string; desc: string }> = [
   { id: 'completion', name: '완료형', desc: '완료/미완료' },
 ]
 
+const MAX_LENGTH = 10
+
 interface AddItemModalProps {
   isOpen: boolean
   onClose: () => void
@@ -110,8 +112,10 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
           <Input
             value={label}
             variant="gray"
-            onChange={(e) => setLabel(e.target.value)}
+            onChange={(e) => setLabel(e.target.value.slice(0, MAX_LENGTH))}
             placeholder="예) 금요일 과제"
+            maxLength={MAX_LENGTH}
+            suffix={`${label.length}/${MAX_LENGTH}`}
           />
         </div>
 
