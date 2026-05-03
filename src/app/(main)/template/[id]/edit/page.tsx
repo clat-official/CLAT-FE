@@ -115,28 +115,60 @@ function TemplateEditForm({
   const [isSaving, setIsSaving] = useState(false)
   const [deletedItemIds, setDeletedItemIds] = useState<number[]>([])
 
-  const notificationItems = useMemo<NotificationEntry[]>(
-    () => [
-      ...commonItems.map((item) => ({
+  const [notificationOrder, setNotificationOrder] = useState<string[]>(() => [
+    ...initialCommonItems.map((i) => i.id),
+    '__attendance__',
+    ...initialIndividualItems.map((i) => i.id),
+  ])
+
+  useEffect(() => {
+    setNotificationOrder((prev) => {
+      const allIds = new Set([
+        ...commonItems.map((i) => i.id),
+        '__attendance__',
+        ...individualItems.map((i) => i.id),
+      ])
+      const filtered = prev.filter((id) => allIds.has(id))
+      const added = [...commonItems.map((i) => i.id), ...individualItems.map((i) => i.id)].filter(
+        (id) => !filtered.includes(id)
+      )
+      return [...filtered, ...added]
+    })
+  }, [commonItems, individualItems])
+
+  const notificationItemMap = useMemo(() => {
+    const map = new Map<string, NotificationEntry>()
+    commonItems.forEach((item) =>
+      map.set(item.id, {
         id: item.id,
         name: item.label || '(이름 없음)',
-        category: 'common' as const,
+        category: 'common',
         isInMessage: item.isInMessage,
-      })),
-      {
-        id: '__attendance__',
-        name: '출결',
-        category: 'individual' as const,
-        isInMessage: attendanceInMessage,
-      },
-      ...individualItems.map((item) => ({
+      })
+    )
+    map.set('__attendance__', {
+      id: '__attendance__',
+      name: '출결',
+      category: 'individual',
+      isInMessage: attendanceInMessage,
+    })
+    individualItems.forEach((item) =>
+      map.set(item.id, {
         id: item.id,
         name: item.name,
-        category: 'individual' as const,
+        category: 'individual',
         isInMessage: item.isInMessage,
-      })),
-    ],
-    [commonItems, individualItems, attendanceInMessage]
+      })
+    )
+    return map
+  }, [commonItems, individualItems, attendanceInMessage])
+
+  const notificationItems = useMemo<NotificationEntry[]>(
+    () =>
+      notificationOrder.flatMap((id) =>
+        notificationItemMap.has(id) ? [notificationItemMap.get(id)!] : []
+      ),
+    [notificationOrder, notificationItemMap]
   )
 
   const isValid =
@@ -165,6 +197,8 @@ function TemplateEditForm({
   const handleUpdate = async () => {
     if (!isValid) return
 
+    const sortOrderMap = new Map(notificationOrder.map((id, i) => [id, i]))
+
     const dto: UpdateTemplateDto = {
       name: templateName.trim(),
       items: [
@@ -174,7 +208,7 @@ function TemplateEditForm({
           item_type: EDITOR_TO_API_ITEM_TYPE[item.itemType],
           is_common: true,
           include_in_message: item.isInMessage,
-          sort_order: i,
+          sort_order: sortOrderMap.get(item.id) ?? 0,
           options: item.choices ?? [],
         })),
         ...(attendanceId != null
@@ -185,7 +219,7 @@ function TemplateEditForm({
                 item_type: 'ATTENDANCE' as const,
                 is_common: false,
                 include_in_message: attendanceInMessage,
-                sort_order: commonItems.length + individualItems.length,
+                sort_order: sortOrderMap.get('__attendance__') ?? 0,
                 options: [],
               },
             ]
@@ -196,7 +230,7 @@ function TemplateEditForm({
           item_type: item.item_type,
           is_common: false,
           include_in_message: item.isInMessage,
-          sort_order: commonItems.length + i,
+          sort_order: sortOrderMap.get(item.id) ?? 0,
           options: item.choices ?? [],
         })),
       ],
