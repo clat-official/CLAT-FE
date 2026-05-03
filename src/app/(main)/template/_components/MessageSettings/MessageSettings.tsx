@@ -132,7 +132,7 @@ export default function MessageSettings({
           순서를 바꾸거나 항목을 켜고 끌 수 있어요
         </Text>
       </div>
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext id="message-settings-dnd" sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={activeOrder} strategy={verticalListSortingStrategy}>
           <div className={rowListStyle}>
             {activeOrder.map((id) => {
