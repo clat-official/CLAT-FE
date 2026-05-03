@@ -130,9 +130,7 @@ export default function CommonContentTable({
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editingValue, setEditingValue] = useState('')
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
-  )
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -159,7 +157,10 @@ export default function CommonContentTable({
   }
 
   const cancelEdit = (id: string) => {
-    onDelete(id)
+    const item = items.find((i) => i.id === id)
+    if (item && item.label === '') {
+      onDelete(id)
+    }
     setEditingId(null)
   }
 
