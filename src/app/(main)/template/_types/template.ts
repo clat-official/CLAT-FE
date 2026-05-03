@@ -12,7 +12,7 @@ export interface TemplateItem {
   choices?: string[]
 }
 
-export type IndividualItemType = 'TEXT' | 'NUMBER' | 'SELECT' | 'COMPLETE'
+export type IndividualItemType = 'TEXT' | 'SCORE' | 'SELECT' | 'COMPLETE'
 
 export interface IndividualTemplateItem {
   id: string

@@ -60,14 +60,14 @@ interface IndividualContentTableProps {
 
 function TypeIcon({ type }: { type: IndividualItemType }) {
   const props = { width: 14, height: 14 }
-  if (type === 'NUMBER') return <NumberIcon {...props} />
+  if (type === 'SCORE') return <NumberIcon {...props} />
   if (type === 'TEXT') return <TextIcon {...props} />
   if (type === 'SELECT') return <SelectIcon {...props} />
   return <CheckIcon {...props} />
 }
 
 function mapToItemType(type: string): IndividualItemType {
-  if (type === 'number') return 'NUMBER'
+  if (type === 'number') return 'SCORE'
   if (type === 'text') return 'TEXT'
   if (type === 'choice') return 'SELECT'
   return 'COMPLETE'

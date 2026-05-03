@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { CreateTemplateItemDto, templateService } from '@/services/template'
+import { CreateTemplateItemDto, EDITOR_TO_API_ITEM_TYPE, templateService } from '@/services/template'
 import type { TemplateItem } from '@/app/(main)/template/_types/template'
 import { INITIAL_COMMON_ITEMS, INITIAL_INDIVIDUAL_ITEMS } from '@/mocks/template'
 import { useToastStore } from '@/stores/toastStore'
@@ -50,15 +50,6 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     return map
   }, [commonItems, individualItems])
 
-  const ITEM_TYPE_MAP: Record<TemplateItem['itemType'], string> = {
-    number: 'SCORE',
-    text: 'TEXT',
-    choice: 'SELECT',
-    completion: 'COMPLETE',
-    inline: 'TEXT',
-    attendance: 'ATTENDANCE',
-  }
-
   const buildItems = (items: TemplateItem[]): CreateTemplateItemDto[] =>
     items
       .filter((item) => item.label.trim() !== '' && item.itemType !== 'attendance')
@@ -68,7 +59,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
         return {
           ...(numericId > 0 ? { id: numericId } : {}),
           name: item.label,
-          item_type: ITEM_TYPE_MAP[item.itemType],
+          item_type: EDITOR_TO_API_ITEM_TYPE[item.itemType],
           is_common: item.category === 'common',
           include_in_message: item.isInMessage,
           sort_order: sortOrder >= 0 ? sortOrder : 999,

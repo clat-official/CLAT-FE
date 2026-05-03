@@ -10,7 +10,7 @@ import IndividualContentTable from '@/app/(main)/template/_components/Individual
 import ConfirmModal from '@/components/common/ConfirmModal'
 import Button from '@/components/common/Button'
 import Toggle from '@/components/common/Toggle'
-import { templateService } from '@/services/template'
+import { templateService, EDITOR_TO_API_ITEM_TYPE } from '@/services/template'
 import type { CreateTemplateDto } from '@/services/template'
 import type { TemplateItem, IndividualTemplateItem } from '../_types/template'
 import type { LessonStudent } from '@/types/lessonStudent'
@@ -37,13 +37,6 @@ import {
   individualBadgeStyle,
   notifItemNameStyle,
 } from '../template-form.css'
-
-const ITEM_TYPE_MAP: Record<string, string> = {
-  text: 'TEXT',
-  number: 'SCORE',
-  choice: 'SELECT',
-  completion: 'COMPLETE',
-}
 
 const INITIAL_COMMON_ITEMS: TemplateItem[] = [
   {
@@ -75,7 +68,7 @@ const INITIAL_COMMON_ITEMS: TemplateItem[] = [
 const MOCK_STUDENTS: LessonStudent[] = [{ id: 1, name: '홍길동', attendance: null, items: [] }]
 
 const INITIAL_INDIVIDUAL_ITEMS: IndividualTemplateItem[] = [
-  { id: '1', name: '시험 점수', item_type: 'NUMBER', isInMessage: true },
+  { id: '1', name: '시험 점수', item_type: 'SCORE', isInMessage: true },
   { id: '2', name: '과제', item_type: 'COMPLETE', isInMessage: true },
   { id: '3', name: '피드백', item_type: 'TEXT', isInMessage: false },
 ]
@@ -182,7 +175,7 @@ export default function TemplateNewPage() {
       items: [
         ...commonItems.map((item, i) => ({
           name: item.label,
-          item_type: ITEM_TYPE_MAP[item.itemType] ?? 'TEXT',
+          item_type: EDITOR_TO_API_ITEM_TYPE[item.itemType],
           is_common: true,
           include_in_message: item.isInMessage,
           sort_order: i,
@@ -190,7 +183,7 @@ export default function TemplateNewPage() {
         })),
         ...individualItems.map((item, i) => ({
           name: item.name,
-          item_type: item.item_type === 'NUMBER' ? 'SCORE' : item.item_type,
+          item_type: item.item_type,
           is_common: false,
           include_in_message: item.isInMessage,
           sort_order: commonItems.length + i,
