@@ -1,6 +1,8 @@
 import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
-import { sectionStyle } from './TemplateName.css'
+import { sectionStyle, requiredMarkStyle, counterStyle } from './TemplateName.css'
+
+const MAX_LENGTH = 20
 
 interface TemplateNameProps {
   value: string
@@ -12,14 +14,18 @@ export default function TemplateNameSection({ value, onChange, hasError }: Templ
   return (
     <div className={sectionStyle}>
       <Text variant="headingMd" as="h2">
-        템플릿 이름 <span style={{ color: '#EF4453' }}>*</span>
+        템플릿 이름 <span className={requiredMarkStyle}>*</span>
       </Text>
       <Input
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value.slice(0, MAX_LENGTH))}
         placeholder="예) 정규 수업 템플릿"
         hasError={hasError}
+        maxLength={MAX_LENGTH}
       />
+      <Text variant="bodyMd" as="span" className={counterStyle}>
+        {value.length}/{MAX_LENGTH}
+      </Text>
     </div>
   )
 }
