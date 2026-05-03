@@ -68,14 +68,18 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
 
   const addChoice = (value: string) => {
     const trimmed = value.trim()
-    if (trimmed) setChoices((prev) => [...prev, trimmed])
+    if (trimmed) {
+      setChoices((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]))
+    }
   }
 
   const handleChoiceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    if (value.endsWith(',')) {
-      addChoice(value.slice(0, -1))
-      setChoiceInput('')
+    if (value.includes(',')) {
+      const parts = value.split(',')
+      const lastPart = parts.pop() || ''
+      parts.forEach((part) => addChoice(part))
+      setChoiceInput(lastPart)
     } else {
       setChoiceInput(value)
     }
