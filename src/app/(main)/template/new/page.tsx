@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import StarIcon from '@/assets/icons/icon-star.svg'
@@ -75,27 +75,17 @@ const INITIAL_COMMON_ITEMS: TemplateItem[] = [
 const MOCK_STUDENTS: LessonStudent[] = [{ id: 1, name: '홍길동', attendance: null, items: [] }]
 
 const INITIAL_INDIVIDUAL_ITEMS: IndividualTemplateItem[] = [
-  { id: '1', name: '시험 점수', item_type: 'NUMBER' },
-  { id: '2', name: '과제', item_type: 'COMPLETE' },
-  { id: '3', name: '피드백', item_type: 'TEXT' },
+  { id: '1', name: '시험 점수', item_type: 'NUMBER', isInMessage: true },
+  { id: '2', name: '과제', item_type: 'COMPLETE', isInMessage: true },
+  { id: '3', name: '피드백', item_type: 'TEXT', isInMessage: false },
 ]
 
-type NotificationItemData = {
+type NotificationEntry = {
   id: string
   name: string
   category: 'common' | 'individual'
-  enabled: boolean
+  isInMessage: boolean
 }
-
-const INITIAL_NOTIFICATION_ITEMS: NotificationItemData[] = [
-  { id: 'c1', name: '오늘 학습 내용', category: 'common', enabled: true },
-  { id: 'c2', name: '다음 시간 예고', category: 'common', enabled: true },
-  { id: 'c3', name: '전달 사항', category: 'common', enabled: true },
-  { id: 'i1', name: '출결', category: 'individual', enabled: false },
-  { id: 'i2', name: '시험 점수', category: 'individual', enabled: true },
-  { id: 'i3', name: '과제', category: 'individual', enabled: true },
-  { id: 'i4', name: '피드백', category: 'individual', enabled: false },
-]
 
 function DragHandle() {
   return (
@@ -114,7 +104,7 @@ function NotificationItem({
   item,
   onToggle,
 }: {
-  item: NotificationItemData
+  item: NotificationEntry
   onToggle: (id: string) => void
 }) {
   return (
@@ -126,7 +116,7 @@ function NotificationItem({
         </span>
         <span className={notifItemNameStyle}>{item.name}</span>
       </div>
-      <Toggle checked={item.enabled} onChange={() => onToggle(item.id)} />
+      <Toggle checked={item.isInMessage} onChange={() => onToggle(item.id)} />
     </div>
   )
 }
@@ -138,11 +128,28 @@ export default function TemplateNewPage() {
   const [commonItems, setCommonItems] = useState<TemplateItem[]>(INITIAL_COMMON_ITEMS)
   const [individualItems, setIndividualItems] =
     useState<IndividualTemplateItem[]>(INITIAL_INDIVIDUAL_ITEMS)
-  const [notificationItems, setNotificationItems] = useState<NotificationItemData[]>(
-    INITIAL_NOTIFICATION_ITEMS
-  )
+  const [attendanceInMessage, setAttendanceInMessage] = useState(false)
   const [isExitModalOpen, setIsExitModalOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+
+  const notificationItems = useMemo<NotificationEntry[]>(
+    () => [
+      ...commonItems.map((item) => ({
+        id: item.id,
+        name: item.label || '(이름 없음)',
+        category: 'common' as const,
+        isInMessage: item.isInMessage,
+      })),
+      { id: '__attendance__', name: '출결', category: 'individual' as const, isInMessage: attendanceInMessage },
+      ...individualItems.map((item) => ({
+        id: item.id,
+        name: item.name,
+        category: 'individual' as const,
+        isInMessage: item.isInMessage,
+      })),
+    ],
+    [commonItems, individualItems, attendanceInMessage]
+  )
 
   const isValid =
     templateName.trim() !== '' && (commonItems.length > 0 || individualItems.length > 0)
@@ -155,8 +162,15 @@ export default function TemplateNewPage() {
   }
 
   const handleToggleNotification = (id: string) => {
-    setNotificationItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, enabled: !item.enabled } : item))
+    if (id === '__attendance__') {
+      setAttendanceInMessage((prev) => !prev)
+      return
+    }
+    setCommonItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isInMessage: !item.isInMessage } : item))
+    )
+    setIndividualItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isInMessage: !item.isInMessage } : item))
     )
   }
 
@@ -178,9 +192,9 @@ export default function TemplateNewPage() {
           name: item.name,
           item_type: item.item_type === 'NUMBER' ? 'SCORE' : item.item_type,
           is_common: false,
-          include_in_message: false,
+          include_in_message: item.isInMessage,
           sort_order: commonItems.length + i,
-          options: [],
+          options: item.choices ?? [],
         })),
       ],
     }
@@ -286,7 +300,11 @@ export default function TemplateNewPage() {
           {/* TODO: NotificationItemList 컴포넌트 분리 + DnD 순서 변경 */}
           <div className={notificationListStyle}>
             {notificationItems.map((item) => (
-              <NotificationItem key={item.id} item={item} onToggle={handleToggleNotification} />
+              <NotificationItem
+                key={item.id === '__attendance__' ? 'attendance-__attendance__' : `${item.category}-${item.id}`}
+                item={item}
+                onToggle={handleToggleNotification}
+              />
             ))}
           </div>
         </div>

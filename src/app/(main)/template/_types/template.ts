@@ -18,5 +18,6 @@ export interface IndividualTemplateItem {
   id: string
   name: string
   item_type: IndividualItemType
+  isInMessage: boolean
   choices?: string[]
 }

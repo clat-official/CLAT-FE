@@ -228,6 +228,7 @@ export default function IndividualContentTable({
       id: crypto.randomUUID(),
       name,
       item_type: mapToItemType(type),
+      isInMessage: false,
       choices,
     }
     onItemsChange([...items, newItem])
