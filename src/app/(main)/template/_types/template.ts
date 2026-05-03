@@ -4,10 +4,20 @@ export type ItemType = 'number' | 'text' | 'choice' | 'completion' | 'inline' | 
 export interface TemplateItem {
   id: string
   label: string
-  isActive: boolean // 왼쪽 섹션 체크 여부 → MessageSettings 표시 여부
-  isInMessage: boolean // MessageSettings 토글 → 미리보기 포함 여부
+  isActive: boolean
+  isInMessage: boolean
   locked?: boolean
   category: ItemCategory
   itemType: ItemType
+  choices?: string[]
+}
+
+export type IndividualItemType = 'TEXT' | 'SCORE' | 'SELECT' | 'COMPLETE'
+
+export interface IndividualTemplateItem {
+  id: string
+  name: string
+  item_type: IndividualItemType
+  isInMessage: boolean
   choices?: string[]
 }

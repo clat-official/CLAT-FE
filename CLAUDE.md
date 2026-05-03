@@ -81,7 +81,7 @@ src/
 | 타입 | 설명 | 알림톡 포함 가능 |
 |---|---|---|
 | 단답형 | 선택지 설정 필요 (예: 출석/지각/결석) | O |
-| 장문형 | 자유 텍스트 | X (대시보드 미표시) |
+| 장문형 | 자유 텍스트 | O |
 | 점수형 | 숫자 입력 | O |
 | 완료형 | 완료/미완료 → 미완료 시 자동 추적 등록 | O |
 
@@ -135,6 +135,7 @@ src/
 | `Button` | `components/common/Button` | `variant`(primary·secondary·ghost·outlined·danger·endClass·deleteClass), `size`(sm·md·lg), `shape`(square·capsule), `fullWidth`, `leftIcon?`, `rightIcon?` |
 | `Chip` | `components/common/Chip` | `variant`(default·active·ended·done·inProgress), `label` — 상태 뱃지 |
 | `ConfirmModal` | `components/common/ConfirmModal` | `isOpen`, `onClose`, `onConfirm`, `title`, `descriptions?[]`, `confirmLabel?`, `cancelLabel?`, `confirmVariant?` |
+| `DragHandle` | `components/common/DragHandle` | props 없음 — 6점 드래그 핸들 아이콘 (2×3 도트 그리드) |
 | `Dropdown` | `components/common/Dropdown` | `options[]`(label+value), `value`, `onChange`, `placeholder?`, `menuLabel?`, `noBorder?`, `fullWidth?` |
 | `Input` | `components/common/Input` | `variant`(default·gray), `shape`(square·capsule), `hasError?` + input HTML 속성, `forwardRef` |
 | `Modal` | `components/common/Modal` | `isOpen`, `onClose`, `size`(sm·md), `children` — 오버레이 기반 범용 모달 |

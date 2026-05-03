@@ -31,32 +31,6 @@ export const rowDraggingStyle = style({
   boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
 })
 
-export const dragHandleStyle = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '3px',
-  cursor: 'grab',
-  flexShrink: 0,
-  color: colors.gray200,
-  selectors: {
-    '&:active': {
-      cursor: 'grabbing',
-    },
-  },
-})
-
-export const dragDotRowStyle = style({
-  display: 'flex',
-  gap: '3px',
-})
-
-export const dragDotStyle = style({
-  width: '3px',
-  height: '3px',
-  borderRadius: '50%',
-  backgroundColor: 'currentColor',
-})
-
 export const rowLabelStyle = style({
   flex: 1,
   fontSize: fontStyles.titleMd.fontSize,

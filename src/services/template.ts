@@ -4,7 +4,7 @@ import type { TemplateItem as EditorItem } from '@/app/(main)/template/_types/te
 export interface TemplateItemDetail {
   id: number
   name: string
-  item_type: 'TEXT' | 'NUMBER' | 'SELECT' | 'COMPLETE' | 'ATTENDANCE'
+  item_type: 'TEXT' | 'SCORE' | 'SELECT' | 'COMPLETE' | 'ATTENDANCE'
   is_common: boolean
   include_in_message: boolean
   is_default_attendance: boolean
@@ -63,10 +63,20 @@ export interface UpdateTemplateDto {
   deleted_item_ids?: number[]
 }
 
+// 에디터 itemType → API item_type 매핑
+export const EDITOR_TO_API_ITEM_TYPE: Record<EditorItem['itemType'], string> = {
+  number: 'SCORE',
+  text: 'TEXT',
+  choice: 'SELECT',
+  completion: 'COMPLETE',
+  inline: 'TEXT',
+  attendance: 'ATTENDANCE',
+}
+
 // API item_type → 에디터 itemType 매핑
 const API_TO_ITEM_TYPE: Record<string, EditorItem['itemType']> = {
   TEXT: 'text',
-  NUMBER: 'number',
+  SCORE: 'number',
   SELECT: 'choice',
   COMPLETE: 'completion',
 }

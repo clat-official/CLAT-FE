@@ -1,14 +1,14 @@
 import Sidebar from '@/components/common/Sidebar'
 import { ToastContainer } from '@/components/common/Toast'
-import { colors } from '@/styles/tokens/colors'
 import UserInitializer from '@/components/common/UserInitializer'
+import { layoutWrapperStyle, mainContentStyle } from './layout.css'
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex' }}>
+    <div className={layoutWrapperStyle}>
       <UserInitializer />
       <Sidebar />
-      <main style={{ marginLeft: '240px', flex: 1, minHeight: '100vh', padding: '48px 48px', backgroundColor: colors.background }}>
+      <main className={mainContentStyle}>
         {children}
       </main>
       <ToastContainer />
