@@ -1,7 +1,16 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import StarIcon from '@/assets/icons/icon-star.svg'
 import TemplateName from '@/app/(main)/template/_components/TemplateName/TemplateName'
@@ -40,38 +49,17 @@ import {
 } from '../template-form.css'
 
 const INITIAL_COMMON_ITEMS: TemplateItem[] = [
-  {
-    id: '1',
-    label: '오늘 수업 내용',
-    isActive: true,
-    isInMessage: true,
-    category: 'common',
-    itemType: 'text',
-  },
-  {
-    id: '2',
-    label: '다음 시간 예고',
-    isActive: true,
-    isInMessage: true,
-    category: 'common',
-    itemType: 'text',
-  },
-  {
-    id: '3',
-    label: '전달 사항',
-    isActive: true,
-    isInMessage: true,
-    category: 'common',
-    itemType: 'text',
-  },
+  { id: 'common-1', label: '오늘 수업 내용', isActive: true, isInMessage: true, category: 'common', itemType: 'text' },
+  { id: 'common-2', label: '다음 시간 예고', isActive: true, isInMessage: true, category: 'common', itemType: 'text' },
+  { id: 'common-3', label: '전달 사항', isActive: true, isInMessage: true, category: 'common', itemType: 'text' },
 ]
 
 const MOCK_STUDENTS: LessonStudent[] = [{ id: 1, name: '홍길동', attendance: null, items: [] }]
 
 const INITIAL_INDIVIDUAL_ITEMS: IndividualTemplateItem[] = [
-  { id: '1', name: '시험 점수', item_type: 'SCORE', isInMessage: true },
-  { id: '2', name: '과제', item_type: 'COMPLETE', isInMessage: true },
-  { id: '3', name: '피드백', item_type: 'TEXT', isInMessage: false },
+  { id: 'individual-1', name: '시험 점수', item_type: 'SCORE', isInMessage: true },
+  { id: 'individual-2', name: '과제', item_type: 'COMPLETE', isInMessage: true },
+  { id: 'individual-3', name: '피드백', item_type: 'TEXT', isInMessage: false },
 ]
 
 type NotificationEntry = {
@@ -81,9 +69,9 @@ type NotificationEntry = {
   isInMessage: boolean
 }
 
-function DragHandle() {
+function DragHandle(props: React.HTMLAttributes<HTMLSpanElement>) {
   return (
-    <span className={notifDragHandleStyle}>
+    <span className={notifDragHandleStyle} {...props}>
       {[0, 1, 2].map((row) => (
         <span key={row} className={notifDragDotRowStyle}>
           <span className={notifDragDotStyle} />
@@ -101,10 +89,17 @@ function NotificationItem({
   item: NotificationEntry
   onToggle: (id: string) => void
 }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
   return (
-    <div className={notificationItemStyle}>
+    <div ref={setNodeRef} style={style} className={notificationItemStyle}>
       <div className={notificationItemLeftStyle}>
-        <DragHandle />
+        <DragHandle {...attributes} {...listeners} />
         <span className={item.category === 'common' ? commonBadgeStyle : individualBadgeStyle}>
           {item.category === 'common' ? '공통' : '개별'}
         </span>
@@ -120,29 +115,62 @@ export default function TemplateNewPage() {
   const addToast = useToastStore((s) => s.addToast)
   const [templateName, setTemplateName] = useState('')
   const [commonItems, setCommonItems] = useState<TemplateItem[]>(INITIAL_COMMON_ITEMS)
-  const [individualItems, setIndividualItems] =
-    useState<IndividualTemplateItem[]>(INITIAL_INDIVIDUAL_ITEMS)
+  const [individualItems, setIndividualItems] = useState<IndividualTemplateItem[]>(INITIAL_INDIVIDUAL_ITEMS)
   const [attendanceInMessage, setAttendanceInMessage] = useState(false)
   const [isExitModalOpen, setIsExitModalOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
-  const notificationItems = useMemo<NotificationEntry[]>(
-    () => [
-      ...commonItems.map((item) => ({
+  const [notificationOrder, setNotificationOrder] = useState<string[]>(() => [
+    ...INITIAL_COMMON_ITEMS.map((i) => i.id),
+    '__attendance__',
+    ...INITIAL_INDIVIDUAL_ITEMS.map((i) => i.id),
+  ])
+
+  useEffect(() => {
+    setNotificationOrder((prev) => {
+      const allIds = new Set([
+        ...commonItems.map((i) => i.id),
+        '__attendance__',
+        ...individualItems.map((i) => i.id),
+      ])
+      const filtered = prev.filter((id) => allIds.has(id))
+      const added = [...commonItems.map((i) => i.id), ...individualItems.map((i) => i.id)].filter(
+        (id) => !filtered.includes(id)
+      )
+      return [...filtered, ...added]
+    })
+  }, [commonItems, individualItems])
+
+  const notificationItemMap = useMemo(() => {
+    const map = new Map<string, NotificationEntry>()
+    commonItems.forEach((item) =>
+      map.set(item.id, {
         id: item.id,
         name: item.label || '(이름 없음)',
-        category: 'common' as const,
+        category: 'common',
         isInMessage: item.isInMessage,
-      })),
-      { id: '__attendance__', name: '출결', category: 'individual' as const, isInMessage: attendanceInMessage },
-      ...individualItems.map((item) => ({
+      })
+    )
+    map.set('__attendance__', {
+      id: '__attendance__',
+      name: '출결',
+      category: 'individual',
+      isInMessage: attendanceInMessage,
+    })
+    individualItems.forEach((item) =>
+      map.set(item.id, {
         id: item.id,
         name: item.name,
-        category: 'individual' as const,
+        category: 'individual',
         isInMessage: item.isInMessage,
-      })),
-    ],
-    [commonItems, individualItems, attendanceInMessage]
+      })
+    )
+    return map
+  }, [commonItems, individualItems, attendanceInMessage])
+
+  const notificationItems = useMemo<NotificationEntry[]>(
+    () => notificationOrder.flatMap((id) => (notificationItemMap.has(id) ? [notificationItemMap.get(id)!] : [])),
+    [notificationOrder, notificationItemMap]
   )
 
   const isValid =
@@ -168,26 +196,44 @@ export default function TemplateNewPage() {
     )
   }
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setNotificationOrder((prev) =>
+      arrayMove(prev, prev.indexOf(String(active.id)), prev.indexOf(String(over.id)))
+    )
+  }
+
   const handleCreate = async () => {
     if (!isValid) return
+
+    const sortOrderMap = new Map(notificationOrder.map((id, i) => [id, i]))
 
     const dto: CreateTemplateDto = {
       name: templateName.trim(),
       items: [
-        ...commonItems.map((item, i) => ({
+        ...commonItems.map((item) => ({
           name: item.label,
           item_type: EDITOR_TO_API_ITEM_TYPE[item.itemType],
           is_common: true,
           include_in_message: item.isInMessage,
-          sort_order: i,
+          sort_order: sortOrderMap.get(item.id) ?? 0,
           options: item.choices ?? [],
         })),
-        ...individualItems.map((item, i) => ({
+        {
+          name: '출결',
+          item_type: 'ATTENDANCE' as const,
+          is_common: false,
+          include_in_message: attendanceInMessage,
+          sort_order: sortOrderMap.get('__attendance__') ?? 0,
+          options: [],
+        },
+        ...individualItems.map((item) => ({
           name: item.name,
           item_type: item.item_type,
           is_common: false,
           include_in_message: item.isInMessage,
-          sort_order: commonItems.length + i,
+          sort_order: sortOrderMap.get(item.id) ?? 0,
           options: item.choices ?? [],
         })),
       ],
@@ -250,14 +296,7 @@ export default function TemplateNewPage() {
               const id = crypto.randomUUID()
               setCommonItems((prev) => [
                 ...prev,
-                {
-                  id,
-                  label: '',
-                  isActive: true,
-                  isInMessage: false,
-                  category: 'common',
-                  itemType: 'inline',
-                },
+                { id, label: '', isActive: true, isInMessage: false, category: 'common', itemType: 'inline' },
               ])
               return id
             }}
@@ -291,16 +330,19 @@ export default function TemplateNewPage() {
               수업 입력 항목과 별개로 알림톡 포함 여부 및 순서를 설정할 수 있어요
             </span>
           </div>
-          {/* TODO: NotificationItemList 컴포넌트 분리 + DnD 순서 변경 */}
-          <div className={notificationListStyle}>
-            {notificationItems.map((item) => (
-              <NotificationItem
-                key={item.id === '__attendance__' ? 'attendance-__attendance__' : `${item.category}-${item.id}`}
-                item={item}
-                onToggle={handleToggleNotification}
-              />
-            ))}
-          </div>
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={notificationOrder} strategy={verticalListSortingStrategy}>
+              <div className={notificationListStyle}>
+                {notificationItems.map((item) => (
+                  <NotificationItem
+                    key={item.id === '__attendance__' ? 'attendance-__attendance__' : `${item.category}-${item.id}`}
+                    item={item}
+                    onToggle={handleToggleNotification}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
       </div>
 
