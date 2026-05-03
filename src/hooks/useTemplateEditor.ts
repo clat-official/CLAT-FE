@@ -211,6 +211,23 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     setMessageOrder((prev) => [...prev, newId])
   }
 
+  const handleReorderCommonItem = (newItems: TemplateItem[]) => {
+    const oldCommonIds = new Set(commonItems.map((i) => i.id))
+    setCommonItems(newItems)
+    setMessageOrder((prev) => {
+      const newCommonIds = newItems.map((i) => i.id)
+      const commonPositions = prev
+        .map((id, idx) => ({ id, idx }))
+        .filter(({ id }) => oldCommonIds.has(id))
+        .map(({ idx }) => idx)
+      const result = [...prev]
+      newCommonIds.forEach((id, i) => {
+        result[commonPositions[i]] = id
+      })
+      return result
+    })
+  }
+
   const handleMessagePreviewToggle = (id: string) => {
     const toggle = (prev: TemplateItem[]) =>
       prev.map((item) => (item.id === id ? { ...item, isInMessage: !item.isInMessage } : item))
@@ -236,6 +253,7 @@ export default function useTemplateEditor(initial: InitialData = {}) {
     handleDeleteCommonItem,
     handleAddCommonItem,
     handleUpdateCommonItem,
+    handleReorderCommonItem,
     handleToggleIndividualItem,
     handleDeleteIndividualItem,
     handleAddIndividualItem,
