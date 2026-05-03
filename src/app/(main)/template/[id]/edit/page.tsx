@@ -2,6 +2,15 @@
 
 import { use, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import SaveIcon from '@/assets/icons/icon-save.svg'
 import TemplateName from '@/app/(main)/template/_components/TemplateName/TemplateName'
@@ -54,9 +63,9 @@ type NotificationEntry = {
   isInMessage: boolean
 }
 
-function DragHandle() {
+function DragHandle(props: React.HTMLAttributes<HTMLSpanElement>) {
   return (
-    <span className={notifDragHandleStyle}>
+    <span className={notifDragHandleStyle} {...props}>
       {[0, 1, 2].map((row) => (
         <span key={row} className={notifDragDotRowStyle}>
           <span className={notifDragDotStyle} />
@@ -74,10 +83,17 @@ function NotificationItem({
   item: NotificationEntry
   onToggle: (id: string) => void
 }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
   return (
-    <div className={notificationItemStyle}>
+    <div ref={setNodeRef} style={style} className={notificationItemStyle}>
       <div className={notificationItemLeftStyle}>
-        <DragHandle />
+        <DragHandle {...attributes} {...listeners} />
         <span className={item.category === 'common' ? commonBadgeStyle : individualBadgeStyle}>
           {item.category === 'common' ? '공통' : '개별'}
         </span>
@@ -191,6 +207,14 @@ function TemplateEditForm({
     )
     setIndividualItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, isInMessage: !item.isInMessage } : item))
+    )
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setNotificationOrder((prev) =>
+      arrayMove(prev, prev.indexOf(String(active.id)), prev.indexOf(String(over.id)))
     )
   }
 
@@ -354,19 +378,24 @@ function TemplateEditForm({
               수업 입력 항목과 별개로 알림톡 포함 여부 및 순서를 설정할 수 있어요
             </span>
           </div>
-          <div className={notificationListStyle}>
-            {notificationItems.map((item) => (
-              <NotificationItem
-                key={
-                  item.id === '__attendance__'
-                    ? 'attendance-__attendance__'
-                    : `${item.category}-${item.id}`
-                }
-                item={item}
-                onToggle={handleToggleNotification}
-              />
-            ))}
-          </div>
+
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={notificationOrder} strategy={verticalListSortingStrategy}>
+              <div className={notificationListStyle}>
+                {notificationItems.map((item) => (
+                  <NotificationItem
+                    key={
+                      item.id === '__attendance__'
+                        ? 'attendance-__attendance__'
+                        : `${item.category}-${item.id}`
+                    }
+                    item={item}
+                    onToggle={handleToggleNotification}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
       </div>
 
