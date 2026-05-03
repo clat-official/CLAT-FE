@@ -137,6 +137,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
               return (
                 <button
                   key={type.id}
+                  type="button"
                   className={typeCardRecipe({ selected: isSelected })}
                   onClick={() => setSelectedType(type.id)}
                 >
