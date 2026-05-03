@@ -272,12 +272,6 @@ function TemplateEditForm({
     setCommonItems((prev) => prev.filter((i) => i.id !== itemId))
   }
 
-  const handleDeleteIndividualItem = (itemId: string) => {
-    const numericId = Number(itemId)
-    if (numericId > 0) setDeletedItemIds((prev) => [...prev, numericId])
-    setIndividualItems((prev) => prev.filter((i) => i.id !== itemId))
-  }
-
   return (
     <div className={pageWrapperStyle}>
       {/* 헤더 */}
