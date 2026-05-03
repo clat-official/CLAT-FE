@@ -88,19 +88,29 @@ function NotificationItem({
   )
 }
 
-function TemplateEditForm({ id, initialCommonItems, initialIndividualItems, initialName, initialAttendanceInMessage }: {
+function TemplateEditForm({
+  id,
+  initialCommonItems,
+  initialIndividualItems,
+  initialName,
+  initialAttendanceInMessage,
+  initialAttendanceId,
+}: {
   id: number
   initialName: string
   initialCommonItems: TemplateItem[]
   initialIndividualItems: IndividualTemplateItem[]
   initialAttendanceInMessage: boolean
+  initialAttendanceId: number | null
 }) {
   const router = useRouter()
   const addToast = useToastStore((s) => s.addToast)
   const [templateName, setTemplateName] = useState(initialName)
   const [commonItems, setCommonItems] = useState<TemplateItem[]>(initialCommonItems)
-  const [individualItems, setIndividualItems] = useState<IndividualTemplateItem[]>(initialIndividualItems)
+  const [individualItems, setIndividualItems] =
+    useState<IndividualTemplateItem[]>(initialIndividualItems)
   const [attendanceInMessage, setAttendanceInMessage] = useState(initialAttendanceInMessage)
+  const [attendanceId] = useState<number | null>(initialAttendanceId)
   const [isExitModalOpen, setIsExitModalOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [deletedItemIds, setDeletedItemIds] = useState<number[]>([])
@@ -113,7 +123,12 @@ function TemplateEditForm({ id, initialCommonItems, initialIndividualItems, init
         category: 'common' as const,
         isInMessage: item.isInMessage,
       })),
-      { id: '__attendance__', name: '출결', category: 'individual' as const, isInMessage: attendanceInMessage },
+      {
+        id: '__attendance__',
+        name: '출결',
+        category: 'individual' as const,
+        isInMessage: attendanceInMessage,
+      },
       ...individualItems.map((item) => ({
         id: item.id,
         name: item.name,
@@ -162,6 +177,19 @@ function TemplateEditForm({ id, initialCommonItems, initialIndividualItems, init
           sort_order: i,
           options: item.choices ?? [],
         })),
+        ...(attendanceId != null
+          ? [
+              {
+                id: attendanceId,
+                name: '출결',
+                item_type: 'ATTENDANCE' as const,
+                is_common: false,
+                include_in_message: attendanceInMessage,
+                sort_order: commonItems.length + individualItems.length,
+                options: [],
+              },
+            ]
+          : []),
         ...individualItems.map((item, i) => ({
           ...(Number(item.id) > 0 ? { id: Number(item.id) } : {}),
           name: item.name,
@@ -295,7 +323,11 @@ function TemplateEditForm({ id, initialCommonItems, initialIndividualItems, init
           <div className={notificationListStyle}>
             {notificationItems.map((item) => (
               <NotificationItem
-                key={item.id === '__attendance__' ? 'attendance-__attendance__' : `${item.category}-${item.id}`}
+                key={
+                  item.id === '__attendance__'
+                    ? 'attendance-__attendance__'
+                    : `${item.category}-${item.id}`
+                }
                 item={item}
                 onToggle={handleToggleNotification}
               />
@@ -327,9 +359,11 @@ export default function TemplateEditPage({ params }: { params: Promise<{ id: str
   const [initialCommonItems, setInitialCommonItems] = useState<TemplateItem[]>([])
   const [initialIndividualItems, setInitialIndividualItems] = useState<IndividualTemplateItem[]>([])
   const [initialAttendanceInMessage, setInitialAttendanceInMessage] = useState(false)
+  const [initialAttendanceId, setInitialAttendanceId] = useState<number | null>(null)
 
   useEffect(() => {
-    templateService.getTemplate(Number(id))
+    templateService
+      .getTemplate(Number(id))
       .then((detail) => {
         const editor = toEditorItems(detail)
         setInitialName(editor.name)
@@ -345,6 +379,7 @@ export default function TemplateEditPage({ params }: { params: Promise<{ id: str
         )
         const attendanceItem = detail.items.find((i) => i.item_type === 'ATTENDANCE')
         setInitialAttendanceInMessage(attendanceItem?.include_in_message ?? false)
+        setInitialAttendanceId(attendanceItem?.id ?? null)
         setIsLoading(false)
       })
       .catch(() => {
@@ -361,6 +396,7 @@ export default function TemplateEditPage({ params }: { params: Promise<{ id: str
       initialCommonItems={initialCommonItems}
       initialIndividualItems={initialIndividualItems}
       initialAttendanceInMessage={initialAttendanceInMessage}
+      initialAttendanceId={initialAttendanceId}
     />
   )
 }
