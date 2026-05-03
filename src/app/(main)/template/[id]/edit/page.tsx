@@ -49,13 +49,6 @@ import {
 } from '../../template-form.css'
 const MOCK_STUDENTS: LessonStudent[] = [{ id: 1, name: '홍길동', attendance: null, items: [] }]
 
-const ITEM_TYPE_MAP: Record<string, IndividualTemplateItem['item_type']> = {
-  number: 'SCORE',
-  text: 'TEXT',
-  choice: 'SELECT',
-  completion: 'COMPLETE',
-}
-
 type NotificationEntry = {
   id: string
   name: string
@@ -435,7 +428,7 @@ export default function TemplateEditPage({ params }: { params: Promise<{ id: str
           editor.individualItems.map((item) => ({
             id: item.id,
             name: item.label,
-            item_type: ITEM_TYPE_MAP[item.itemType] ?? 'TEXT',
+            item_type: (EDITOR_TO_API_ITEM_TYPE[item.itemType] ?? 'TEXT') as IndividualTemplateItem['item_type'],
             isInMessage: item.isInMessage,
             choices: item.choices,
           }))
