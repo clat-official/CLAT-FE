@@ -27,6 +27,7 @@ import CheckIcon from '@/assets/icons/icon-check.svg'
 import type { LessonStudent } from '@/types/lessonStudent'
 import type { IndividualTemplateItem, IndividualItemType } from '../../_types/template'
 import AddItemModal from '../AddItemModal/AddItemModal'
+import DragHandle from '@/components/common/DragHandle/DragHandle'
 import {
   tableStyle,
   thStudentStyle,
@@ -46,9 +47,6 @@ import {
   nameCellStyle,
   cellButtonGroupStyle,
   cellButtonRecipe,
-  dragHandleStyle,
-  dragDotRowStyle,
-  dragDotStyle,
   dragOverlayWrapperStyle,
   dragOverlayThStyle,
   dragOverlayTdStyle,
@@ -58,25 +56,6 @@ interface IndividualContentTableProps {
   students: LessonStudent[]
   items: IndividualTemplateItem[]
   onItemsChange: (items: IndividualTemplateItem[]) => void
-}
-
-function DragHandle() {
-  return (
-    <span className={dragHandleStyle}>
-      <span className={dragDotRowStyle}>
-        <span className={dragDotStyle} />
-        <span className={dragDotStyle} />
-      </span>
-      <span className={dragDotRowStyle}>
-        <span className={dragDotStyle} />
-        <span className={dragDotStyle} />
-      </span>
-      <span className={dragDotRowStyle}>
-        <span className={dragDotStyle} />
-        <span className={dragDotStyle} />
-      </span>
-    </span>
-  )
 }
 
 function TypeIcon({ type }: { type: IndividualItemType }) {

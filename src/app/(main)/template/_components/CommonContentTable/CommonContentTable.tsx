@@ -18,6 +18,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import XIcon from '@/assets/icons/icon-close.svg'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
+import DragHandle from '@/components/common/DragHandle/DragHandle'
 import type { TemplateItem } from '../../_types/template'
 import {
   tableWrapperStyle,
@@ -28,9 +29,6 @@ import {
   thEditingStyle,
   thContentStyle,
   tdStyle,
-  dragHandleStyle,
-  dragDotRowStyle,
-  dragDotStyle,
   rowLabelStyle,
   rowInputStyle,
   deleteButtonStyle,
@@ -44,25 +42,6 @@ interface CommonContentTableProps {
   onAddInline: () => string
   onUpdate: (id: string, label: string) => void
   onReorder: (newItems: TemplateItem[]) => void
-}
-
-function DragHandle() {
-  return (
-    <span className={dragHandleStyle}>
-      <span className={dragDotRowStyle}>
-        <span className={dragDotStyle} />
-        <span className={dragDotStyle} />
-      </span>
-      <span className={dragDotRowStyle}>
-        <span className={dragDotStyle} />
-        <span className={dragDotStyle} />
-      </span>
-      <span className={dragDotRowStyle}>
-        <span className={dragDotStyle} />
-        <span className={dragDotStyle} />
-      </span>
-    </span>
-  )
 }
 
 interface SortableRowProps {
