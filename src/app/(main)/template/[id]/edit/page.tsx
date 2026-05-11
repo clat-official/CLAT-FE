@@ -1,136 +1,454 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+import { use, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Text from '@/components/common/Text'
-import Button from '@/components/common/Button'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import SaveIcon from '@/assets/icons/icon-save.svg'
-import TemplateName from '../../_components/TemplateName/TemplateName'
-import ContentSection from '../../_components/ContentSection/ContentSection'
-import MessageSettings from '../../_components/MessageSettings/MessageSettings'
-import MessagePreview from '../../_components/MessagePreview/MessagePreview'
+import TemplateName from '@/app/(main)/template/_components/TemplateName/TemplateName'
+import CommonContentTable from '@/app/(main)/template/_components/CommonContentTable/CommonContentTable'
+import IndividualContentTable from '@/app/(main)/template/_components/IndividualContentTable/IndividualContentTable'
+import ConfirmModal from '@/components/common/ConfirmModal'
+import Button from '@/components/common/Button'
+import Toggle from '@/components/common/Toggle'
+import { templateService, toEditorItems, EDITOR_TO_API_ITEM_TYPE } from '@/services/template'
+import type { UpdateTemplateDto } from '@/services/template'
+import type { TemplateItem, IndividualTemplateItem } from '../../_types/template'
+import type { LessonStudent } from '@/types/lessonStudent'
+import { useToastStore } from '@/stores/toastStore'
 import {
-  pageStyle,
-  leftSectionStyle,
-  rightSectionStyle,
-  sectionBoxStyle,
-  formHeaderStyle,
-  formHeaderLeftStyle,
-  formBackButtonStyle,
+  pageWrapperStyle,
+  headerStyle,
+  headerLeftStyle,
+  backButtonStyle,
+  pageTitleStyle,
+  contentStyle,
+  templateNameWidthStyle,
+  sectionStyle,
+  sectionHeaderRowStyle,
+  sectionTitleStyle,
+  sectionHintStyle,
+  tableScrollStyle,
+  notificationListStyle,
+  notificationItemStyle,
+  notificationItemLeftStyle,
+  notifDragHandleStyle,
+  notifDragDotRowStyle,
+  notifDragDotStyle,
+  commonBadgeStyle,
+  individualBadgeStyle,
+  notifItemNameStyle,
 } from '../../template-form.css'
-import useTemplateEditor from '@/hooks/useTemplateEditor'
-import { templateService, toEditorItems } from '@/services/template'
-import type { TemplateItem } from '../../_types/template'
 
-type EditorInitialData = Parameters<typeof useTemplateEditor>[0]
+const MOCK_STUDENTS: LessonStudent[] = [{ id: 1, name: '홍길동', attendance: null, items: [] }]
 
-const ATTENDANCE_DISPLAY: TemplateItem = {
-  id: '__attendance__',
-  label: '출결 *',
-  isActive: true,
-  isInMessage: true,
-  locked: true,
-  category: 'individual',
-  itemType: 'attendance',
+const EDITOR_TYPE_TO_INDIVIDUAL_ITEM_TYPE: Record<string, IndividualTemplateItem['item_type']> = {
+  number: 'SCORE',
+  text: 'TEXT',
+  choice: 'SELECT',
+  completion: 'COMPLETE',
 }
 
-function TemplateEditForm({ id, initialData }: { id: number; initialData: EditorInitialData }) {
-  const router = useRouter()
-  const editor = useTemplateEditor(initialData)
+type NotificationEntry = {
+  id: string
+  name: string
+  category: 'common' | 'individual'
+  isInMessage: boolean
+}
+
+function DragHandle(props: React.HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span className={notifDragHandleStyle} {...props}>
+      {[0, 1, 2].map((row) => (
+        <span key={row} className={notifDragDotRowStyle}>
+          <span className={notifDragDotStyle} />
+          <span className={notifDragDotStyle} />
+        </span>
+      ))}
+    </span>
+  )
+}
+
+function NotificationItem({
+  item,
+  onToggle,
+}: {
+  item: NotificationEntry
+  onToggle: (id: string) => void
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
 
   return (
-    <>
-      <div className={formHeaderStyle}>
-        <div className={formHeaderLeftStyle}>
-          <button className={formBackButtonStyle} onClick={() => router.back()}>
+    <div ref={setNodeRef} style={style} className={notificationItemStyle}>
+      <div className={notificationItemLeftStyle}>
+        <DragHandle {...attributes} {...listeners} />
+        <span className={item.category === 'common' ? commonBadgeStyle : individualBadgeStyle}>
+          {item.category === 'common' ? '공통' : '개별'}
+        </span>
+        <span className={notifItemNameStyle}>{item.name}</span>
+      </div>
+      <Toggle checked={item.isInMessage} onChange={() => onToggle(item.id)} />
+    </div>
+  )
+}
+
+function TemplateEditForm({
+  id,
+  initialCommonItems,
+  initialIndividualItems,
+  initialName,
+  initialAttendanceInMessage,
+  initialAttendanceId,
+  initialNotificationOrder,
+}: {
+  id: number
+  initialName: string
+  initialCommonItems: TemplateItem[]
+  initialIndividualItems: IndividualTemplateItem[]
+  initialAttendanceInMessage: boolean
+  initialAttendanceId: number | null
+  initialNotificationOrder: string[]
+}) {
+  const router = useRouter()
+  const addToast = useToastStore((s) => s.addToast)
+  const [templateName, setTemplateName] = useState(initialName)
+  const [commonItems, setCommonItems] = useState<TemplateItem[]>(initialCommonItems)
+  const [individualItems, setIndividualItems] =
+    useState<IndividualTemplateItem[]>(initialIndividualItems)
+  const [attendanceInMessage, setAttendanceInMessage] = useState(initialAttendanceInMessage)
+  const [attendanceId] = useState<number | null>(initialAttendanceId)
+  const [isExitModalOpen, setIsExitModalOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [deletedItemIds, setDeletedItemIds] = useState<number[]>([])
+  const [notificationOrder, setNotificationOrder] = useState<string[]>(initialNotificationOrder)
+
+  useEffect(() => {
+    setNotificationOrder((prev) => {
+      const allIds = new Set([
+        ...commonItems.map((i) => i.id),
+        '__attendance__',
+        ...individualItems.map((i) => i.id),
+      ])
+      const filtered = prev.filter((id) => allIds.has(id))
+      const added = [...commonItems.map((i) => i.id), ...individualItems.map((i) => i.id)].filter(
+        (id) => !filtered.includes(id)
+      )
+      return [...filtered, ...added]
+    })
+  }, [commonItems, individualItems])
+
+  const notificationItemMap = useMemo(() => {
+    const map = new Map<string, NotificationEntry>()
+    commonItems.forEach((item) =>
+      map.set(item.id, {
+        id: item.id,
+        name: item.label || '(이름 없음)',
+        category: 'common',
+        isInMessage: item.isInMessage,
+      })
+    )
+    map.set('__attendance__', {
+      id: '__attendance__',
+      name: '출결',
+      category: 'individual',
+      isInMessage: attendanceInMessage,
+    })
+    individualItems.forEach((item) =>
+      map.set(item.id, {
+        id: item.id,
+        name: item.name,
+        category: 'individual',
+        isInMessage: item.isInMessage,
+      })
+    )
+    return map
+  }, [commonItems, individualItems, attendanceInMessage])
+
+  const notificationItems = useMemo<NotificationEntry[]>(
+    () =>
+      notificationOrder.flatMap((id) =>
+        notificationItemMap.has(id) ? [notificationItemMap.get(id)!] : []
+      ),
+    [notificationOrder, notificationItemMap]
+  )
+
+  const isValid =
+    templateName.trim() !== '' && (commonItems.length > 0 || individualItems.length > 0)
+
+  const handleBack = () => setIsExitModalOpen(true)
+
+  const handleConfirmExit = () => {
+    router.back()
+    setIsExitModalOpen(false)
+  }
+
+  const handleToggleNotification = (id: string) => {
+    if (id === '__attendance__') {
+      setAttendanceInMessage((prev) => !prev)
+      return
+    }
+    setCommonItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isInMessage: !item.isInMessage } : item))
+    )
+    setIndividualItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, isInMessage: !item.isInMessage } : item))
+    )
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setNotificationOrder((prev) =>
+      arrayMove(prev, prev.indexOf(String(active.id)), prev.indexOf(String(over.id)))
+    )
+  }
+
+  const handleUpdate = async () => {
+    if (!isValid) return
+
+    const sortOrderMap = new Map(notificationOrder.map((id, i) => [id, i]))
+
+    const dto: UpdateTemplateDto = {
+      name: templateName.trim(),
+      items: [
+        ...commonItems.map((item) => ({
+          ...(Number(item.id) > 0 ? { id: Number(item.id) } : {}),
+          name: item.label,
+          item_type: EDITOR_TO_API_ITEM_TYPE[item.itemType],
+          is_common: true,
+          include_in_message: item.isInMessage,
+          sort_order: sortOrderMap.get(item.id) ?? 0,
+          options: item.choices ?? [],
+        })),
+        ...(attendanceId != null
+          ? [
+              {
+                id: attendanceId,
+                name: '출결',
+                item_type: 'ATTENDANCE' as const,
+                is_common: false,
+                include_in_message: attendanceInMessage,
+                sort_order: sortOrderMap.get('__attendance__') ?? 0,
+                options: [],
+              },
+            ]
+          : []),
+        ...individualItems.map((item) => ({
+          ...(Number(item.id) > 0 ? { id: Number(item.id) } : {}),
+          name: item.name,
+          item_type: item.item_type,
+          is_common: false,
+          include_in_message: item.isInMessage,
+          sort_order: sortOrderMap.get(item.id) ?? 0,
+          options: item.choices ?? [],
+        })),
+      ],
+      deleted_item_ids: deletedItemIds,
+    }
+
+    try {
+      setIsSaving(true)
+      await templateService.updateTemplate(id, dto)
+      addToast({ variant: 'success', message: '템플릿이 수정됐어요.' })
+      router.push('/template')
+    } catch {
+      addToast({ variant: 'error', message: '템플릿 수정에 실패했어요.' })
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleDeleteCommonItem = (itemId: string) => {
+    const numericId = Number(itemId)
+    if (numericId > 0) setDeletedItemIds((prev) => [...prev, numericId])
+    setCommonItems((prev) => prev.filter((i) => i.id !== itemId))
+  }
+
+  return (
+    <div className={pageWrapperStyle}>
+      <div className={headerStyle}>
+        <div className={headerLeftStyle}>
+          <button
+            type="button"
+            className={backButtonStyle}
+            onClick={handleBack}
+            aria-label="뒤로가기"
+          >
             <ArrowLeftIcon width={24} height={24} />
           </button>
-          <Text variant="display" as="h1">
-            수업 템플릿 수정
-          </Text>
+          <h1 className={pageTitleStyle}>수업 템플릿 수정</h1>
         </div>
         <Button
           variant="primary"
           size="sm"
           leftIcon={<SaveIcon width={16} height={16} />}
-          onClick={() => editor.handleUpdate(id)}
-          disabled={editor.isSaving}
+          onClick={handleUpdate}
+          disabled={!isValid || isSaving}
         >
-          {editor.isSaving ? '저장 중...' : '저장'}
+          {isSaving ? '저장 중...' : '저장'}
         </Button>
       </div>
-      <div className={pageStyle}>
-        <div className={leftSectionStyle}>
-          <div className={sectionBoxStyle}>
-            <TemplateName value={editor.templateName} onChange={editor.setTemplateName} />
-            <div style={{ marginTop: '100px' }}>
-              <ContentSection
-                title="공통 내용"
-                description="모든 학생에게 동일하게 전달할 내용이에요"
-                items={editor.commonItems}
-                onToggle={editor.handleToggleCommonItem}
-                onDelete={editor.handleDeleteCommonItem}
-                onAddInline={editor.handleAddCommonItem}
-                onUpdate={editor.handleUpdateCommonItem}
-              />
-            </div>
-            <div style={{ marginTop: '100px' }}>
-              <ContentSection
-                title="개별 내용"
-                description="학생마다 다르게 전달할 내용이에요"
-                items={[ATTENDANCE_DISPLAY, ...editor.individualItems]}
-                onToggle={(id) => {
-                  if (id !== '__attendance__') editor.handleToggleIndividualItem(id)
-                }}
-                onDelete={(id) => {
-                  if (id !== '__attendance__') editor.handleDeleteIndividualItem(id)
-                }}
-                onAdd={editor.handleAddIndividualItem}
-              />
-            </div>
+
+      <div className={contentStyle}>
+        <div className={templateNameWidthStyle}>
+          <TemplateName value={templateName} onChange={setTemplateName} />
+        </div>
+
+        <div className={sectionStyle}>
+          <div className={sectionHeaderRowStyle}>
+            <span className={sectionTitleStyle}>공통 내용</span>
+            <span className={sectionHintStyle}>헤더를 드래그해서 순서를 바꿀 수 있어요</span>
+          </div>
+          <CommonContentTable
+            items={commonItems}
+            onDelete={handleDeleteCommonItem}
+            onAddInline={() => {
+              const newId = crypto.randomUUID()
+              setCommonItems((prev) => [
+                ...prev,
+                {
+                  id: newId,
+                  label: '',
+                  isActive: true,
+                  isInMessage: false,
+                  category: 'common',
+                  itemType: 'inline',
+                },
+              ])
+              return newId
+            }}
+            onUpdate={(itemId, label) =>
+              setCommonItems((prev) => prev.map((i) => (i.id === itemId ? { ...i, label } : i)))
+            }
+            onReorder={setCommonItems}
+          />
+        </div>
+
+        <div className={sectionStyle}>
+          <div className={sectionHeaderRowStyle}>
+            <span className={sectionTitleStyle}>개별 내용</span>
+            <span className={sectionHintStyle}>헤더를 드래그해서 순서를 바꿀 수 있어요</span>
+          </div>
+          <div className={tableScrollStyle}>
+            <IndividualContentTable
+              students={MOCK_STUDENTS}
+              items={individualItems}
+              onItemsChange={(newItems) => {
+                const deletedIds = individualItems
+                  .filter((i) => !newItems.find((n) => n.id === i.id))
+                  .map((i) => Number(i.id))
+                  .filter((n) => n > 0)
+                setDeletedItemIds((prev) => [...prev, ...deletedIds])
+                setIndividualItems(newItems)
+              }}
+            />
           </div>
         </div>
-        <div className={rightSectionStyle}>
-          <div className={sectionBoxStyle}>
-            <MessageSettings
-              messageOrder={editor.messageOrder}
-              allItemsMap={editor.allItemsMap}
-              onToggle={editor.handleMessagePreviewToggle}
-              onReorder={editor.handleMessageReorder}
-            />
+
+        <div className={sectionStyle}>
+          <div className={sectionHeaderRowStyle}>
+            <span className={sectionTitleStyle}>알림톡 포함 항목</span>
+            <span className={sectionHintStyle}>
+              수업 입력 항목과 별개로 알림톡 포함 여부 및 순서를 설정할 수 있어요
+            </span>
           </div>
-          <div className={sectionBoxStyle}>
-            <MessagePreview
-              messageOrder={editor.messageOrder}
-              allItemsMap={editor.allItemsMap}
-            />
-          </div>
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={notificationOrder} strategy={verticalListSortingStrategy}>
+              <div className={notificationListStyle}>
+                {notificationItems.map((item) => (
+                  <NotificationItem
+                    key={
+                      item.id === '__attendance__'
+                        ? 'attendance-__attendance__'
+                        : `${item.category}-${item.id}`
+                    }
+                    item={item}
+                    onToggle={handleToggleNotification}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
       </div>
-    </>
+
+      <ConfirmModal
+        isOpen={isExitModalOpen}
+        onClose={() => setIsExitModalOpen(false)}
+        onConfirm={handleConfirmExit}
+        title="지금 나가면 내용이 사라져요"
+        descriptions={['작성 중인 내용은 저장되지 않아요.']}
+        confirmLabel="나가기"
+        cancelLabel="계속 작성"
+        confirmVariant="danger"
+      />
+    </div>
   )
 }
 
 export default function TemplateEditPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const { id } = use(params)
-  const [initialData, setInitialData] = useState<EditorInitialData>()
   const [isLoading, setIsLoading] = useState(true)
+  const [initialName, setInitialName] = useState('')
+  const [initialCommonItems, setInitialCommonItems] = useState<TemplateItem[]>([])
+  const [initialIndividualItems, setInitialIndividualItems] = useState<IndividualTemplateItem[]>([])
+  const [initialAttendanceInMessage, setInitialAttendanceInMessage] = useState(false)
+  const [initialAttendanceId, setInitialAttendanceId] = useState<number | null>(null)
+  const [initialNotificationOrder, setInitialNotificationOrder] = useState<string[]>([])
 
   useEffect(() => {
-    templateService.getTemplate(Number(id))
+    templateService
+      .getTemplate(Number(id))
       .then((detail) => {
-        setInitialData(toEditorItems(detail))
+        const editor = toEditorItems(detail)
+        setInitialName(editor.name)
+        setInitialCommonItems(editor.commonItems)
+        setInitialIndividualItems(
+          editor.individualItems.map((item) => ({
+            id: item.id,
+            name: item.label,
+            item_type: EDITOR_TYPE_TO_INDIVIDUAL_ITEM_TYPE[item.itemType] ?? 'TEXT',
+            isInMessage: item.isInMessage,
+            choices: item.choices,
+          }))
+        )
+        const attendanceItem = detail.items.find((i) => i.item_type === 'ATTENDANCE')
+        setInitialAttendanceInMessage(attendanceItem?.include_in_message ?? false)
+        setInitialAttendanceId(attendanceItem?.id ?? null)
+        // toEditorItems의 messageOrder로 초기 순서 세팅
+        setInitialNotificationOrder(editor.messageOrder)
         setIsLoading(false)
       })
       .catch(() => {
-        alert('템플릿을 불러오지 못했습니다.')
         router.push('/template')
       })
   }, [id])
 
-  if (isLoading || !initialData) return null
+  if (isLoading) return null
 
-  return <TemplateEditForm id={Number(id)} initialData={initialData} />
+  return (
+    <TemplateEditForm
+      id={Number(id)}
+      initialName={initialName}
+      initialCommonItems={initialCommonItems}
+      initialIndividualItems={initialIndividualItems}
+      initialAttendanceInMessage={initialAttendanceInMessage}
+      initialAttendanceId={initialAttendanceId}
+      initialNotificationOrder={initialNotificationOrder}
+    />
+  )
 }

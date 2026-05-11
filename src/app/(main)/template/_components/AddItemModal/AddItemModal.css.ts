@@ -3,15 +3,6 @@ import { recipe } from '@vanilla-extract/recipes'
 import { colors } from '@/styles/tokens/colors'
 import { fontStyles } from '@/styles/tokens/typography'
 
-export const formStyle = style({
-  backgroundColor: colors.primary100,
-  borderRadius: '8px',
-  padding: '16px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '24px',
-})
-
 export const fieldStyle = style({
   display: 'flex',
   flexDirection: 'column',
@@ -29,8 +20,8 @@ export const typeCardRecipe = recipe({
     display: 'flex',
     flexDirection: 'column',
     gap: '4px',
-    backgroundColor: colors.white,
-    border: `1px solid ${colors.gray300}`,
+    backgroundColor: colors.gray50,
+    border: `0px`,
     borderRadius: '8px',
     padding: '12px',
     cursor: 'pointer',
@@ -81,6 +72,7 @@ export const typeCardDescStyle = style({
 export const actionsStyle = style({
   display: 'flex',
   gap: '8px',
+  justifyContent: 'flex-end',
 })
 
 export const labelStyle = style({
@@ -98,7 +90,7 @@ export const tagInputContainerStyle = style({
   gap: '6px',
   padding: '8px 12px',
   backgroundColor: colors.white,
-  border: `1px solid ${colors.gray200}`,
+  border: `1px solid ${colors.gray50}`,
   borderRadius: '8px',
   minHeight: '40px',
 })
@@ -169,4 +161,24 @@ export const completionInfoListStyle = style({
   color: colors.gray700,
   letterSpacing: '-0.03em',
   lineHeight: '140%',
+})
+
+export const contentStyle = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+})
+
+export const requiredMarkStyle = style({
+  color: colors.error500,
+})
+
+export const infoRowStyle = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+})
+
+export const infoIconStyle = style({
+  color: colors.primary500,
 })

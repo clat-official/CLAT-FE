@@ -18,15 +18,13 @@ import { CSS } from '@dnd-kit/utilities'
 import Text from '@/components/common/Text'
 import Chip from '@/components/common/Chip'
 import Toggle from '@/components/common/Toggle'
+import DragHandle from '@/components/common/DragHandle/DragHandle'
 import type { TemplateItem } from '../../_types/template'
 import {
   sectionHeaderStyle,
   rowListStyle,
   rowStyle,
   rowDraggingStyle,
-  dragHandleStyle,
-  dragDotRowStyle,
-  dragDotStyle,
   rowLabelStyle,
   itemTypeBadgeStyle,
 } from './MessageSettings.css'
@@ -49,25 +47,6 @@ interface MessageSettingsProps {
 interface SortableRowProps {
   item: TemplateItem
   onToggle: (id: string) => void
-}
-
-function DragHandle() {
-  return (
-    <span className={dragHandleStyle}>
-      <span className={dragDotRowStyle}>
-        <span className={dragDotStyle} />
-        <span className={dragDotStyle} />
-      </span>
-      <span className={dragDotRowStyle}>
-        <span className={dragDotStyle} />
-        <span className={dragDotStyle} />
-      </span>
-      <span className={dragDotRowStyle}>
-        <span className={dragDotStyle} />
-        <span className={dragDotStyle} />
-      </span>
-    </span>
-  )
 }
 
 function SortableRow({ item, onToggle }: SortableRowProps) {
@@ -132,7 +111,7 @@ export default function MessageSettings({
           순서를 바꾸거나 항목을 켜고 끌 수 있어요
         </Text>
       </div>
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext id="message-settings-dnd" sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={activeOrder} strategy={verticalListSortingStrategy}>
           <div className={rowListStyle}>
             {activeOrder.map((id) => {

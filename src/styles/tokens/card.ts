@@ -3,9 +3,10 @@ import { colors } from './colors'
 
 export const baseCardStyleRule: StyleRule = {
   backgroundColor: colors.white,
-  border: `1px solid ${colors.gray100}`,
+  border: `1px solid ${colors.gray75}`,
   borderRadius: '16px',
   padding: '24px',
+  minHeight: '160px',
   cursor: 'pointer',
 }
 
