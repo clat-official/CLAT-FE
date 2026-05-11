@@ -7,7 +7,7 @@ import Text from '@/components/common/Text'
 import AddCard from '@/components/common/AddCard'
 import TemplateCard from './_components/TemplateCard/TemplateCard'
 import DeleteConfirmModal from './_components/DeleteConfirmModal/DeleteConfirmModal'
-import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
+import PlusIcon from '@/assets/icons/icon-plus.svg'
 import { gridStyle } from './template.css'
 import { templateService, type Template } from '@/services/template'
 
@@ -76,8 +76,8 @@ export default function TemplatePage() {
           />
         ))}
         <AddCard
-          icon={<PlusCircleIcon width={36} height={36} />}
-          label="템플릿 추가"
+          icon={<PlusIcon width={24} height={24} />}
+          label="템플릿 추가하기"
           onClick={() => router.push('/template/new')}
         />
       </div>

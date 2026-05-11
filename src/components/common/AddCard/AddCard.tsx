@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react'
-import { addCardStyle, descriptionStyle } from './AddCard.css'
+import { addCardStyle } from './AddCard.css'
 import Text from '@/components/common/Text'
 
 interface AddCardProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -12,8 +12,7 @@ export default function AddCard({ icon, label, description, ...props }: AddCardP
   return (
     <button className={addCardStyle} {...props}>
       {icon}
-      <Text variant="titleSm" color="gray300">{label}</Text>
-      {description && <p className={descriptionStyle}>{description}</p>}
+      <Text variant="titleMd" color="gray300">{label}</Text>
     </button>
   )
 }
