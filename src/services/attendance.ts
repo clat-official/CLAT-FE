@@ -1,10 +1,11 @@
 import axiosInstance from '@/lib/api/axiosInstance'
 import type {
   AttendanceSession,
+  AttendanceSummary,
   CreateSessionDto,
-  EndSessionResponse,
   PatchStudentAttendanceDto,
   PublicAttendanceSession,
+  SessionByLessonResponse,
   SubmitAttendanceCodeDto,
   SubmitAttendanceCodeResponse,
 } from '@/types/attendance'
@@ -12,26 +13,25 @@ import type {
 export const attendanceService = {
   // 강사 측
 
-  async createSession(dto: CreateSessionDto): Promise<AttendanceSession> {
-    const { data } = await axiosInstance.post('/attendance/sessions', dto)
-    return data.data
+  async createSession(dto: CreateSessionDto): Promise<void> {
+    await axiosInstance.post('/attendance/sessions', dto)
   },
 
-  async getSessionByLesson(lessonRecordId: number): Promise<AttendanceSession | null> {
+  async getSessionByLesson(lessonRecordId: number): Promise<SessionByLessonResponse> {
     const { data } = await axiosInstance.get(
       `/attendance/sessions/by-lesson/${lessonRecordId}`
     )
-    return data.data
+    return data.data.data
   },
 
   async getSession(sessionId: number): Promise<AttendanceSession> {
     const { data } = await axiosInstance.get(`/attendance/sessions/${sessionId}`)
-    return data.data
+    return data.data.data
   },
 
-  async endSession(sessionId: number): Promise<EndSessionResponse> {
+  async endSession(sessionId: number): Promise<AttendanceSummary> {
     const { data } = await axiosInstance.post(`/attendance/sessions/${sessionId}/end`)
-    return data.data
+    return data.data.data
   },
 
   async patchStudentAttendance(
@@ -51,7 +51,7 @@ export const attendanceService = {
     const { data } = await axiosInstance.get(
       `/attendance/public/sessions/${sessionId}`
     )
-    return data.data
+    return data.data.data
   },
 
   async submitAttendanceCode(
@@ -62,6 +62,6 @@ export const attendanceService = {
       `/attendance/public/sessions/${sessionId}/check`,
       dto
     )
-    return data.data
+    return data.data.data
   },
 }

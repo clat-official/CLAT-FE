@@ -1,8 +1,5 @@
 // 출석 상태 (null = 미응답)
-export type AttendanceStatus = '출석' | '지각' | '결석'
-
-// 세션 진행 상태 (강사 측)
-export type SessionStatus = 'ACTIVE' | 'ENDED'
+export type AttendanceStatus = 'PRESENT' | 'ABSENT'
 
 // 세션 진행 상태 (학생 측 공개)
 export type PublicSessionStatus = 'ACTIVE' | 'ENDED' | 'EXPIRED'
@@ -11,32 +8,32 @@ export type PublicSessionStatus = 'ACTIVE' | 'ENDED' | 'EXPIRED'
 
 export interface AttendanceStudentRecord {
   student_id: number
-  name: string
+  student_name: string
   status: AttendanceStatus | null // null = 미응답
-  submitted_at: string | null // ISO timestamp, 미응답 시 null
+  checked_at: string | null // ISO timestamp, 미응답 시 null
+  is_manual: boolean
 }
 
 export interface AttendanceSession {
   session_id: number
-  lesson_record_id: number
-  status: SessionStatus
   code: string // 4자리 코드
-  duration_minutes: number
+  started_at: string // ISO timestamp
   expires_at: string // ISO timestamp
-  created_at: string // ISO timestamp
+  is_active: boolean
+  total_count: number
+  present_count: number
+  absent_count: number
   students: AttendanceStudentRecord[]
 }
 
 export interface AttendanceSummary {
-  present: number // 출석
-  late: number // 지각
-  absent: number // 결석
-  total: number
+  present_count: number
+  absent_count: number
+  note?: string
 }
 
-export interface EndSessionResponse {
-  session_id: number
-  summary: AttendanceSummary
+export interface SessionByLessonResponse {
+  session_id: number | null
 }
 
 export interface CreateSessionDto {
