@@ -233,19 +233,15 @@ function TemplateEditForm({
           sort_order: sortOrderMap.get(item.id) ?? 0,
           options: item.choices ?? [],
         })),
-        ...(attendanceId != null
-          ? [
-              {
-                id: attendanceId,
-                name: '출결',
-                item_type: 'ATTENDANCE' as const,
-                is_common: false,
-                include_in_message: attendanceInMessage,
-                sort_order: sortOrderMap.get('__attendance__') ?? 0,
-                options: [],
-              },
-            ]
-          : []),
+        {
+          ...(attendanceId != null ? { id: attendanceId } : {}),
+          name: '출결',
+          item_type: 'ATTENDANCE' as const,
+          is_common: false,
+          include_in_message: attendanceInMessage,
+          sort_order: sortOrderMap.get('__attendance__') ?? 0,
+          options: [],
+        },
         ...individualItems.map((item) => ({
           ...(Number(item.id) > 0 ? { id: Number(item.id) } : {}),
           name: item.name,
