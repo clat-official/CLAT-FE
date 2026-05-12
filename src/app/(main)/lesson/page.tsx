@@ -9,7 +9,7 @@ import DateCard from './_components/DateCard/DateCard'
 import LessonCard from './_components/LessonCard/LessonCard'
 import AddCard from '@/components/common/AddCard'
 import AddLessonModal from './_components/AddLessonModal/AddLessonModal'
-import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
+import PlusIcon from '@/assets/icons/icon-plus.svg'
 import ArrowLeftIcon from '@/assets/icons/icon-chevron-left.svg'
 import ArrowRightIcon from '@/assets/icons/icon-chevron-right.svg'
 import {
@@ -136,8 +136,8 @@ export default function LessonPage() {
           )
         })}
         <AddCard
-          icon={<PlusCircleIcon width={36} height={36} />}
-          label="다른 수업 추가"
+          icon={<PlusIcon width={24} height={24} />}
+          label="다른 수업 추가하기"
           description="오늘 일정에 없는 반의 수업을 입력할 수 있어요"
           onClick={() => setIsAddLessonOpen(true)}
         />
