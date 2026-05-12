@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useState } from 'react'
+import { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
@@ -9,12 +9,14 @@ import DownloadIcon from '@/assets/icons/icon-download.svg'
 import SaveIcon from '@/assets/icons/icon-save.svg'
 import ChevronDownIcon from '@/assets/icons/icon-chevron-down.svg'
 import MessageIcon from '@/assets/icons/icon-message.svg'
+import StopWatchIcon from '@/assets/icons/icon-stopwatch.svg'
 import LessonTable from './_components/LessonTableSection/LessonTableSection'
 import CommonContent from './_components/CommonContent/CommonContent'
 import ProgressBar from './_components/ProgressBar/ProgressBar'
 import MessagePreview from './_components/MessagePreview/MessagePreview'
 import ConfirmModal from '@/components/common/ConfirmModal'
 import TemplateSelectModal from '../_components/TemplateSelectModal/TemplateSelectModal'
+import AttendanceStartModal from './_components/AttendanceStartModal/AttendanceStartModal'
 import {
   pageStyle,
   headerStyle,
@@ -27,6 +29,7 @@ import {
 } from './lessonDetail.css'
 import useLessonDetail from '@/hooks/useLessonDetail'
 import useDisclosure from '@/hooks/useDisclosure'
+import { useAttendanceStore } from '@/stores/attendanceStore'
 import { lessonService } from '@/services/lesson'
 import { useToastStore } from '@/stores/toastStore'
 import { format } from 'date-fns'
@@ -55,6 +58,16 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
   const templateModal = useDisclosure()
   const confirmModal = useDisclosure()
   const [pendingTemplateId, setPendingTemplateId] = useState<number | null>(null)
+
+  const attendanceInit = useAttendanceStore((s) => s.init)
+  const attendanceIsFetching = useAttendanceStore((s) => s.isFetching)
+  const attendanceSession = useAttendanceStore((s) => s.session)
+  const attendanceCreateSession = useAttendanceStore((s) => s.createSession)
+  const [isStartModalOpen, setIsStartModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (lesson) attendanceInit(lessonId, lesson.class_name)
+  }, [lessonId, lesson, attendanceInit])
 
   const handleSave = async () => {
     if (!lesson) return
@@ -199,6 +212,21 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
           </Button>
         </div>
         <div className={headerButtonGroupStyle}>
+          {!attendanceIsFetching && (
+            <Button
+              variant="secondary"
+              size="sm"
+              leftIcon={<StopWatchIcon width={20} height={20} />}
+              onClick={!attendanceSession ? () => setIsStartModalOpen(true) : undefined}
+              disabled={!!attendanceSession}
+            >
+              {!attendanceSession
+                ? '출결 시작하기'
+                : attendanceSession.is_active
+                  ? '출결 진행 중'
+                  : '출결 완료'}
+            </Button>
+          )}
           <Button
             variant="secondary"
             size="sm"
@@ -279,6 +307,24 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
         onClose={messagePreview.close}
         lessonId={lessonId}
         lesson={lesson}
+      />
+
+      <AttendanceStartModal
+        isOpen={isStartModalOpen}
+        onClose={() => setIsStartModalOpen(false)}
+        onConfirm={async (minutes) => {
+          try {
+            await attendanceCreateSession(minutes)
+            setIsStartModalOpen(false)
+          } catch (err: unknown) {
+            const message =
+              (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data
+                ?.error?.message ?? '출결 시작에 실패했어요.'
+            addToast({ variant: 'error', message })
+          }
+        }}
+        className={lesson.class_name}
+        studentCount={students.length}
       />
     </div>
   )
