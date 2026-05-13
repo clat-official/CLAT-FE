@@ -1,7 +1,6 @@
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import Modal from '@/components/common/Modal'
-import { contentStyle, actionsStyle, titleStyle } from './ConfirmModal.css'
 
 interface ConfirmModalProps {
   isOpen: boolean
@@ -26,8 +25,8 @@ export default function ConfirmModal({
 }: ConfirmModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="sm">
-      <div className={contentStyle}>
-        <Text variant="headingMd" as="h2" className={titleStyle}>
+      <div className="flex flex-col items-center text-center mt-11 mb-9">
+        <Text variant="headingMd" as="h2" className="mb-3">
           {title}
         </Text>
         {descriptions &&
@@ -37,7 +36,7 @@ export default function ConfirmModal({
             </Text>
           ))}
       </div>
-      <div className={actionsStyle}>
+      <div className="flex gap-2">
         <Button variant="ghost" size="md" fullWidth onClick={onClose}>
           {cancelLabel}
         </Button>

@@ -1,6 +1,8 @@
 import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
-import { sectionStyle, requiredMarkStyle } from './TemplateName.css'
+
+const sectionStyle = 'flex flex-col gap-3'
+const requiredMarkStyle = 'text-error-500'
 
 const MAX_LENGTH = 20
 

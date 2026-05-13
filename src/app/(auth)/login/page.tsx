@@ -3,19 +3,10 @@
 import { useRef, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { auth } from '@/services/auth'
-import {
-  containerStyle,
-  loginBoxStyle,
-  logoSectionStyle,
-  formStyle,
-  submitButtonStyle,
-  footerLinkStyle,
-} from './login.css'
 import Input from '@/components/common/Input/Input'
 import Button from '@/components/common/Button/Button'
 import Text from '@/components/common/Text/Text'
 import Logo from '@/assets/logo/logo-full.svg'
-import { colors } from '@/styles/tokens/colors'
 
 function LoginContent() {
   const [email, setEmail] = useState('')
@@ -50,10 +41,10 @@ function LoginContent() {
   }
 
   return (
-    <div className={containerStyle}>
-      <div className={loginBoxStyle}>
+    <div className="flex justify-center items-center w-screen h-screen bg-background">
+      <div className="w-full max-w-[400px] flex flex-col items-center px-5">
         {/* 로고 섹션 */}
-        <div className={logoSectionStyle}>
+        <div className="flex flex-col items-center gap-10 mb-[60px]">
           <Logo height={80} style={{ width: 'auto' }} />
           <Text variant="headingMd" color="gray500">
             출강 강사를 위한 운영 매니저
@@ -61,7 +52,7 @@ function LoginContent() {
         </div>
 
         {/* 로그인 폼 */}
-        <form className={formStyle} onSubmit={handleLogin}>
+        <form className="w-full flex flex-col gap-4" onSubmit={handleLogin}>
           <Input
             placeholder="이메일"
             shape="capsule"
@@ -85,7 +76,7 @@ function LoginContent() {
             shape="capsule"
             fullWidth
             type="submit"
-            className={submitButtonStyle}
+            className="mt-6"
             disabled={!email || !password || isLoading}
           >
             {isLoading ? '로그인 중...' : '로그인'}
@@ -99,11 +90,11 @@ function LoginContent() {
         </form>
 
         {/* 하단 링크 */}
-        <div className={footerLinkStyle}>
+        <div className="flex items-center gap-4 mt-6">
           <Text variant="bodyLg" color="gray300">
             회원가입
           </Text>
-          <div style={{ width: 1, height: 16, backgroundColor: colors.gray300 }} />
+          <div className="w-px h-4 bg-gray-300" />
           <Text variant="bodyLg" color="gray300">
             비밀번호 찾기
           </Text>

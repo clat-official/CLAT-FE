@@ -17,16 +17,14 @@ import MessagePreview from './_components/MessagePreview/MessagePreview'
 import ConfirmModal from '@/components/common/ConfirmModal'
 import TemplateSelectModal from '../_components/TemplateSelectModal/TemplateSelectModal'
 import AttendanceStartModal from './_components/AttendanceStartModal/AttendanceStartModal'
-import {
-  pageStyle,
-  headerStyle,
-  footerStyle,
-  sectionStyle,
-  backButtonStyle,
-  headerLeftStyle,
-  headerButtonGroupStyle,
-  templateChipButtonStyle,
-} from './lessonDetail.css'
+const pageStyle = 'flex flex-col gap-[60px] pb-[80px]'
+const headerStyle = 'flex justify-between items-center'
+const footerStyle = 'fixed bottom-0 left-[240px] right-0 flex justify-between items-center py-4 px-12 bg-primary-100 border-t border-gray-100 z-[100]'
+const sectionStyle = 'flex flex-col gap-5'
+const backButtonStyle = 'bg-transparent border-none cursor-pointer text-gray-500 flex items-center hover:text-gray-700'
+const headerLeftStyle = 'flex items-center gap-3'
+const headerButtonGroupStyle = 'flex gap-2'
+const templateChipButtonStyle = 'flex items-center gap-1 py-2 px-3 rounded-lg border-none bg-gray-50 text-gray-500 text-sm font-semibold cursor-pointer tracking-[-0.03em] leading-[140%] hover:bg-gray-75'
 import useLessonDetail from '@/hooks/useLessonDetail'
 import useDisclosure from '@/hooks/useDisclosure'
 import { useAttendanceStore } from '@/stores/attendanceStore'

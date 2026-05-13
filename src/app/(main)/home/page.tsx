@@ -8,7 +8,6 @@ import giftBox from '@/assets/images/gift-box.png'
 import envelope from '@/assets/images/envelope.png'
 import BookOpen from '@/assets/icons/icon-book-open.svg'
 import ChevronRight from '@/assets/icons/icon-chevron-right.svg'
-import * as styles from './home.css'
 
 const steps = [
   {
@@ -58,46 +57,50 @@ const steps = [
   },
 ]
 
+const tabBase = 'rounded-full border-none text-xs font-semibold tracking-[-0.03em] cursor-pointer transition-all duration-150'
+const tabStyle = `${tabBase} py-2 px-4 bg-gray-50 text-gray-500`
+const tabActiveStyle = `${tabBase} py-[7px] px-4 bg-primary-500 text-white`
+
 export default function HomePage() {
   const [activeStep, setActiveStep] = useState(0)
 
   return (
-    <div className={styles.pageStyle}>
+    <div className="flex flex-col gap-9">
       {/* 웰컴 배너 */}
-      <div className={styles.bannerStyle}>
-        <div className={styles.bannerContentStyle}>
-          <div style={{ overflow: 'hidden', height: '24px', width: '120px' }}>
-            <LogoBetaIcon style={{ height: '16px', width: 'auto', marginLeft: '3px' }} />
+      <div className="[background:radial-gradient(circle_at_right_center,var(--color-primary-400)_0%,transparent_75%),var(--color-primary-100)] rounded-[20px] p-8 flex items-center justify-between overflow-hidden relative min-h-[160px]">
+        <div className="flex flex-col gap-4 z-[1]">
+          <div className="overflow-hidden h-6 w-[120px]">
+            <LogoBetaIcon className="h-4 w-auto ml-[3px]" />
           </div>
           <div>
-            <div className={styles.bannerSubtitleStyle}>수업 기록부터 문자까지,</div>
-            <div className={styles.bannerTitleStyle}>3분이면 끝</div>
+            <div className="text-2xl font-bold tracking-[-0.05em] text-gray-700">수업 기록부터 문자까지,</div>
+            <div className="text-[52px] font-[800] tracking-[-0.05em] text-primary-500">3분이면 끝</div>
           </div>
         </div>
-        <div className={styles.bannerIllustWrapStyle}>
+        <div className="absolute right-[-140px] bottom-[-110px] flex">
           <Image
             src={bannerIllust}
             alt="배너 일러스트"
             height={380}
-            style={{ objectFit: 'contain', objectPosition: 'right bottom' }}
+            className="object-contain object-right-bottom"
           />
         </div>
       </div>
 
       {/* 클랫 시작 가이드 */}
       <div>
-        <div className={styles.sectionHeaderStyle}>
+        <div className="flex items-center gap-2 mb-4">
           <BookOpen width={24} height={24} />
-          <span className={styles.sectionTitleStyle}>클랫 시작 가이드</span>
+          <span className="text-xl font-bold tracking-[-0.03em] text-gray-900">클랫 시작 가이드</span>
         </div>
 
         {/* 탭 */}
-        <div className={styles.tabListStyle}>
+        <div className="flex gap-2 mb-4">
           {steps.map((step, i) => (
             <button
               key={i}
               onClick={() => setActiveStep(i)}
-              className={activeStep === i ? styles.tabButtonActiveStyle : styles.tabButtonStyle}
+              className={activeStep === i ? tabActiveStyle : tabStyle}
             >
               {step.tag}
             </button>
@@ -105,15 +108,17 @@ export default function HomePage() {
         </div>
 
         {/* 스텝 카드 */}
-        <div className={styles.stepCardStyle}>
-          <div className={styles.stepCardHeaderStyle}>
-            <div className={styles.stepCardTitleStyle}>{steps[activeStep].title}</div>
+        <div className="bg-gray-50 rounded-[20px] py-6 px-7">
+          <div className="flex items-center gap-[10px] mb-4">
+            <div className="text-lg font-semibold tracking-[-0.03em] text-gray-900">{steps[activeStep].title}</div>
           </div>
-          <div className={styles.stepItemListStyle}>
+          <div className="flex flex-col gap-[10px]">
             {steps[activeStep].items.map((item, i) => (
-              <div key={i} className={styles.stepItemStyle}>
-                <div className={styles.stepNumberStyle}>{String(i + 1).padStart(2, '0')}</div>
-                <div className={styles.stepItemTextStyle}>{item}</div>
+              <div key={i} className="flex items-start gap-[10px]">
+                <div className="shrink-0 px-3 h-5 rounded-full bg-gray-75 text-gray-500 text-[11px] font-semibold tracking-[-0.03em] inline-flex items-center justify-center mt-0.5 whitespace-nowrap">
+                  {String(i + 1).padStart(2, '0')}
+                </div>
+                <div className="text-sm font-medium text-gray-700 tracking-[-0.03em] leading-[1.65]">{item}</div>
               </div>
             ))}
           </div>
@@ -121,38 +126,42 @@ export default function HomePage() {
       </div>
 
       {/* 하단 2열 카드 */}
-      <div className={styles.cardGridStyle}>
+      <div className="grid grid-cols-2 gap-4">
         {/* 베타 혜택 */}
-        <div className={styles.betaCardStyle}>
-          <div className={styles.cardContentStyle}>
-            <div className={styles.cardTagStyle}>베타 테스터 혜택</div>
-            <div className={styles.cardTitleStyle}>
+        <div className="bg-primary-100 rounded-[20px] py-7 px-8 overflow-hidden min-h-[200px] relative">
+          <div className="flex flex-col gap-3 z-[1] relative">
+            <div className="inline-flex bg-primary-200 rounded-full py-1 px-3 text-sm font-semibold tracking-[-0.03em] text-primary-400 w-fit">
+              베타 테스터 혜택
+            </div>
+            <div className="text-2xl font-bold tracking-[-0.05em] text-gray-900 leading-[1.3]">
               지금 참여하면
               <br />
               3개월 무료
             </div>
-            <div className={styles.cardDescStyle}>
+            <div className="text-sm font-semibold tracking-[-0.03em] text-gray-700">
               베타 기간 동안 모든 기능을
               <br />
               무료로 사용하세요.
             </div>
           </div>
-          <div className={styles.cardImageWrapStyle}>
+          <div className="absolute right-[-100px] bottom-[-120px]">
             <Image
               src={giftBox}
               alt="선물상자"
               width={360}
               height={360}
-              style={{ objectFit: 'contain' }}
+              className="object-contain"
             />
           </div>
         </div>
 
         {/* 친구 초대 */}
-        <div className={styles.inviteCardStyle}>
-          <div className={styles.cardContentStyle}>
-            <div className={styles.cardTagInvertStyle}>친구 초대 이벤트</div>
-            <div className={styles.cardTitleInvertStyle}>
+        <div className="bg-primary-500 rounded-[20px] py-7 px-8 overflow-hidden min-h-[200px] relative">
+          <div className="flex flex-col gap-3 z-[1] relative">
+            <div className="inline-flex bg-transparent border border-primary-100 rounded-full py-1 px-3 text-sm font-semibold tracking-[-0.03em] text-primary-100 w-fit">
+              친구 초대 이벤트
+            </div>
+            <div className="text-2xl font-bold tracking-[-0.05em] text-white leading-[1.3]">
               친구 초대하고
               <br />
               3개월 추가 무료
@@ -161,19 +170,19 @@ export default function HomePage() {
               href="https://forms.gle/GnAunK7KUQQuHCSY8"
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.inviteButtonStyle}
+              className="inline-flex items-center gap-5 bg-white border-none rounded-full py-2 px-4 text-base font-bold tracking-[-0.03em] text-primary-500 cursor-pointer w-fit no-underline transition-all duration-150 hover:bg-primary-50 active:opacity-80"
             >
               친구 초대하기
               <ChevronRight width={24} height={24} />
             </a>
           </div>
-          <div className={styles.cardImageWrapStyle}>
+          <div className="absolute right-[-100px] bottom-[-120px]">
             <Image
               src={envelope}
               alt="편지봉투"
               width={360}
               height={360}
-              style={{ objectFit: 'contain' }}
+              className="object-contain"
             />
           </div>
         </div>

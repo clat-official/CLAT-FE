@@ -1,7 +1,4 @@
-import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin'
 import type { Configuration } from 'webpack'
-
-const withVanillaExtract = createVanillaExtractPlugin()
 
 const allowedDevOrigins = process.env.ALLOWED_DEV_ORIGINS
   ? process.env.ALLOWED_DEV_ORIGINS.split(',').map((s) => s.trim())
@@ -60,4 +57,4 @@ const nextConfig = {
   },
 }
 
-export default withVanillaExtract(nextConfig)
+export default nextConfig

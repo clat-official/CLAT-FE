@@ -20,21 +20,20 @@ import XIcon from '@/assets/icons/icon-close.svg'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
 import DragHandle from '@/components/common/DragHandle/DragHandle'
 import type { TemplateItem } from '../../_types/template'
-import {
-  tableWrapperStyle,
-  tableStyle,
-  trStyle,
-  trDraggingStyle,
-  thStyle,
-  thEditingStyle,
-  thContentStyle,
-  tdStyle,
-  rowLabelStyle,
-  rowInputStyle,
-  deleteButtonStyle,
-  addRowButtonStyle,
-  emptyTdStyle,
-} from './CommonContentTable.css'
+
+const tableWrapperStyle = 'w-full border border-gray-100 overflow-hidden'
+const tableStyle = 'w-full border-separate border-spacing-0'
+const trStyle = 'relative'
+const trDraggingStyle = 'opacity-50 bg-primary-50 z-[9999]'
+const thStyle = 'w-[200px] h-12 bg-gray-50 border-b border-r border-gray-100 [tr:last-child_&]:border-b-0'
+const thEditingStyle = 'bg-primary-50'
+const thContentStyle = 'flex items-center px-4 h-full'
+const tdStyle = 'h-12 border-b border-gray-100 [tr:last-child_&]:border-b-0'
+const rowLabelStyle = 'ml-2 text-sm font-semibold text-gray-700 tracking-[-0.03em] leading-[140%] cursor-text'
+const rowInputStyle = 'flex-1 ml-2 text-sm font-semibold text-gray-700 tracking-[-0.03em] leading-[140%] bg-transparent border-none outline-none p-0 w-full placeholder:text-gray-300'
+const deleteButtonStyle = 'flex items-center bg-transparent border-none cursor-pointer p-1 text-gray-300 shrink-0 ml-auto hover:text-gray-500'
+const addRowButtonStyle = 'flex items-center justify-center gap-1 w-full py-[10px] px-4 bg-white border-0 border-t border-gray-100 cursor-pointer text-sm font-semibold text-primary-500 tracking-[-0.03em] hover:bg-primary-50'
+const emptyTdStyle = 'px-4 py-6 text-center text-sm text-gray-300'
 
 interface CommonContentTableProps {
   items: TemplateItem[]

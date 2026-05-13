@@ -1,5 +1,3 @@
-import { tableStyle, thStyle, tdStyle } from './ClassInfoTable.css'
-
 interface ClassInfo {
   academyName: string
   schedule: string
@@ -7,9 +5,13 @@ interface ClassInfo {
   templates: { id: number; name: string }[]
 }
 
+const tableStyle = 'w-full border-collapse border border-gray-100 overflow-hidden'
+const thStyle = 'w-[116px] h-10 px-4 bg-gray-50 text-gray-900 text-sm font-semibold tracking-[-0.03em] leading-[1.4] text-left border-r border-b border-gray-100'
+const tdStyle = 'h-10 px-4 bg-white text-gray-700 text-sm font-medium tracking-[-0.03em] leading-[1.4] border-b border-gray-100 last:border-r-0'
+
 export default function ClassInfoTable({ academyName, schedule, status, templates }: ClassInfo) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+    <div className="grid grid-cols-2 gap-5">
       <table className={tableStyle}>
         <colgroup>
           <col style={{ width: '116px' }} />

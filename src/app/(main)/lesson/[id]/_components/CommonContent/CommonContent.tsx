@@ -1,4 +1,7 @@
-import { tableStyle, thStyle, tdStyle, inputStyle } from './CommonContent.css'
+const tableStyle = 'w-full border-collapse border border-gray-100 overflow-hidden'
+const thStyle = 'w-[160px] h-12 pl-4 bg-gray-50 text-gray-900 text-sm font-semibold tracking-[-0.03em] text-left border-b border-r border-gray-100 [tr:last-child_&]:border-b-0'
+const tdStyle = 'h-12 border-b border-gray-100 [tr:last-child_&]:border-b-0'
+const inputStyle = 'w-full h-full px-4 border-none outline-none text-sm font-medium text-gray-700 tracking-[-0.03em] bg-transparent placeholder:text-gray-300 focus:bg-primary-50'
 
 interface CommonItem {
   id: number

@@ -46,7 +46,7 @@ import {
   commonBadgeStyle,
   individualBadgeStyle,
   notifItemNameStyle,
-} from '../template-form.css'
+} from '../template-form'
 
 const INITIAL_COMMON_ITEMS: TemplateItem[] = [
   { id: 'common-1', label: '오늘 수업 내용', isActive: true, isInMessage: true, category: 'common', itemType: 'text' },

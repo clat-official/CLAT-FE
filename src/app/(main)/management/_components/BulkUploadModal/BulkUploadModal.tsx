@@ -8,23 +8,7 @@ import UploadCloudIcon from '@/assets/icons/icon-upload-cloud.svg'
 import DownloadIcon from '@/assets/icons/icon-download.svg'
 import CloseIcon from '@/assets/icons/icon-close.svg'
 import XlsxIcon from '@/assets/icons/icon-xlsx.svg'
-import {
-  fieldGroupStyle,
-  stepStyle,
-  stepHeaderStyle,
-  stepNumberStyle,
-  stepTitleStyle,
-  stepDescStyle,
-  dropzoneStyle,
-  dropzoneActiveStyle,
-  dropzoneTextStyle,
-  dropzoneIconStyle,
-  fileNameStyle,
-  fileRowStyle,
-  fileDeleteButtonStyle,
-  fileIconBadgeStyle,
-  actionsStyle,
-} from './BulkUploadModal.css'
+import { cn } from '@/lib/utils'
 
 interface BulkUploadModalProps {
   isOpen: boolean
@@ -53,23 +37,23 @@ export default function BulkUploadModal({ isOpen, onClose, onConfirm }: BulkUplo
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
-      <div style={{ marginBottom: '36px' }}>
+      <div className="mb-9">
         <Text variant="headingLg" as="h2">
           일괄 등록
         </Text>
       </div>
-      <div className={fieldGroupStyle}>
+      <div className="flex flex-col gap-3 mb-10">
         {/* Step 1 */}
-        <div className={stepStyle}>
-          <div className={stepHeaderStyle}>
-            <span className={stepNumberStyle}>1</span>
-            <span className={stepTitleStyle}>양식 다운로드</span>
+        <div className="flex flex-col gap-4 p-6 bg-background border border-gray-50 rounded-2xl">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-base font-semibold shrink-0">1</span>
+            <span className="text-lg font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">양식 다운로드</span>
           </div>
           <Button
             variant="secondary"
             size="sm"
             leftIcon={<DownloadIcon width={20} height={20} />}
-            style={{ marginLeft: 32, alignSelf: 'flex-start' }}
+            className="ml-8 self-start"
             onClick={() => {
               const link = document.createElement('a')
               link.href = '/templates/student-template.xlsx'
@@ -82,38 +66,38 @@ export default function BulkUploadModal({ isOpen, onClose, onConfirm }: BulkUplo
         </div>
 
         {/* Step 2 */}
-        <div className={stepStyle}>
-          <div className={stepHeaderStyle}>
-            <span className={stepNumberStyle}>2</span>
-            <span className={stepTitleStyle}>학생 정보 작성</span>
+        <div className="flex flex-col gap-4 p-6 bg-background border border-gray-50 rounded-2xl">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-base font-semibold shrink-0">2</span>
+            <span className="text-lg font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">학생 정보 작성</span>
           </div>
-          <span className={stepDescStyle}>
+          <span className="ml-8 text-sm font-medium text-gray-500 tracking-[-0.03em] leading-[1.4]">
             양식에 학생명, 학생 전화, 학부모 전화를 입력해주세요
           </span>
         </div>
 
         {/* Step 3 */}
-        <div className={stepStyle}>
-          <div className={stepHeaderStyle}>
-            <span className={stepNumberStyle}>3</span>
-            <span className={stepTitleStyle}>파일 업로드</span>
+        <div className="flex flex-col gap-4 p-6 bg-background border border-gray-50 rounded-2xl">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 text-white text-base font-semibold shrink-0">3</span>
+            <span className="text-lg font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">파일 업로드</span>
           </div>
           <input
             ref={inputRef}
             type="file"
             accept=".xlsx,.xls"
-            style={{ display: 'none' }}
+            className="hidden"
             onChange={(e) => {
               const f = e.target.files?.[0]
               if (f) handleFile(f)
             }}
           />
           {file ? (
-            <div className={fileRowStyle}>
+            <div className="flex items-center gap-1 py-3 px-4 bg-white rounded-lg">
               <XlsxIcon width={24} height={24} />
-              <span className={fileNameStyle}>{file.name}</span>
+              <span className="text-sm font-semibold text-gray-700 tracking-[-0.03em]">{file.name}</span>
               <button
-                className={fileDeleteButtonStyle}
+                className="bg-transparent border-none cursor-pointer p-0 flex items-center text-gray-300 ml-auto hover:text-gray-500"
                 onClick={() => {
                   setFile(null)
                   if (inputRef.current) inputRef.current.value = ''
@@ -124,7 +108,10 @@ export default function BulkUploadModal({ isOpen, onClose, onConfirm }: BulkUplo
             </div>
           ) : (
             <div
-              className={`${dropzoneStyle}${isDragging ? ` ${dropzoneActiveStyle}` : ''}`}
+              className={cn(
+                'group flex flex-col items-center justify-center gap-2 p-6 mx-8 mb-4 border-none dropzone-dashed-border rounded-xl bg-white cursor-pointer transition-colors duration-200 hover:bg-primary-50',
+                isDragging && 'bg-primary-50'
+              )}
               onDragOver={(e) => {
                 e.preventDefault()
                 setIsDragging(true)
@@ -132,12 +119,13 @@ export default function BulkUploadModal({ isOpen, onClose, onConfirm }: BulkUplo
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
               onClick={() => inputRef.current?.click()}
-              style={{ cursor: 'pointer' }}
             >
-              <span className={dropzoneIconStyle}>
+              <span className="text-gray-300 transition-colors duration-200 group-hover:text-primary-500">
                 <UploadCloudIcon width={24} height={24} />
               </span>
-              <span className={dropzoneTextStyle}>파일을 드래그하거나 클릭하여 선택하세요</span>
+              <span className="text-sm font-semibold text-gray-300 tracking-[-0.03em] group-hover:text-primary-500">
+                파일을 드래그하거나 클릭하여 선택하세요
+              </span>
               <Button
                 variant="ghost"
                 size="sm"
@@ -152,7 +140,7 @@ export default function BulkUploadModal({ isOpen, onClose, onConfirm }: BulkUplo
           )}
         </div>
       </div>
-      <div className={actionsStyle}>
+      <div className="flex gap-2">
         <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>
           취소
         </Button>

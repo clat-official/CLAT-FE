@@ -46,7 +46,7 @@ import {
   commonBadgeStyle,
   individualBadgeStyle,
   notifItemNameStyle,
-} from '../../template-form.css'
+} from '../../template-form'
 
 const MOCK_STUDENTS: LessonStudent[] = [{ id: 1, name: '홍길동', attendance: null, items: [] }]
 

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import Modal from '@/components/common/Modal'
 import Text from '@/components/common/Text'
-import { colors } from '@/styles/tokens/colors'
 import { studentService } from '@/services/student'
 import { useToastStore } from '@/stores/toastStore'
 import useDisclosure from '@/hooks/useDisclosure'
@@ -11,25 +10,6 @@ import type { StudentDetail, IncompleteItem } from '@/types/student'
 import CloseIcon from '@/assets/icons/icon-close.svg'
 import CheckIcon from '@/assets/icons/icon-check.svg'
 import AddStudentFormModal from '../AddStudentFormModal/AddStudentFormModal'
-import {
-  headerStyle,
-  closeButtonStyle,
-  sectionStyle,
-  sectionTitleStyle,
-  infoLabelStyle,
-  infoValueStyle,
-  editButtonStyle,
-  statsGridStyle,
-  statCardStyle,
-  statLabelStyle,
-  statValueStyle,
-  trackingListStyle,
-  trackingItemStyle,
-  trackingLabelStyle,
-  completeButtonStyle,
-  completeCheckIconStyle,
-  scrollBodyStyle,
-} from './StudentDetailModal.css'
 
 interface StudentDetailModalProps {
   studentId: number | null
@@ -72,7 +52,6 @@ export default function StudentDetailModal({
                 ...prev.stats,
                 total_incomplete_items: prev.stats.total_incomplete_items - 1,
                 total_complete_items: prev.stats.total_complete_items + 1,
-
                 completion_rate:
                   (prev.stats.total_complete_items + 1) /
                   (prev.stats.total_complete_items + 1 + prev.stats.total_incomplete_items - 1),
@@ -91,7 +70,7 @@ export default function StudentDetailModal({
     <>
       <Modal isOpen={!!studentId} onClose={onClose} size="md">
         {isLoading || !detail ? (
-          <div style={{ padding: '40px', textAlign: 'center' }}>
+          <div className="p-10 text-center">
             <Text variant="bodyMd" color="gray500">
               불러오는 중...
             </Text>
@@ -99,114 +78,109 @@ export default function StudentDetailModal({
         ) : (
           <>
             {/* 헤더 */}
-            <div className={headerStyle}>
+            <div className="flex justify-between items-center mb-9">
               <Text variant="headingLg" as="h2">
                 {detail.name}
               </Text>
-              <button className={closeButtonStyle} onClick={onClose}>
+              <button
+                className="bg-transparent border-none cursor-pointer text-gray-500 flex items-center justify-center p-1 hover:text-gray-600"
+                onClick={onClose}
+              >
                 <CloseIcon width={24} height={24} />
               </button>
             </div>
 
-            <div className={scrollBodyStyle}>
-            {/* 기본 정보 */}
-            <div className={sectionStyle}>
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}
-              >
-                <Text variant="headingMd" as="h3">
-                  기본 정보
-                </Text>
-                <button className={editButtonStyle} onClick={editStudent.open}>
-                  수정
-                </button>
-              </div>
-              <div
-                style={{
-                  backgroundColor: colors.gray50,
-                  borderRadius: '12px',
-                  padding: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                }}
-              >
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <span className={infoLabelStyle}>학생 전화번호</span>
-                  <span className={infoValueStyle}>{detail.phone || '-'}</span>
-                </div>
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <span className={infoLabelStyle}>학부모 전화번호</span>
-                  <span className={infoValueStyle}>{detail.parent_phone || '-'}</span>
-                </div>
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <span className={infoLabelStyle}>소속 반</span>
-                  <span className={infoValueStyle}>
-                    {detail.classes.map((c) => c.name).join(', ') || '-'}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <span className={infoLabelStyle}>학교명</span>
-                  <span className={infoValueStyle}>{detail.school_name || '-'}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 통계 요약 */}
-            <div className={sectionStyle}>
-              <Text variant="headingMd" as="h3" className={sectionTitleStyle}>
-                통계 요약
-              </Text>
-              <div className={statsGridStyle}>
-                <div className={statCardStyle}>
-                  <span className={statLabelStyle}>완료율</span>
-                  <span className={statValueStyle} style={{ color: '#1DAA7F' }}>
-                    {Math.round(detail.stats.completion_rate * 100)}%
-                  </span>
-                </div>
-                <div className={statCardStyle}>
-                  <span className={statLabelStyle}>완료</span>
-                  <span className={statValueStyle}>{detail.stats.total_complete_items}개</span>
-                </div>
-                <div className={statCardStyle}>
-                  <span className={statLabelStyle}>미완료</span>
-                  <span className={statValueStyle}>{detail.stats.total_incomplete_items}개</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 미완료 항목 */}
-            <div className={sectionStyle}>
-              <Text variant="headingMd" as="h3" className={sectionTitleStyle}>
-                미완료 항목{' '}
-                <span style={{ color: '#3B51CC' }}>{detail.incomplete_items.length}</span>
-              </Text>
-              <div className={trackingListStyle}>
-                {detail.incomplete_items.length === 0 ? (
-                  <Text variant="bodyMd" color="gray500">
-                    미완료 항목이 없어요.
+            <div className="overflow-y-auto flex-1 [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-[3px] hover:[&::-webkit-scrollbar-thumb]:bg-gray-200">
+              {/* 기본 정보 */}
+              <div className="mb-9">
+                <div className="flex items-center gap-3 mb-3">
+                  <Text variant="headingMd" as="h3">
+                    기본 정보
                   </Text>
-                ) : (
-                  detail.incomplete_items.map((item: IncompleteItem) => (
-                    <div key={item.lesson_student_data_id} className={trackingItemStyle}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        <span className={trackingLabelStyle}>{item.item_name}</span>
-                        <span style={{ fontSize: '12px', color: '#9492A9' }}>
-                          {item.lesson_date} · {item.class_name}
-                        </span>
-                      </div>
-                      <button
-                        className={completeButtonStyle}
-                        onClick={() => handleComplete(item.lesson_student_data_id)}
-                      >
-                        <CheckIcon width={16} height={16} className={completeCheckIconStyle} />
-                        완료 처리
-                      </button>
-                    </div>
-                  ))
-                )}
+                  <button
+                    className="text-xs font-medium bg-primary-50 border-none rounded-[6px] h-6 px-3 cursor-pointer text-primary-500 shrink-0 tracking-[-0.03em] leading-[1.4] hover:bg-primary-100"
+                    onClick={editStudent.open}
+                  >
+                    수정
+                  </button>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-4 flex flex-col gap-3">
+                  <div className="flex gap-4">
+                    <span className="text-sm font-medium text-gray-500 w-[140px] shrink-0 tracking-[-0.03em] leading-[1.4]">학생 전화번호</span>
+                    <span className="text-sm font-medium text-gray-900 flex-1 tracking-[-0.03em] leading-[1.4]">{detail.phone || '-'}</span>
+                  </div>
+                  <div className="flex gap-4">
+                    <span className="text-sm font-medium text-gray-500 w-[140px] shrink-0 tracking-[-0.03em] leading-[1.4]">학부모 전화번호</span>
+                    <span className="text-sm font-medium text-gray-900 flex-1 tracking-[-0.03em] leading-[1.4]">{detail.parent_phone || '-'}</span>
+                  </div>
+                  <div className="flex gap-4">
+                    <span className="text-sm font-medium text-gray-500 w-[140px] shrink-0 tracking-[-0.03em] leading-[1.4]">소속 반</span>
+                    <span className="text-sm font-medium text-gray-900 flex-1 tracking-[-0.03em] leading-[1.4]">
+                      {detail.classes.map((c) => c.name).join(', ') || '-'}
+                    </span>
+                  </div>
+                  <div className="flex gap-4">
+                    <span className="text-sm font-medium text-gray-500 w-[140px] shrink-0 tracking-[-0.03em] leading-[1.4]">학교명</span>
+                    <span className="text-sm font-medium text-gray-900 flex-1 tracking-[-0.03em] leading-[1.4]">{detail.school_name || '-'}</span>
+                  </div>
+                </div>
               </div>
-            </div>
+
+              {/* 통계 요약 */}
+              <div className="mb-9">
+                <Text variant="headingMd" as="h3" className="mb-3">
+                  통계 요약
+                </Text>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-gray-50 rounded-xl h-[104px] p-4 flex flex-col gap-2">
+                    <span className="text-sm font-medium text-gray-500 tracking-[-0.03em] leading-[1.4]">완료율</span>
+                    <span className="text-2xl font-semibold text-success-500 tracking-[-0.03em] leading-[1.4]">
+                      {Math.round(detail.stats.completion_rate * 100)}%
+                    </span>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl h-[104px] p-4 flex flex-col gap-2">
+                    <span className="text-sm font-medium text-gray-500 tracking-[-0.03em] leading-[1.4]">완료</span>
+                    <span className="text-2xl font-semibold text-gray-700 tracking-[-0.03em] leading-[1.4]">{detail.stats.total_complete_items}개</span>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl h-[104px] p-4 flex flex-col gap-2">
+                    <span className="text-sm font-medium text-gray-500 tracking-[-0.03em] leading-[1.4]">미완료</span>
+                    <span className="text-2xl font-semibold text-gray-700 tracking-[-0.03em] leading-[1.4]">{detail.stats.total_incomplete_items}개</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 미완료 항목 */}
+              <div className="mb-9">
+                <Text variant="headingMd" as="h3" className="mb-3">
+                  미완료 항목{' '}
+                  <span className="text-primary-500">{detail.incomplete_items.length}</span>
+                </Text>
+                <div className="flex flex-col gap-2">
+                  {detail.incomplete_items.length === 0 ? (
+                    <Text variant="bodyMd" color="gray500">
+                      미완료 항목이 없어요.
+                    </Text>
+                  ) : (
+                    detail.incomplete_items.map((item: IncompleteItem) => (
+                      <div key={item.lesson_student_data_id} className="flex items-center justify-between py-[14px] px-4 bg-gray-50 rounded-lg">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-sm font-medium text-gray-900 tracking-[-0.03em] leading-[1.4]">{item.item_name}</span>
+                          <span className="text-xs text-gray-500">
+                            {item.lesson_date} · {item.class_name}
+                          </span>
+                        </div>
+                        <button
+                          className="group flex items-center gap-1 text-xs font-medium text-gray-500 bg-white border-none rounded py-1 px-2 cursor-pointer tracking-[-0.03em] leading-[1.4] hover:bg-success-50 hover:text-success-500 active:bg-success-200"
+                          onClick={() => handleComplete(item.lesson_student_data_id)}
+                        >
+                          <CheckIcon width={16} height={16} className="text-gray-100 group-hover:text-success-500" />
+                          완료 처리
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
           </>
         )}
@@ -227,7 +201,6 @@ export default function StudentDetailModal({
           onConfirm={async (data) => {
             try {
               await studentService.updateStudent(detail.id, data)
-              // 수정 후 상세 다시 조회
               const updated = await studentService.getStudent(detail.id)
               setDetail(updated)
               editStudent.close()

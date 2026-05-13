@@ -12,13 +12,6 @@ import AddCard from '@/components/common/AddCard'
 import Dropdown from '@/components/common/Dropdown'
 import ClassCard from './_components/ClassCard/ClassCard'
 import PlusCircleIcon from '@/assets/icons/icon-plus-circle.svg'
-import {
-  tabStyle,
-  tabActiveStyle,
-  tabContainerStyle,
-  tabActionsStyle,
-  gridStyle,
-} from './management.css'
 import ClassFormModal from './_components/ClassFormModal/ClassFormModal'
 import StudentTable from './_components/StudentTable/StudentTable'
 import AddStudentFormModal from './_components/AddStudentFormModal/AddStudentFormModal'
@@ -36,6 +29,11 @@ const FILTER_OPTIONS = [
 ]
 
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
+
+const tabBase = 'bg-transparent border-none cursor-pointer text-2xl font-semibold tracking-[-0.03em] leading-[1.4] p-0'
+const tabStyle = `${tabBase} text-gray-300`
+const tabActiveStyle = `${tabBase} text-gray-900`
+const gridStyle = 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 [grid-auto-rows:minmax(190px,auto)]'
 
 function ManagementContent() {
   const router = useRouter()
@@ -98,7 +96,7 @@ function ManagementContent() {
       <Text variant="display" as="h1">
         학생·반 관리
       </Text>
-      <div className={tabContainerStyle}>
+      <div className="flex items-center gap-8 mt-[60px] mb-6">
         <button
           className={tab === 'class' ? tabActiveStyle : tabStyle}
           onClick={() => router.push('/management?tab=class')}
@@ -112,7 +110,7 @@ function ManagementContent() {
           전체 학생
         </button>
         {tab === 'students' && (
-          <div className={tabActionsStyle}>
+          <div className="ml-auto flex gap-2">
             <Button
               variant="secondary"
               size="sm"
@@ -134,7 +132,7 @@ function ManagementContent() {
       </div>
       {tab === 'class' && (
         <>
-          <div style={{ marginBottom: '20px' }}>
+          <div className="mb-5">
             <Dropdown
               options={FILTER_OPTIONS}
               value={filter}

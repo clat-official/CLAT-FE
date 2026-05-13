@@ -9,7 +9,6 @@ import Button from '@/components/common/Button'
 import ClassInfoTable from './_components/ClassInfoTable/ClassInfoTable'
 import StudentTable from '../_components/StudentTable/StudentTable'
 import DangerSection from './_components/DangerSection/DangerSection'
-import { sectionWrapperStyle } from './_components/DangerSection/DangerSection.css'
 import ArrowLeftIcon from '@/assets/icons/icon-arrow-left.svg'
 import EditIcon from '@/assets/icons/icon-edit.svg'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
@@ -20,7 +19,6 @@ import StudentDetailModal from '../_components/StudentDetailModal/StudentDetailM
 import { classService, type ClassDetail } from '@/services/class'
 import { useToastStore } from '@/stores/toastStore'
 import type { Student } from '@/types/student'
-import { backButtonStyle } from '../management.css'
 
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
 const formatSchedule = (schedules: { day_of_week: number }[]) =>
@@ -94,10 +92,13 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
   if (isLoading || !classDetail) return null
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
+    <div className="flex flex-col gap-[60px]">
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <button onClick={() => router.back()} className={backButtonStyle}>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => router.back()}
+          className="bg-transparent border-none cursor-pointer text-gray-500 flex items-center hover:text-gray-700"
+        >
           <ArrowLeftIcon width={24} height={24} />
         </button>
         <Text variant="display" as="h1">
@@ -106,14 +107,14 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
       </div>
 
       {/* 반 정보 */}
-      <section style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <section className="flex flex-col gap-6">
+        <div className="flex items-center gap-3">
           <Text variant="headingMd">반 정보</Text>
           <Button
             variant="ghost"
             size="sm"
             leftIcon={<EditIcon width={14} height={14} />}
-            style={{ height: '28px' }}
+            className="h-7"
             onClick={editClass.open}
           >
             수정
@@ -153,14 +154,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
 
       {/* 학생 명단 */}
       <section>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '24px',
-          }}
-        >
+        <div className="flex justify-between items-center mb-6">
           <Text variant="headingMd">학생 명단</Text>
           <Button
             variant="primary"
@@ -195,7 +189,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
         />
       </section>
 
-      <div className={sectionWrapperStyle}>
+      <div className="flex flex-col gap-4">
         <DangerSection
           variant="end"
           title="반 종료"

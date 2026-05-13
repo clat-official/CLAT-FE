@@ -8,24 +8,49 @@ import TimerIcon from '@/assets/icons/icon-timer.svg'
 import NumberIcon from '@/assets/icons/icon-number-2.svg'
 import ClockIcon from '@/assets/icons/icon-clock-fill.svg'
 import UsersIcon from '@/assets/icons/icon-users-fill.svg'
+import { cva } from 'class-variance-authority'
 import type { AttendanceSession, AttendanceStatus } from '@/types/attendance'
-import {
-  titleStyle,
-  metaRowStyle,
-  metaItemStyle,
-  statCardGroupStyle,
-  statCardStyle,
-  statNumberPrimaryStyle,
-  statNumberGrayStyle,
-  filterChipGroupStyle,
-  filterChipRecipe,
-  studentListStyle,
-  studentRowGroupStyle,
-  studentItemStyle,
-  studentRightStyle,
-  statusBadgeRecipe,
-  endButtonStyle,
-} from './AttendanceDetailModal.css'
+
+const titleStyle = 'mt-5 mb-3'
+const metaRowStyle = 'flex items-center gap-3 mb-9'
+const metaItemStyle = 'flex items-center gap-1'
+const statCardGroupStyle = 'flex gap-2 mb-9'
+const statCardStyle = 'flex-1 rounded-xl bg-gray-50 p-4 flex flex-col items-center gap-3'
+const statBase = 'text-[28px] font-semibold tracking-[-0.03em] leading-[140%]'
+const statNumberPrimaryStyle = `${statBase} text-primary-500`
+const statNumberGrayStyle = `${statBase} text-gray-700`
+const filterChipGroupStyle = 'flex gap-2 mb-4'
+const studentListStyle = 'flex flex-col gap-4 max-h-[calc(4*25px+3*16px)] overflow-y-auto mb-8'
+const studentRowGroupStyle = 'flex items-center gap-5'
+const studentItemStyle = 'flex-1 flex justify-between items-center'
+const studentRightStyle = 'flex items-center gap-2'
+const endButtonStyle = 'w-full h-[54px] rounded-xl border-none cursor-pointer bg-primary-500 text-white text-base font-semibold tracking-[-0.03em] leading-[140%]'
+
+const filterChipVariants = cva(
+  'flex items-center gap-2 py-1 px-3 rounded-[999px] border-none cursor-pointer text-sm font-semibold tracking-[-0.03em] leading-[140%] transition-colors duration-150',
+  {
+    variants: {
+      active: {
+        true: 'bg-primary-500 text-white',
+        false: 'bg-gray-50 text-gray-700',
+      },
+    },
+    defaultVariants: { active: false },
+  }
+)
+
+const statusBadgeVariants = cva(
+  'py-1 px-2 rounded-lg text-xs font-semibold tracking-[-0.03em] leading-[140%]',
+  {
+    variants: {
+      status: {
+        PRESENT: 'bg-success-50 text-success-500',
+        ABSENT: 'bg-error-50 text-error-500',
+        NONE: 'bg-gray-50 text-gray-500',
+      },
+    },
+  }
+)
 
 type FilterType = '전체' | 'PRESENT' | 'ABSENT'
 
@@ -155,7 +180,7 @@ export default function AttendanceDetailModal({
         {(['전체', 'PRESENT', 'ABSENT'] as FilterType[]).map((f) => (
           <button
             key={f}
-            className={filterChipRecipe({ active: filter === f })}
+            className={filterChipVariants({ active: filter === f })}
             onClick={() => setFilter(f)}
           >
             {FILTER_LABELS[f]} {filterCount[f]}
@@ -177,7 +202,7 @@ export default function AttendanceDetailModal({
                         {formatTime(student.checked_at)}
                       </Text>
                     )}
-                    <span className={statusBadgeRecipe({ status: student.status ?? 'NONE' })}>
+                    <span className={statusBadgeVariants({ status: student.status ?? 'NONE' })}>
                       {getStatusLabel(student.status)}
                     </span>
                   </div>

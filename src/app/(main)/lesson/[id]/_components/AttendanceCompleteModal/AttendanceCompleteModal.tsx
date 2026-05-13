@@ -3,15 +3,15 @@
 import Modal from '@/components/common/Modal'
 import Text from '@/components/common/Text'
 import type { AttendanceSummary } from '@/types/attendance'
-import {
-  checkIconStyle,
-  titleStyle,
-  statCardGroupStyle,
-  statCardStyle,
-  statNumberPrimaryStyle,
-  statNumberGrayStyle,
-  confirmButtonStyle,
-} from './AttendanceCompleteModal.css'
+
+const checkIconStyle = 'w-[60px] h-[60px] rounded-full bg-primary-100 flex items-center justify-center mb-5'
+const titleStyle = 'mb-[40px]'
+const statCardGroupStyle = 'flex gap-2 mb-[40px]'
+const statCardStyle = 'flex-1 rounded-xl bg-gray-50 py-4 flex flex-col items-center gap-3'
+const statBase = 'text-[28px] font-semibold tracking-[-0.03em] leading-[140%]'
+const statNumberPrimaryStyle = `${statBase} text-primary-500`
+const statNumberGrayStyle = `${statBase} text-gray-700`
+const confirmButtonStyle = 'w-full h-[54px] rounded-xl border-none cursor-pointer bg-primary-500 text-white text-base font-semibold tracking-[-0.03em] leading-[140%] flex items-center justify-center gap-2'
 import CheckIcon from '@/assets/icons/icon-check-2.svg'
 
 interface Props {
