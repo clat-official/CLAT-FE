@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { cva } from 'class-variance-authority'
 import Text from '@/components/common/Text'
 import Input from '@/components/common/Input'
 import Button from '@/components/common/Button'
@@ -9,14 +10,19 @@ import useToggleArray from '@/hooks/useToggleArray'
 import { classService, type Class } from '@/services/class'
 import { studentService } from '@/services/student'
 import { useToastStore } from '@/stores/toastStore'
-import {
-  fieldGroupStyle,
-  fieldStyle,
-  labelStyle,
-  classChipGroupStyle,
-  classChipRecipe,
-  actionsStyle,
-} from './AddStudentFormModal.css'
+
+const classChipVariants = cva(
+  'py-2 px-4 rounded-lg cursor-pointer text-sm font-medium tracking-[-0.03em] leading-[1.4] transition-all duration-150',
+  {
+    variants: {
+      selected: {
+        true: 'bg-primary-50 border border-primary-500 text-primary-500 hover:bg-primary-100',
+        false: 'bg-white border border-gray-100 text-gray-700 hover:bg-gray-50 hover:border-gray-200',
+      },
+    },
+    defaultVariants: { selected: false },
+  }
+)
 
 interface StudentFormData {
   name: string
@@ -123,14 +129,7 @@ export default function AddStudentFormModal({
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
-      <div
-        style={{
-          marginBottom: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
+      <div className="mb-6 flex items-center justify-between">
         <Text variant="headingLg" as="h2">
           {mode === 'add' ? '학생 등록' : '학생 정보 수정'}
         </Text>
@@ -140,7 +139,7 @@ export default function AddStudentFormModal({
               ref={fileInputRef}
               type="file"
               accept=".xlsx,.xls"
-              style={{ display: 'none' }}
+              className="hidden"
               onChange={handleExcelUpload}
             />
             <Button
@@ -154,15 +153,15 @@ export default function AddStudentFormModal({
           </>
         )}
       </div>
-      <div className={fieldGroupStyle}>
-        <div className={fieldStyle}>
-          <span className={labelStyle}>
-            학생명 <span style={{ color: '#EF4453' }}>*</span>
+      <div className="flex flex-col gap-9 mb-10">
+        <div className="flex flex-col gap-3">
+          <span className="text-lg font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">
+            학생명 <span className="text-error-500">*</span>
           </span>
           <Input variant="gray" value={name} onChange={(e) => setName(e.target.value)} />
         </div>
-        <div className={fieldStyle}>
-          <span className={labelStyle}>학생 전화번호</span>
+        <div className="flex flex-col gap-3">
+          <span className="text-lg font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">학생 전화번호</span>
           <Input
             variant="gray"
             value={phone}
@@ -170,8 +169,8 @@ export default function AddStudentFormModal({
             onChange={(e) => setPhone(formatPhone(e.target.value))}
           />
         </div>
-        <div className={fieldStyle}>
-          <span className={labelStyle}>학부모 전화번호</span>
+        <div className="flex flex-col gap-3">
+          <span className="text-lg font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">학부모 전화번호</span>
           <Input
             variant="gray"
             value={parentPhone}
@@ -179,21 +178,21 @@ export default function AddStudentFormModal({
             onChange={(e) => setParentPhone(formatPhone(e.target.value))}
           />
         </div>
-        <div className={fieldStyle}>
-          <span className={labelStyle}>학교명</span>
+        <div className="flex flex-col gap-3">
+          <span className="text-lg font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">학교명</span>
           <Input
             variant="gray"
             value={schoolName}
             onChange={(e) => setSchoolName(e.target.value)}
           />
         </div>
-        <div className={fieldStyle}>
-          <span className={labelStyle}>소속 반</span>
-          <div className={classChipGroupStyle}>
+        <div className="flex flex-col gap-3">
+          <span className="text-lg font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">소속 반</span>
+          <div className="flex flex-wrap gap-2">
             {classes.map((cls) => (
               <button
                 key={cls.id}
-                className={classChipRecipe({ selected: selectedClassIds.includes(cls.id) })}
+                className={classChipVariants({ selected: selectedClassIds.includes(cls.id) })}
                 onClick={() => toggleClass(cls.id)}
               >
                 {cls.name}
@@ -202,7 +201,7 @@ export default function AddStudentFormModal({
           </div>
         </div>
       </div>
-      <div className={actionsStyle}>
+      <div className="flex gap-2">
         <Button variant="ghost" size="lg" fullWidth onClick={handleClose}>
           취소
         </Button>

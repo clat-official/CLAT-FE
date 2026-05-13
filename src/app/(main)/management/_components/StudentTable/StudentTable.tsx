@@ -2,20 +2,8 @@
 
 import { ReactNode } from 'react'
 import TrashIcon from '@/assets/icons/icon-trash.svg'
-import { colors } from '@/styles/tokens/colors'
 import type { Student } from '@/types/student'
-import {
-  tableStyle,
-  trStyle,
-  thStyle,
-  tdStyle,
-  completionCellStyle,
-  progressTrackStyle,
-  progressBarStyle,
-  percentTextStyle,
-  remainingTextStyle,
-  deleteButtonStyle,
-} from './StudentTable.css'
+import { cn } from '@/lib/utils'
 
 interface MiddleColumn {
   header: string
@@ -29,7 +17,6 @@ interface StudentTableProps {
   onRowClick?: (id: number) => void
 }
 
-// 고정 컬럼 수: 학생, 학생 전화, 학부모 전화, 학교, 완료율
 const FIXED_COLUMN_COUNT = 5
 
 function getCellPaddingRight(totalColumns: number): number {
@@ -38,12 +25,22 @@ function getCellPaddingRight(totalColumns: number): number {
   return 16
 }
 
-function getProgressColor(rate: number, totalIncomplete: number): string {
-  if (rate === 0 && totalIncomplete === 0) return colors.gray500
-  if (rate >= 0.7) return colors.success500
-  if (rate >= 0.4) return colors.warning500
-  return colors.error500
+function getProgressClass(rate: number, totalIncomplete: number): string {
+  if (rate === 0 && totalIncomplete === 0) return 'bg-gray-500'
+  if (rate >= 0.7) return 'bg-success-500'
+  if (rate >= 0.4) return 'bg-warning-500'
+  return 'bg-error-500'
 }
+
+function getRemainingTextClass(rate: number, totalIncomplete: number): string {
+  if (rate === 0 && totalIncomplete === 0) return 'text-gray-500'
+  if (rate >= 0.7) return 'text-success-500'
+  if (rate >= 0.4) return 'text-warning-500'
+  return 'text-error-500'
+}
+
+const thStyle = 'h-10 pl-4 pr-[var(--cell-padding-right,48px)] bg-gray-50 text-gray-900 text-sm font-semibold tracking-[-0.03em] leading-[1.4] text-left border-b border-r border-gray-100 last:border-r-0'
+const tdStyle = 'h-10 pl-4 pr-[var(--cell-padding-right,48px)] text-gray-700 text-sm font-medium tracking-[-0.03em] leading-[1.4] border-b border-r border-gray-100 [tr:last-child_&]:border-b-0 last:border-r-0'
 
 export default function StudentTable({
   students,
@@ -56,7 +53,7 @@ export default function StudentTable({
 
   return (
     <table
-      className={tableStyle}
+      className="w-full border-collapse border border-gray-100 overflow-hidden"
       style={{ '--cell-padding-right': `${cellPaddingRight}px` } as React.CSSProperties}
     >
       <colgroup>
@@ -85,13 +82,13 @@ export default function StudentTable({
       </thead>
       <tbody>
         {students.map((student) => {
-          const color = getProgressColor(student.completion_rate, student.total_incomplete_items)
+          const progressClass = getProgressClass(student.completion_rate, student.total_incomplete_items)
+          const remainingClass = getRemainingTextClass(student.completion_rate, student.total_incomplete_items)
           return (
             <tr
               key={student.id}
-              className={trStyle}
+              className={cn('hover:bg-gray-50', onRowClick && 'cursor-pointer')}
               onClick={() => onRowClick?.(student.id)}
-              style={{ cursor: onRowClick ? 'pointer' : 'default' }}
             >
               <td className={tdStyle}>{student.name}</td>
               <td className={tdStyle}>{student.phone}</td>
@@ -102,16 +99,18 @@ export default function StudentTable({
                 </td>
               ))}
               <td className={tdStyle}>{student.school_name ?? '-'}</td>
-              <td className={tdStyle} style={{ padding: 0 }}>
-                <div className={completionCellStyle}>
-                  <div className={progressTrackStyle}>
+              <td className={cn(tdStyle, 'p-0')}>
+                <div className="h-full pl-5 pr-6 flex items-center gap-3">
+                  <div className="w-40 h-3 bg-gray-50 rounded-full overflow-hidden shrink-0">
                     <div
-                      className={progressBarStyle}
-                      style={{ width: `${student.completion_rate * 100}%`, backgroundColor: color }}
+                      className={cn('h-full rounded-full transition-[width] duration-300', progressClass)}
+                      style={{ width: `${student.completion_rate * 100}%` }}
                     />
                   </div>
-                  <span className={percentTextStyle}>{student.completion_rate * 100}%</span>
-                  <span className={remainingTextStyle} style={{ color }}>
+                  <span className="text-sm font-medium text-gray-700 tracking-[-0.03em] leading-[1.4] shrink-0">
+                    {student.completion_rate * 100}%
+                  </span>
+                  <span className={cn('text-sm font-semibold tracking-[-0.03em] shrink-0', remainingClass)}>
                     {student.completion_rate === 1
                       ? '모두 완료'
                       : student.total_incomplete_items == null
@@ -121,7 +120,7 @@ export default function StudentTable({
                           : `${student.total_incomplete_items}개 남음`}
                   </span>
                   <button
-                    className={deleteButtonStyle}
+                    className="bg-transparent border-none cursor-pointer p-0 flex items-center text-gray-100 ml-auto hover:text-gray-300"
                     onClick={(e) => {
                       e.stopPropagation()
                       onDelete(student.id)

@@ -2,36 +2,30 @@
 
 import { use, useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { cva } from 'class-variance-authority'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import { attendanceService } from '@/services/attendance'
 import type { PublicAttendanceSession, SubmitAttendanceCodeResponse } from '@/types/attendance'
 import useRemainingTime from '@/hooks/useRemainingTime'
 import { getErrorStatus } from '@/lib/getErrorStatus'
-import {
-  pageStyle,
-  classBadgeStyle,
-  centerContentStyle,
-  titleStyle,
-  subtitleStyle,
-  timerStyle,
-  timerLabelStyle,
-  timerValueStyle,
-  codeInputGroupStyle,
-  codeBoxRecipe,
-  codeBoxInputStyle,
-  errorTextStyle,
-  confirmButtonWrapperStyle,
-  resultPageStyle,
-  resultCenterStyle,
-  resultIconStyle,
-  resultInfoCardStyle,
-  resultInfoRowStyle,
-  resultInfoValueStyle,
-  resultInfoStatusStyle,
-} from './attendance.css'
 import WarningIcon from '@/assets/icons/icon-warning-2.svg'
 import CheckIcon from '@/assets/icons/icon-check-2.svg'
+
+const codeBoxVariants = cva(
+  'w-[63px] h-[81px] rounded-xl bg-background flex items-center justify-center text-[28px] font-bold tracking-[-0.03em] leading-[1.4] transition-[border-color] duration-150 relative',
+  {
+    variants: {
+      state: {
+        empty: 'border border-gray-100',
+        focused: 'border-[1.5px] border-primary-500',
+        filled: 'border-[1.5px] border-primary-500 text-gray-900',
+        error: 'border-[1.5px] border-error-500 text-error-500',
+      },
+    },
+    defaultVariants: { state: 'empty' },
+  }
+)
 
 type PageState = 'input' | 'error' | 'success' | 'expired' | 'no_student'
 
@@ -39,10 +33,10 @@ function RemainingTimer({ expiresAt }: { expiresAt: string }) {
   const remaining = useRemainingTime(expiresAt)
 
   return (
-    <div className={timerStyle}>
+    <div className="text-center mb-7 w-full">
       <Text variant="bodyMd">
-        <span className={timerLabelStyle}>남은 시간</span>{' '}
-        <span className={timerValueStyle}>{remaining}</span>
+        <span className="text-gray-500">남은 시간</span>{' '}
+        <span className="text-primary-500 font-semibold">{remaining}</span>
       </Text>
     </div>
   )
@@ -106,17 +100,19 @@ function CodeInputScreen({
   }
 
   return (
-    <div className={pageStyle}>
-      <span className={classBadgeStyle}>{session.class_name}</span>
+    <div className="min-h-[100dvh] max-w-[440px] mx-auto bg-background flex flex-col items-center px-6 relative">
+      <span className="inline-flex items-center py-1 px-2 rounded bg-primary-100 text-primary-400 text-xs font-semibold tracking-[-0.03em] leading-[1.4] absolute top-[177px] left-1/2 -translate-x-1/2">
+        {session.class_name}
+      </span>
 
-      <div className={centerContentStyle}>
-        <div className={titleStyle}>
+      <div className="flex flex-col items-center w-full max-w-[276px] absolute top-[221px]">
+        <div className="text-center mb-[22px]">
           <Text variant="headingLg" as="h1">
             출결 코드를 입력해주세요
           </Text>
         </div>
 
-        <div className={subtitleStyle}>
+        <div className="text-center mb-7 whitespace-pre-line">
           <Text variant="bodyMd" color="gray500">
             {'선생님께 받은\n4자리 코드를 입력해주세요'}
           </Text>
@@ -124,9 +120,9 @@ function CodeInputScreen({
 
         <RemainingTimer expiresAt={session.expires_at} />
 
-        <div className={codeInputGroupStyle}>
+        <div className="flex gap-2 w-full justify-center">
           {digits.map((digit, i) => (
-            <div key={i} className={codeBoxRecipe({ state: getBoxState(i) })}>
+            <div key={i} className={codeBoxVariants({ state: getBoxState(i) })}>
               <input
                 ref={(el) => { inputRefs.current[i] = el }}
                 type="text"
@@ -137,7 +133,7 @@ function CodeInputScreen({
                 onKeyDown={(e) => handleKeyDown(i, e)}
                 onFocus={() => setFocusedIndex(i)}
                 onBlur={() => setFocusedIndex(null)}
-                className={codeBoxInputStyle}
+                className="absolute inset-0 opacity-0 cursor-text w-full h-full border-none bg-transparent"
               />
               {digit}
             </div>
@@ -145,7 +141,7 @@ function CodeInputScreen({
         </div>
 
         {hasError && (
-          <div className={errorTextStyle}>
+          <div className="mt-4 text-center">
             <Text variant="bodyMd" color="error500">
               코드가 올바르지 않아요
             </Text>
@@ -153,7 +149,7 @@ function CodeInputScreen({
         )}
       </div>
 
-      <div className={confirmButtonWrapperStyle}>
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-48px)] max-w-[calc(440px-48px)]">
         <Button
           variant="primary"
           size="lg"
@@ -181,9 +177,9 @@ function SuccessScreen({ result }: { result: SubmitAttendanceCodeResponse }) {
   }
 
   return (
-    <div className={resultPageStyle}>
-      <div className={resultCenterStyle}>
-        <div className={resultIconStyle}>
+    <div className="min-h-[100dvh] max-w-[440px] mx-auto bg-background flex flex-col items-center relative">
+      <div className="flex flex-col items-center gap-[30px] absolute top-[177px] left-1/2 -translate-x-1/2 w-[186px] whitespace-pre-line text-center">
+        <div className="w-20 h-20 rounded-full bg-primary-100 flex items-center justify-center">
           <CheckIcon width={80} height={80} />
         </div>
 
@@ -196,18 +192,18 @@ function SuccessScreen({ result }: { result: SubmitAttendanceCodeResponse }) {
         </Text>
       </div>
 
-      <div className={resultInfoCardStyle}>
-        <div className={resultInfoRowStyle}>
+      <div className="absolute top-[439px] left-[55px] right-[55px] rounded-3xl bg-gray-50 p-6">
+        <div className="flex justify-between items-center [&+&]:mt-3">
           <Text variant="labelSm" color="gray700">반</Text>
-          <span className={resultInfoValueStyle}>{result.class_name}</span>
+          <span className="text-xs font-semibold text-gray-900 tracking-[-0.03em]">{result.class_name}</span>
         </div>
-        <div className={resultInfoRowStyle}>
+        <div className="flex justify-between items-center [&+&]:mt-3">
           <Text variant="labelSm" color="gray700">날짜</Text>
-          <span className={resultInfoValueStyle}>{formatDate(result.lesson_date)}</span>
+          <span className="text-xs font-semibold text-gray-900 tracking-[-0.03em]">{formatDate(result.lesson_date)}</span>
         </div>
-        <div className={resultInfoRowStyle}>
+        <div className="flex justify-between items-center [&+&]:mt-3">
           <Text variant="labelSm" color="gray700">상태</Text>
-          <span className={resultInfoStatusStyle}>{STATUS_DISPLAY[result.status] ?? result.status}</span>
+          <span className="text-xs font-semibold text-primary-500 tracking-[-0.03em]">{STATUS_DISPLAY[result.status] ?? result.status}</span>
         </div>
       </div>
     </div>
@@ -216,9 +212,9 @@ function SuccessScreen({ result }: { result: SubmitAttendanceCodeResponse }) {
 
 function ExpiredScreen() {
   return (
-    <div className={resultPageStyle}>
-      <div className={resultCenterStyle}>
-        <div className={resultIconStyle}>
+    <div className="min-h-[100dvh] max-w-[440px] mx-auto bg-background flex flex-col items-center relative">
+      <div className="flex flex-col items-center gap-[30px] absolute top-[177px] left-1/2 -translate-x-1/2 w-[186px] whitespace-pre-line text-center">
+        <div className="w-20 h-20 rounded-full bg-primary-100 flex items-center justify-center">
           <WarningIcon width={80} height={80} />
         </div>
 
@@ -236,9 +232,9 @@ function ExpiredScreen() {
 
 function NoStudentScreen() {
   return (
-    <div className={resultPageStyle}>
-      <div className={resultCenterStyle}>
-        <div className={resultIconStyle}>
+    <div className="min-h-[100dvh] max-w-[440px] mx-auto bg-background flex flex-col items-center relative">
+      <div className="flex flex-col items-center gap-[30px] absolute top-[177px] left-1/2 -translate-x-1/2 w-[186px] whitespace-pre-line text-center">
+        <div className="w-20 h-20 rounded-full bg-primary-100 flex items-center justify-center">
           <WarningIcon width={80} height={80} />
         </div>
 
@@ -327,8 +323,6 @@ export default function AttendancePage({ params }: { params: Promise<{ sessionId
       setPageState('success')
     } catch (err: unknown) {
       const status = getErrorStatus(err)
-      // 400/422: 코드 불일치 → CodeInputScreen의 catch가 "코드가 올바르지 않아요" 표시
-      // 그 외(404·410 등): 세션 만료·종료 → 만료 화면으로 전환
       if (status === 400 || status === 422) throw err
       setPageState('expired')
     }

@@ -1,8 +1,20 @@
+import { cva } from 'class-variance-authority'
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
-import { sectionRecipe, contentStyle } from './DangerSection.css'
 import TrashIcon from '@/assets/icons/icon-trash.svg'
 import FlagIcon from '@/assets/icons/icon-flag.svg'
+
+const sectionVariants = cva(
+  'flex justify-between items-center rounded-2xl p-6',
+  {
+    variants: {
+      variant: {
+        end: 'bg-primary-50 border border-primary-200',
+        delete: 'bg-error-50 border border-error-200',
+      },
+    },
+  }
+)
 
 interface DangerSectionProps {
   variant: 'end' | 'delete'
@@ -20,8 +32,8 @@ export default function DangerSection({
   onConfirm,
 }: DangerSectionProps) {
   return (
-    <div className={sectionRecipe({ variant })}>
-      <div className={contentStyle}>
+    <div className={sectionVariants({ variant })}>
+      <div className="flex flex-col gap-2">
         <Text variant="headingMd" color="gray900">
           {title}
         </Text>
