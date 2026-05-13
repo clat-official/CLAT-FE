@@ -4,14 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { auth } from '@/services/auth'
-import {
-  sidebarStyle,
-  sidebarTopStyle,
-  navStyle,
-  navItemStyle,
-  navItemActiveStyle,
-  logoutButtonStyle,
-} from './Sidebar.css'
+import { cn } from '@/lib/utils'
 import LogoutConfirmModal from './_components/LogoutConfirmModal'
 import HomeIcon from '@/assets/icons/icon-home.svg'
 import EditIcon from '@/assets/icons/icon-edit.svg'
@@ -29,22 +22,26 @@ const NAV_ITEMS = [
 
 export default function Sidebar() {
   const pathname = usePathname()
-
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
 
   return (
-    <aside className={sidebarStyle}>
-      <div className={sidebarTopStyle}>
+    <aside className="w-[240px] h-screen bg-gray-900 flex flex-col py-[2px] fixed top-0 left-0 z-[100]">
+      <div className="flex items-center justify-between py-14 px-9">
         <LogoIcon width={32} height={32} />
       </div>
-      <nav className={navStyle}>
+      <nav className="flex flex-col flex-1 gap-2 px-6">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive = pathname.startsWith(href)
           return (
             <Link
               key={href}
               href={href}
-              className={`${navItemStyle}${isActive ? ` ${navItemActiveStyle}` : ''}`}
+              className={cn(
+                'flex items-center gap-4 h-12 px-4 rounded-lg cursor-pointer no-underline',
+                'text-base font-semibold tracking-[-0.03em] leading-[1.4]',
+                'text-gray-600 transition-colors duration-200 hover:text-gray-300',
+                isActive && 'text-white',
+              )}
             >
               <Icon width={20} height={20} />
               {label}
@@ -52,7 +49,10 @@ export default function Sidebar() {
           )
         })}
 
-        <button className={logoutButtonStyle} onClick={() => setIsLogoutModalOpen(true)}>
+        <button
+          className="mt-auto mb-10 flex items-center gap-4 px-4 text-gray-600 cursor-pointer border-0 bg-transparent text-base font-semibold tracking-[-0.03em] leading-[1.4] transition-all duration-200 hover:text-gray-300"
+          onClick={() => setIsLogoutModalOpen(true)}
+        >
           <LogoutIcon width={20} height={20} />
           로그아웃
         </button>
