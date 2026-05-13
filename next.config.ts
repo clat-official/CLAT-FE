@@ -3,8 +3,12 @@ import type { Configuration } from 'webpack'
 
 const withVanillaExtract = createVanillaExtractPlugin()
 
+const allowedDevOrigins = process.env.ALLOWED_DEV_ORIGINS
+  ? process.env.ALLOWED_DEV_ORIGINS.split(',').map((s) => s.trim())
+  : []
+
 const nextConfig = {
-  allowedDevOrigins: ['172.21.38.30'],
+  ...(allowedDevOrigins.length > 0 && { allowedDevOrigins }),
   async rewrites() {
     return [
       {
