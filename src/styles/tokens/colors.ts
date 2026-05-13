@@ -1,3 +1,4 @@
+// @deprecated — Phase 1에서 src/app/globals.css의 @theme 블록으로 이관 완료. Phase 2에서 삭제 예정.
 export const colors = {
   primary50: '#F1F4FD',
   primary100: '#E0E7F9',

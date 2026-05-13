@@ -1,37 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Primary ─────────────────────────────────────── */
+  --color-primary-50: #F1F4FD;
+  --color-primary-100: #E0E7F9;
+  --color-primary-200: #C8D5F5;
+  --color-primary-300: #A3BAED;
+  --color-primary-400: #5774DA;
+  --color-primary-500: #3B51CC;
+  --color-primary-600: #3946BC;
+  --color-primary-700: #333A9A;
+  --color-primary-800: #2E367A;
+
+  /* ── Gray ────────────────────────────────────────── */
+  --color-white: #FFFFFF;
+  --color-background: #FAFAFA;
+  --color-gray-50: #F3F4F5;
+  --color-gray-75: #E5E6EC;
+  --color-gray-100: #D7D7E3;
+  --color-gray-200: #C5C6D3;
+  --color-gray-300: #A9AABF;
+  --color-gray-500: #9492A9;
+  --color-gray-600: #757693;
+  --color-gray-700: #5B5C72;
+  --color-gray-900: #363744;
+
+  /* ── Semantic ────────────────────────────────────── */
+  --color-success-50: #EDFCF5;
+  --color-success-200: #ABEFD2;
+  --color-success-500: #1DAA7F;
+  --color-warning-50: #FFF9EB;
+  --color-warning-200: #FFEEC6;
+  --color-warning-500: #FDAD22;
+  --color-error-50: #FFF1F1;
+  --color-error-200: #FDCED0;
+  --color-error-500: #EF4453;
+  --color-error-600: #DC223B;
+  --color-error-700: #B91730;
+
+  /* ── Typography ──────────────────────────────────── */
+  --font-size-display: 28px;
+  --font-weight-display: 700;
+  --font-size-heading-lg: 24px;
+  --font-weight-heading-lg: 600;
+  --font-size-heading-md: 20px;
+  --font-weight-heading-md: 600;
+  --font-size-heading-sm: 18px;
+  --font-weight-heading-sm: 600;
+  --font-size-title-md: 16px;
+  --font-weight-title-md: 600;
+  --font-size-title-sm: 14px;
+  --font-weight-title-sm: 600;
+  --font-size-body-lg: 16px;
+  --font-weight-body-lg: 500;
+  --font-size-body-md: 14px;
+  --font-weight-body-md: 500;
+  --font-size-label-sm: 12px;
+  --font-weight-label-sm: 500;
+
+  /* ── Grid ────────────────────────────────────────── */
+  --grid-cols-default: repeat(3, 1fr);
+  --grid-gap: 20px;
+
+  /* ── Card ────────────────────────────────────────── */
+  --card-radius: 16px;
+  --card-padding: 24px;
+  --card-min-height: 160px;
+  --card-border: 1px solid #E5E6EC;
+}
+
 @font-face {
-    font-family: 'Pretendard';
-    src: url('/font/PretendardVariable.woff2') format('woff2');
-    font-weight: 45 920;
-    font-style: normal;
-    font-display: swap;
-  }
-  
-  *, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  body {
-    font-family: 'Pretendard', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  img, video {
-    max-width: 100%;
-    display: block;
-  }
-  
-  input, button, textarea, select {
-    font: inherit;
-  }
-  
-  ul, ol {
-    list-style: none;
-  }
-  
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
+  font-family: 'Pretendard';
+  src: url('/font/PretendardVariable.woff2') format('woff2');
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, video {
+  max-width: 100%;
+  display: block;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
