@@ -1,22 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { cn } from '@/lib/utils'
 import ChevronDownIcon from '@/assets/icons/icon-chevron-down.svg'
-import {
-  containerStyle,
-  triggerStyle,
-  triggerActiveStyle,
-  menuStyle,
-  menuLabelStyle,
-  optionStyle,
-  optionSelectedStyle,
-  chevronStyle,
-  chevronOpenStyle,
-  triggerNoBorderStyle,
-  triggerFullWidthStyle,
-  containerFullWidthStyle,
-  menuNoBorderStyle,
-} from './Dropdown.css'
 
 interface DropdownOption {
   label: string
@@ -62,35 +48,49 @@ export default function Dropdown({
 
   return (
     <div
-      className={[containerStyle, fullWidth ? containerFullWidthStyle : ''].join(' ').trim()}
       ref={containerRef}
+      className={cn('relative inline-block', fullWidth && 'block w-full')}
     >
       <button
-        className={[
-          triggerStyle,
-          noBorder ? triggerNoBorderStyle : '',
-          fullWidth ? triggerFullWidthStyle : '',
-          isSelected ? triggerActiveStyle : '',
-          triggerClassName ?? '',
-        ]
-          .join(' ')
-          .trim()}
+        className={cn(
+          'flex items-center gap-8 bg-white border border-gray-200 rounded-lg px-4 py-2 cursor-pointer',
+          'text-gray-700 text-sm font-semibold tracking-[-0.03em] leading-[1.4]',
+          'transition-[border-color,color] duration-200 hover:bg-primary-50',
+          noBorder && 'border-0 hover:bg-gray-50',
+          fullWidth && 'w-full justify-between',
+          isSelected && 'text-primary-500',
+          triggerClassName,
+        )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {selectedOption ? selectedOption.label : placeholder}
         <ChevronDownIcon
           width={16}
           height={16}
-          className={`${chevronStyle}${isOpen ? ` ${chevronOpenStyle}` : ''}`}
+          className={cn('transition-transform duration-200 ease-in-out shrink-0', isOpen && 'rotate-180')}
         />
       </button>
       {isOpen && (
-        <div className={[menuStyle, noBorder ? menuNoBorderStyle : ''].join(' ').trim()}>
-          {menuLabel && <div className={menuLabelStyle}>{menuLabel}</div>}
+        <div
+          className={cn(
+            'absolute top-[calc(100%+8px)] left-0 bg-white border border-gray-200 rounded-lg z-[100] min-w-full overflow-hidden py-2',
+            noBorder && 'border-0 shadow-[0_4px_16px_rgba(0,0,0,0.08)]',
+          )}
+        >
+          {menuLabel && (
+            <div className="px-4 py-2 text-gray-300 text-sm font-semibold tracking-[-0.03em] leading-[1.4]">
+              {menuLabel}
+            </div>
+          )}
           {options.map((opt) => (
             <div
               key={opt.value}
-              className={`${optionStyle}${opt.value === value ? ` ${optionSelectedStyle}` : ''}`}
+              className={cn(
+                'flex items-center px-4 py-2 cursor-pointer text-gray-700',
+                'text-sm font-semibold tracking-[-0.03em] leading-[1.4]',
+                'transition-[background-color] duration-150 hover:bg-gray-50',
+                opt.value === value && 'text-primary-500',
+              )}
               onClick={() => {
                 onChange(opt.value)
                 setIsOpen(false)

@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css'
 import { colors } from '@/styles/tokens/colors'
 import { fontStyles } from '@/styles/tokens/typography'
-import { listItemRowStyle, listItemRowSelectedStyle } from '@/components/common/styles/listItem.css'
+import { listItemRowStyle, listItemRowSelectedStyle } from '@/components/common/styles/listItem'
 
 export const headerStyle = style({
   display: 'flex',
