@@ -1,7 +1,7 @@
 # CLAT-FE — Claude Code 가이드
 
 > 코드 작성 전 반드시 전체를 읽으세요.
-> 마지막 업데이트: 2026-04-30
+> 마지막 업데이트: 2026-05-13
 
 ---
 
@@ -21,7 +21,7 @@ CLAT은 **출강 강사를 위한 학생 관리 + 알림톡 자동화 SaaS**입�
 
 ```
 Next.js 16 (App Router) + React 19 + TypeScript 5
-스타일: vanilla-extract (.css.ts 파일 분리)
+스타일: Tailwind CSS v4 (utility-first) + cva() for variants
 전역 상태: Zustand 5
 HTTP: axios — axiosInstance만 사용 (직접 import 금지)
 패키지 매니저: pnpm
@@ -35,10 +35,17 @@ HTTP: axios — axiosInstance만 사용 (직접 import 금지)
 ### 코드
 - NEVER import axios directly → `@/lib/api/axiosInstance` only
 - NEVER use `any` type → `unknown` + 타입 가드로 처리
-- NEVER use inline `style={{}}` → `.css.ts` 파일로 분리
-- NEVER hardcode colors → `@/styles/theme.css.ts` 토큰 사용
+- NEVER use inline `style={{}}` → Tailwind 유틸리티 클래스 사용
+- NEVER hardcode colors → `globals.css`의 `@theme` 토큰(`--color-*`) 사용
 - NEVER commit `console.log`
 - 클라이언트 훅 사용 시 반드시 파일 상단에 `'use client'` 명시
+
+### 스타일링 (Tailwind CSS v4)
+- NEVER create `.css.ts` files
+- NEVER import `style()`, `recipe()`, `createGlobalTheme()` from `@vanilla-extract/*`
+- 스타일은 반드시 Tailwind 유틸리티 클래스로 작성
+- variant가 있는 컴포넌트는 `cva()` 사용 (`class-variance-authority`)
+- 클래스 조합은 반드시 `cn()` 사용 (`@/lib/utils`)
 
 ### 구현 순서
 **type → service → hook → UI** 순서를 반드시 따를 것
