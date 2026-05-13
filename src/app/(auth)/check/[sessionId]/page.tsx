@@ -6,6 +6,8 @@ import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import { attendanceService } from '@/services/attendance'
 import type { PublicAttendanceSession, SubmitAttendanceCodeResponse } from '@/types/attendance'
+import useRemainingTime from '@/hooks/useRemainingTime'
+import { getErrorStatus } from '@/lib/getErrorStatus'
 import {
   pageStyle,
   classBadgeStyle,
@@ -34,19 +36,7 @@ import CheckIcon from '@/assets/icons/icon-check-2.svg'
 type PageState = 'input' | 'error' | 'success' | 'expired' | 'no_student'
 
 function RemainingTimer({ expiresAt }: { expiresAt: string }) {
-  const [remaining, setRemaining] = useState('')
-
-  useEffect(() => {
-    const calc = () => {
-      const diff = Math.max(0, new Date(expiresAt).getTime() - Date.now())
-      const m = Math.floor(diff / 60000)
-      const s = Math.floor((diff % 60000) / 1000)
-      setRemaining(`${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`)
-    }
-    calc()
-    const id = setInterval(calc, 1000)
-    return () => clearInterval(id)
-  }, [expiresAt])
+  const remaining = useRemainingTime(expiresAt)
 
   return (
     <div className={timerStyle}>
@@ -300,15 +290,7 @@ export default function AttendancePage({ params }: { params: Promise<{ sessionId
           setPageState('success')
         }
       } catch (err: unknown) {
-        const status =
-          err !== null &&
-          typeof err === 'object' &&
-          'response' in err &&
-          err.response !== null &&
-          typeof err.response === 'object' &&
-          'status' in err.response
-            ? (err.response as { status: number }).status
-            : null
+        const status = getErrorStatus(err)
         setPageState(status === 400 || status === 404 ? 'no_student' : 'expired')
       } finally {
         setIsLoading(false)
@@ -344,15 +326,7 @@ export default function AttendancePage({ params }: { params: Promise<{ sessionId
       setResult(res)
       setPageState('success')
     } catch (err: unknown) {
-      const status =
-        err !== null &&
-        typeof err === 'object' &&
-        'response' in err &&
-        err.response !== null &&
-        typeof err.response === 'object' &&
-        'status' in err.response
-          ? (err.response as { status: number }).status
-          : null
+      const status = getErrorStatus(err)
       // 400/422: 코드 불일치 → CodeInputScreen의 catch가 "코드가 올바르지 않아요" 표시
       // 그 외(404·410 등): 세션 만료·종료 → 만료 화면으로 전환
       if (status === 400 || status === 422) throw err

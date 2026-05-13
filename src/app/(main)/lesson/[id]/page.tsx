@@ -32,6 +32,7 @@ import useDisclosure from '@/hooks/useDisclosure'
 import { useAttendanceStore } from '@/stores/attendanceStore'
 import { lessonService } from '@/services/lesson'
 import { useToastStore } from '@/stores/toastStore'
+import { getServerErrorMessage } from '@/lib/getErrorStatus'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 
@@ -333,22 +334,7 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
             await attendanceCreateSession(minutes)
             setIsStartModalOpen(false)
           } catch (err: unknown) {
-            const serverMessage =
-              err !== null &&
-              typeof err === 'object' &&
-              'response' in err &&
-              err.response !== null &&
-              typeof err.response === 'object' &&
-              'data' in err.response &&
-              err.response.data !== null &&
-              typeof err.response.data === 'object' &&
-              'error' in err.response.data &&
-              err.response.data.error !== null &&
-              typeof err.response.data.error === 'object' &&
-              'message' in err.response.data.error &&
-              typeof err.response.data.error.message === 'string'
-                ? err.response.data.error.message
-                : null
+            const serverMessage = getServerErrorMessage(err)
             addToast({ variant: 'error', message: serverMessage ?? '출결 시작에 실패했어요.' })
           }
         }}
