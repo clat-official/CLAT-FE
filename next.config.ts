@@ -4,7 +4,15 @@ import type { Configuration } from 'webpack'
 const withVanillaExtract = createVanillaExtractPlugin()
 
 const nextConfig = {
-  turbopack: {},
+  allowedDevOrigins: ['172.21.38.30'],
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
+      },
+    ]
+  },
   webpack(config: Configuration) {
     config.module!.rules!.push({
       test: /\.svg$/,

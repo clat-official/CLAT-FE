@@ -1,26 +1,32 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// 인증 없이 접근 가능한 퍼블릭 경로
-const PUBLIC_PATHS = ['/login', '/signup', '/find-password']
+// 비로그인 전용 경로 (로그인 상태면 홈으로)
+const AUTH_ONLY_PATHS = ['/login', '/signup', '/find-password']
+
+// 로그인 여부 상관없이 접근 가능한 경로
+const OPEN_PATHS = ['/check', '/api']
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  const isPublicPath = PUBLIC_PATHS.some((path) => pathname.startsWith(path))
+  const isAuthOnlyPath = AUTH_ONLY_PATHS.some((path) => pathname.startsWith(path))
+  const isOpenPath = OPEN_PATHS.some((path) => pathname.startsWith(path))
 
   // proxy에서는 localStorage 접근 불가 -> 쿠키 기반 토큰 확인
   const token = request.cookies.get('accessToken')?.value
 
-  if (!isPublicPath && !token) {
+  if (isOpenPath) return NextResponse.next()
+
+  if (!isAuthOnlyPath && !token) {
     // 인증 필요한 페이지인데 토큰 없음 -> 로그인으로 리다이렉트
     const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('redirect', pathname) // 로그인 후 원래 페이지로 돌아오기 위해
+    loginUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  if (isPublicPath && token) {
-    // 이미 로그인된 상태에서 퍼블릭 페이지 접근 -> 홈으로 리다이렉트
+  if (isAuthOnlyPath && token) {
+    // 이미 로그인된 상태에서 비로그인 전용 페이지 접근 -> 홈으로 리다이렉트
     return NextResponse.redirect(new URL('/', request.url))
   }
 
