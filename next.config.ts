@@ -1,3 +1,4 @@
+// vanilla-extract 플러그인은 Phase 2 (.css.ts 전체 제거) 완료 후 제거 예정
 import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin'
 import type { Configuration } from 'webpack'
 
