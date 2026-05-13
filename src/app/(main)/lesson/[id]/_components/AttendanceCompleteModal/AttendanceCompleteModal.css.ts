@@ -41,6 +41,9 @@ export const statNumberStyle = style({
   lineHeight: '140%',
 })
 
+export const statNumberPrimaryStyle = style([statNumberStyle, { color: colors.primary500 }])
+export const statNumberGrayStyle = style([statNumberStyle, { color: colors.gray700 }])
+
 export const confirmButtonStyle = style({
   width: '100%',
   height: '54px',

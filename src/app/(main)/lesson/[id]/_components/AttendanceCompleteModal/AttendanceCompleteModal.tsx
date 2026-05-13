@@ -8,7 +8,8 @@ import {
   titleStyle,
   statCardGroupStyle,
   statCardStyle,
-  statNumberStyle,
+  statNumberPrimaryStyle,
+  statNumberGrayStyle,
   confirmButtonStyle,
 } from './AttendanceCompleteModal.css'
 import CheckIcon from '@/assets/icons/icon-check-2.svg'
@@ -20,8 +21,8 @@ interface Props {
 }
 
 const STAT_ITEMS = [
-  { key: 'present_count' as const, label: '출석', colorVar: '#3B51CC' },
-  { key: 'absent_count' as const, label: '결석', colorVar: '#5B5C72' },
+  { key: 'present_count' as const, label: '출석' },
+  { key: 'absent_count' as const, label: '결석' },
 ]
 
 export default function AttendanceCompleteModal({ isOpen, onClose, summary }: Props) {
@@ -38,12 +39,12 @@ export default function AttendanceCompleteModal({ isOpen, onClose, summary }: Pr
 
       {/* 통계 카드 */}
       <div className={statCardGroupStyle}>
-        {STAT_ITEMS.map(({ key, label, colorVar }) => (
+        {STAT_ITEMS.map(({ key, label }) => (
           <div key={key} className={statCardStyle}>
             <Text variant="bodyMd" color={key === 'present_count' ? 'primary500' : 'gray700'}>
               {label}
             </Text>
-            <span className={statNumberStyle} style={{ color: colorVar }}>
+            <span className={key === 'present_count' ? statNumberPrimaryStyle : statNumberGrayStyle}>
               {summary[key]}
             </span>
           </div>
