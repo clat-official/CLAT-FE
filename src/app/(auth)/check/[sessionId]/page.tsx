@@ -271,7 +271,11 @@ export default function AttendancePage({ params }: { params: Promise<{ sessionId
   const searchParams = useSearchParams()
   const studentIdRaw = searchParams.get('studentId')
   const studentId = studentIdRaw !== null ? Number(studentIdRaw) : null
-  const hasValidStudentId = studentId !== null && !isNaN(studentId) && studentId > 0
+  const hasValidStudentId =
+    !isNaN(sessionIdNum) &&
+    studentId !== null &&
+    !isNaN(studentId) &&
+    studentId > 0
 
   const [session, setSession] = useState<PublicAttendanceSession | null>(null)
   const [pageState, setPageState] = useState<PageState>(hasValidStudentId ? 'input' : 'no_student')
