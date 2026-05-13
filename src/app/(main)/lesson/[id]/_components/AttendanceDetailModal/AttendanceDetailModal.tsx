@@ -15,7 +15,8 @@ import {
   metaItemStyle,
   statCardGroupStyle,
   statCardStyle,
-  statNumberStyle,
+  statNumberPrimaryStyle,
+  statNumberGrayStyle,
   filterChipGroupStyle,
   filterChipRecipe,
   studentListStyle,
@@ -135,7 +136,7 @@ export default function AttendanceDetailModal({
           <Text variant="bodyMd" color="primary500">
             출석
           </Text>
-          <span className={statNumberStyle} style={{ color: '#3B51CC' }}>
+          <span className={statNumberPrimaryStyle}>
             {presentCount}
           </span>
         </div>
@@ -143,7 +144,7 @@ export default function AttendanceDetailModal({
           <Text variant="bodyMd" color="gray700">
             결석
           </Text>
-          <span className={statNumberStyle} style={{ color: '#5B5C72' }}>
+          <span className={statNumberGrayStyle}>
             {absentCount}
           </span>
         </div>
@@ -176,7 +177,7 @@ export default function AttendanceDetailModal({
                         {formatTime(student.checked_at)}
                       </Text>
                     )}
-                    <span className={statusBadgeRecipe({ status: getStatusLabel(student.status) })}>
+                    <span className={statusBadgeRecipe({ status: student.status ?? 'NONE' })}>
                       {getStatusLabel(student.status)}
                     </span>
                   </div>

@@ -45,6 +45,9 @@ export const statNumberStyle = style({
   lineHeight: '140%',
 })
 
+export const statNumberPrimaryStyle = style([statNumberStyle, { color: colors.primary500 }])
+export const statNumberGrayStyle = style([statNumberStyle, { color: colors.gray700 }])
+
 export const filterChipGroupStyle = style({
   display: 'flex',
   gap: '8px',
@@ -121,9 +124,9 @@ export const statusBadgeRecipe = recipe({
   },
   variants: {
     status: {
-      출석: { backgroundColor: colors.success50, color: colors.success500 },
-      결석: { backgroundColor: colors.error50, color: colors.error500 },
-      미응답: { backgroundColor: colors.gray50, color: colors.gray500 },
+      PRESENT: { backgroundColor: colors.success50, color: colors.success500 },
+      ABSENT: { backgroundColor: colors.error50, color: colors.error500 },
+      NONE: { backgroundColor: colors.gray50, color: colors.gray500 },
     },
   },
 })
