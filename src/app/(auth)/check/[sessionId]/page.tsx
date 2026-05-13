@@ -333,12 +333,28 @@ export default function AttendancePage({ params }: { params: Promise<{ sessionId
 
   const handleSubmit = async (code: string) => {
     if (!studentId) return
-    const res = await attendanceService.submitAttendanceCode(sessionIdNum, {
-      student_id: studentId,
-      code,
-    })
-    setResult(res)
-    setPageState('success')
+    try {
+      const res = await attendanceService.submitAttendanceCode(sessionIdNum, {
+        student_id: studentId,
+        code,
+      })
+      setResult(res)
+      setPageState('success')
+    } catch (err: unknown) {
+      const status =
+        err !== null &&
+        typeof err === 'object' &&
+        'response' in err &&
+        err.response !== null &&
+        typeof err.response === 'object' &&
+        'status' in err.response
+          ? (err.response as { status: number }).status
+          : null
+      // 400/422: 코드 불일치 → CodeInputScreen의 catch가 "코드가 올바르지 않아요" 표시
+      // 그 외(404·410 등): 세션 만료·종료 → 만료 화면으로 전환
+      if (status === 400 || status === 422) throw err
+      setPageState('expired')
+    }
   }
 
   if (isLoading) return null
