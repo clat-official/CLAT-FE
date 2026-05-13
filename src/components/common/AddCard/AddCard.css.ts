@@ -6,10 +6,10 @@ import { interactiveCardStyleRule } from '@/styles/tokens/card'
 export const addCardStyle = style({
   ...interactiveCardStyleRule,
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: '8px',
+  gap: '4px',
   width: '100%',
   selectors: {
     '&:hover': { backgroundColor: colors.primary50 },
@@ -19,4 +19,11 @@ export const addCardStyle = style({
     },
   },
   color: colors.gray300,
+})
+
+export const labelRowStyle = style({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: '8px',
 })

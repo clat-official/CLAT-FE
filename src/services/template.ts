@@ -102,6 +102,7 @@ export const toEditorItems = (detail: TemplateDetail) => {
   const messageOrder = sorted
     .map((i) => (i.item_type === 'ATTENDANCE' ? '__attendance__' : String(i.id)))
     .filter((id, index, self) => self.indexOf(id) === index) // 중복 제거
+  if (!messageOrder.includes('__attendance__')) messageOrder.push('__attendance__')
 
   return {
     name: detail.name,
