@@ -67,6 +67,7 @@ interface Props {
   onEnd: () => Promise<void>
   session: AttendanceSession
   className: string
+  isEnding: boolean
   onPatchStudent: (studentId: number, status: AttendanceStatus) => Promise<void>
 }
 
@@ -76,25 +77,16 @@ export default function AttendanceDetailModal({
   onEnd,
   session,
   className,
+  isEnding,
   onPatchStudent,
 }: Props) {
   const [filter, setFilter] = useState<FilterType>('전체')
-  const [isEnding, setIsEnding] = useState(false)
   const remaining = useRemainingTime(session.expires_at)
 
   const filtered = session.students.filter((s) => {
     if (filter === '전체') return true
     return s.status === filter
   })
-
-  const handleEnd = async () => {
-    setIsEnding(true)
-    try {
-      await onEnd()
-    } finally {
-      setIsEnding(false)
-    }
-  }
 
   const formatTime = (iso: string | null) => {
     if (!iso) return '-'
@@ -216,7 +208,7 @@ export default function AttendanceDetailModal({
       </div>
 
       {/* 종료 버튼 */}
-      <button className={endButtonStyle} onClick={handleEnd} disabled={isEnding}>
+      <button className={endButtonStyle} onClick={onEnd} disabled={isEnding}>
         출결 종료하기
       </button>
     </Modal>

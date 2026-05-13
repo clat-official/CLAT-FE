@@ -9,6 +9,7 @@ export default function AttendanceGlobalUI() {
   const session = useAttendanceStore((s) => s.session)
   const summary = useAttendanceStore((s) => s.summary)
   const className = useAttendanceStore((s) => s.className)
+  const isEnding = useAttendanceStore((s) => s.isEnding)
   const isDetailModalOpen = useAttendanceStore((s) => s.isDetailModalOpen)
   const isCompleteModalOpen = useAttendanceStore((s) => s.isCompleteModalOpen)
   const openDetailModal = useAttendanceStore((s) => s.openDetailModal)
@@ -23,6 +24,7 @@ export default function AttendanceGlobalUI() {
         <AttendanceFloatingBar
           session={session}
           className={className}
+          isEnding={isEnding}
           onOpenDetail={openDetailModal}
           onEnd={endSession}
         />
@@ -35,6 +37,7 @@ export default function AttendanceGlobalUI() {
           onEnd={endSession}
           session={session}
           className={className}
+          isEnding={isEnding}
           onPatchStudent={patchStudentAttendance}
         />
       )}

@@ -29,6 +29,7 @@ interface AttendanceState {
   session: AttendanceSession | null
   summary: AttendanceSummary | null
   isFetching: boolean
+  isEnding: boolean
   lessonId: number | null
   className: string
   isDetailModalOpen: boolean
@@ -51,6 +52,7 @@ export const useAttendanceStore = create<AttendanceState & AttendanceActions>()(
       session: null,
       summary: null,
       isFetching: false,
+      isEnding: false,
       lessonId: null,
       className: '',
       isDetailModalOpen: false,
@@ -95,16 +97,21 @@ export const useAttendanceStore = create<AttendanceState & AttendanceActions>()(
       },
 
       endSession: async () => {
-        const { session } = get()
-        if (!session) return
-        const result = await attendanceService.endSession(session.session_id)
-        stopPolling()
-        set({
-          session: { ...session, is_active: false },
-          summary: result,
-          isDetailModalOpen: false,
-          isCompleteModalOpen: true,
-        })
+        const { session, isEnding } = get()
+        if (!session || !session.is_active || isEnding) return
+        set({ isEnding: true })
+        try {
+          const result = await attendanceService.endSession(session.session_id)
+          stopPolling()
+          set({
+            session: { ...session, is_active: false },
+            summary: result,
+            isDetailModalOpen: false,
+            isCompleteModalOpen: true,
+          })
+        } finally {
+          set({ isEnding: false })
+        }
       },
 
       patchStudentAttendance: async (studentId, status) => {
