@@ -40,3 +40,38 @@ export interface StudentDetail {
   stats: StudentStats
   incomplete_items: IncompleteItem[]
 }
+
+export interface ScoreDataPoint {
+  lesson_date: string
+  class_name: string
+  score: number
+  class_avg: number | null
+  class_max: number | null
+}
+
+export interface LessonHistoryDataItem {
+  item_name: string
+  value: string | null
+}
+
+export interface LessonHistoryRecord {
+  lesson_id: number
+  lesson_date: string
+  class_name: string
+  attendance: string | null
+  items: LessonHistoryDataItem[]
+}
+
+export interface AlimtalkRecord {
+  id: number
+  sent_at: string
+  lesson_date: string
+  class_name: string
+  status: 'sent' | 'failed' | 'pending'
+  preview?: string
+}
+
+export interface AiAnalysis {
+  content: string
+  generated_at: string | null
+}
