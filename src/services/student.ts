@@ -80,17 +80,17 @@ export const studentService = {
     const { data } = await axiosInstance.get(`/students/${id}/score-history`, {
       params: period ? { period } : undefined,
     })
-    return data.data
+    return Array.isArray(data.data) ? data.data : []
   },
 
   async getLessonHistory(id: number): Promise<LessonHistoryRecord[]> {
     const { data } = await axiosInstance.get(`/students/${id}/lesson-history`)
-    return data.data
+    return Array.isArray(data.data) ? data.data : []
   },
 
   async getAlimtalkHistory(id: number): Promise<AlimtalkRecord[]> {
     const { data } = await axiosInstance.get(`/students/${id}/alimtalk`)
-    return data.data
+    return Array.isArray(data.data) ? data.data : []
   },
 
   async postAiAnalysis(id: number): Promise<AiAnalysis> {
