@@ -83,8 +83,8 @@ export const useAttendanceStore = create<AttendanceState & AttendanceActions>()(
       },
 
       createSession: async (durationMinutes) => {
-        const { lessonId } = get()
-        if (!lessonId) return
+        const { lessonId, session } = get()
+        if (!lessonId || session) return
         await attendanceService.createSession({
           lesson_record_id: lessonId,
           duration_minutes: durationMinutes,
