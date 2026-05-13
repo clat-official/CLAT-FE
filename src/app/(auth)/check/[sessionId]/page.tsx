@@ -178,9 +178,8 @@ function CodeInputScreen({
   )
 }
 
-const STATUS_DISPLAY: Record<string, string> = {
+const STATUS_DISPLAY: Record<'PRESENT' | 'ABSENT', string> = {
   PRESENT: '출석',
-  LATE: '지각',
   ABSENT: '결석',
 }
 
