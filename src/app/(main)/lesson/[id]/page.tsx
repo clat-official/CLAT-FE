@@ -333,10 +333,23 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
             await attendanceCreateSession(minutes)
             setIsStartModalOpen(false)
           } catch (err: unknown) {
-            const message =
-              (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data
-                ?.error?.message ?? '출결 시작에 실패했어요.'
-            addToast({ variant: 'error', message })
+            const serverMessage =
+              err !== null &&
+              typeof err === 'object' &&
+              'response' in err &&
+              err.response !== null &&
+              typeof err.response === 'object' &&
+              'data' in err.response &&
+              err.response.data !== null &&
+              typeof err.response.data === 'object' &&
+              'error' in err.response.data &&
+              err.response.data.error !== null &&
+              typeof err.response.data.error === 'object' &&
+              'message' in err.response.data.error &&
+              typeof err.response.data.error.message === 'string'
+                ? err.response.data.error.message
+                : null
+            addToast({ variant: 'error', message: serverMessage ?? '출결 시작에 실패했어요.' })
           }
         }}
         className={lesson.class_name}
