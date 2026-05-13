@@ -1,14 +1,13 @@
 import Text from '@/components/common/Text'
 import Button from '@/components/common/Button'
 import Chip from '@/components/common/Chip'
-import {
-  cardStyle,
-  chipGroupStyle,
-  progressWrapperStyle,
-  progressLabelStyle,
-  progressTrackStyle,
-  progressBarStyle,
-} from './LessonCard.css'
+
+const cardStyle = 'flex flex-col gap-4 bg-white border border-gray-75 rounded-2xl p-6 min-h-[160px] cursor-pointer'
+const chipGroupStyle = 'flex gap-1'
+const progressWrapperStyle = 'flex flex-col gap-2 mb-1'
+const progressLabelStyle = 'flex justify-between items-center'
+const progressTrackStyle = 'w-full h-4 bg-primary-50 rounded-[999px] overflow-hidden'
+const progressBarStyle = 'h-full bg-primary-500 rounded-[999px] transition-[width] duration-300'
 
 interface LessonCardProps {
   academyName: string

@@ -1,24 +1,42 @@
 'use client'
 
 import CheckIcon from '@/assets/icons/icon-check.svg'
+import { cva } from 'class-variance-authority'
 import type { LessonStudent, Attendance, CompletionStatus } from '@/types/lessonStudent'
 import type { LessonItemDetail } from '@/services/lesson'
-import {
-  tableStyle,
-  tdStyle,
-  thCompactStyle,
-  tdCompactStyle,
-  thShrinkStyle,
-  tdShrinkStyle,
-  cellButtonGroupStyle,
-  cellButtonRecipe,
-  cellEditableStyle,
-  nameCellStyle,
-  thInnerStyle,
-  checkboxLabelStyle,
-  checkboxLabelActiveStyle,
-  activeRowStyle,
-} from './LessonTable.css'
+
+const tableStyle = 'w-full border-collapse border border-gray-100 overflow-hidden'
+const thBase = 'h-10 pl-4 bg-gray-50 text-gray-900 text-sm font-semibold tracking-[-0.03em] text-left border-b border-r border-gray-100 whitespace-nowrap last:border-r-0'
+const thCompactStyle = `${thBase} pr-9 w-[1%]`
+const thShrinkStyle = `${thBase} pr-4 w-[1%]`
+const tdBase = 'h-10 pl-4 bg-white border-b border-r border-gray-100 last:border-r-0 [tr:last-child_&]:border-b-0'
+const tdStyle = `${tdBase} pr-4`
+const tdCompactStyle = `${tdBase} pr-9 w-[1%]`
+const tdShrinkStyle = `${tdBase} pr-4 w-[1%]`
+const cellButtonGroupStyle = 'flex gap-1'
+const cellEditableStyle = 'w-full text-sm font-medium text-gray-700 tracking-[-0.03em] outline-none cursor-text whitespace-nowrap overflow-hidden [&:empty::before]:content-["—"] [&:empty::before]:text-gray-300 [&:empty::before]:pointer-events-none'
+const nameCellStyle = 'text-sm font-medium text-gray-700 tracking-[-0.03em] whitespace-nowrap'
+const thInnerStyle = 'flex items-center gap-4 whitespace-nowrap'
+const checkboxLabelStyle = 'flex items-center gap-1 cursor-pointer text-sm font-medium text-gray-300 tracking-[-0.03em]'
+const checkboxLabelActiveStyle = 'text-primary-500'
+const activeRowStyle = 'bg-success-50'
+
+const cellButtonVariants = cva(
+  'h-6 w-[44px] rounded-[6px] cursor-pointer text-xs font-medium tracking-[-0.03em] leading-[140%] transition-colors duration-150 border-none',
+  {
+    variants: {
+      variant: {
+        default: 'bg-gray-50 text-gray-300',
+        attend: 'bg-success-500 text-white',
+        late: 'bg-warning-500 text-white',
+        absent: 'bg-error-500 text-white',
+        done: 'bg-success-500 text-white',
+        undone: 'bg-error-500 text-white',
+      },
+    },
+    defaultVariants: { variant: 'default' },
+  }
+)
 
 interface LessonTableSectionProps {
   students: LessonStudent[]
@@ -36,19 +54,19 @@ function AttendanceCell({
   return (
     <div className={cellButtonGroupStyle}>
       <button
-        className={cellButtonRecipe({ variant: value === '출석' ? 'attend' : 'default' })}
+        className={cellButtonVariants({ variant: value === '출석' ? 'attend' : 'default' })}
         onClick={() => onChange(value === '출석' ? null : '출석')}
       >
         출석
       </button>
       <button
-        className={cellButtonRecipe({ variant: value === '지각' ? 'late' : 'default' })}
+        className={cellButtonVariants({ variant: value === '지각' ? 'late' : 'default' })}
         onClick={() => onChange(value === '지각' ? null : '지각')}
       >
         지각
       </button>
       <button
-        className={cellButtonRecipe({ variant: value === '결석' ? 'absent' : 'default' })}
+        className={cellButtonVariants({ variant: value === '결석' ? 'absent' : 'default' })}
         onClick={() => onChange(value === '결석' ? null : '결석')}
       >
         결석
@@ -67,13 +85,13 @@ function CompletionCell({
   return (
     <div className={cellButtonGroupStyle}>
       <button
-        className={cellButtonRecipe({ variant: value === '완료' ? 'done' : 'default' })}
+        className={cellButtonVariants({ variant: value === '완료' ? 'done' : 'default' })}
         onClick={() => onChange(value === '완료' ? null : '완료')}
       >
         완료
       </button>
       <button
-        className={cellButtonRecipe({ variant: value === '미완료' ? 'undone' : 'default' })}
+        className={cellButtonVariants({ variant: value === '미완료' ? 'undone' : 'default' })}
         onClick={() => onChange(value === '미완료' ? null : '미완료')}
       >
         미완료
@@ -96,7 +114,7 @@ function SelectCell({
       {options.map((opt) => (
         <button
           key={opt.id}
-          className={cellButtonRecipe({ variant: value === opt.label ? 'attend' : 'default' })}
+          className={cellButtonVariants({ variant: value === opt.label ? 'attend' : 'default' })}
           onClick={() => onChange(value === opt.label ? '' : opt.label)}
         >
           {opt.label}

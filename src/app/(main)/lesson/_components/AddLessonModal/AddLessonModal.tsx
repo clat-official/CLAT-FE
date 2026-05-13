@@ -8,17 +8,16 @@ import Button from '@/components/common/Button'
 import Modal from '@/components/common/Modal'
 import Chip from '@/components/common/Chip'
 import { classService, type Class } from '@/services/class'
-import {
-  headerStyle,
-  classListStyle,
-  classItemStyle,
-  classItemSelectedStyle,
-  classNameStyle,
-  classMetaStyle,
-  radioStyle,
-  radioSelectedStyle,
-  actionsStyle,
-} from './AddLessonModal.css'
+
+const headerStyle = 'flex items-center gap-5 mb-7'
+const classListStyle = 'flex flex-col gap-3 mb-[40px] max-h-[320px] overflow-y-auto'
+const classItemStyle = 'flex items-center gap-3 py-3 px-4 rounded-lg cursor-pointer transition-colors duration-150 hover:bg-gray-50'
+const classItemSelectedStyle = 'bg-primary-50 hover:bg-primary-100'
+const classNameStyle = 'text-[18px] font-semibold text-gray-900 tracking-[-0.03em] leading-[140%]'
+const classMetaStyle = 'flex gap-1'
+const radioStyle = 'shrink-0 w-4 h-4 rounded-full border-2 border-gray-200 transition-[border-color] duration-150'
+const radioSelectedStyle = 'border-primary-500 [background-image:radial-gradient(circle,var(--color-primary-500)_40%,transparent_40%)]'
+const actionsStyle = 'flex gap-2'
 
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
 const formatSchedule = (schedules: { day_of_week: number }[]) =>

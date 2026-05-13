@@ -8,16 +8,14 @@ import { lessonService, type LessonDetail } from '@/services/lesson'
 import { useUserStore } from '@/stores/userStore'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
-import {
-  backdrop,
-  drawer,
-  drawerClosing,
-  header,
-  content,
-  dropdownTrigger,
-  messagePreview,
-  closeButtonStyle,
-} from './MessagePreview.css'
+const backdrop = 'fixed inset-0 bg-black/40 flex justify-end z-[100]'
+const drawer = 'w-[480px] h-full bg-gray-50 shadow-[-4px_0_16px_rgba(0,0,0,0.1)] flex flex-col animate-slide-in-right'
+const drawerClosing = 'animate-slide-out-right'
+const header = 'p-5 border-b border-gray-100 flex justify-between items-center'
+const content = 'flex-1 p-6 overflow-y-auto flex flex-col gap-4'
+const dropdownTrigger = 'border-none bg-white'
+const messagePreview = 'bg-white p-6 rounded-xl whitespace-pre-wrap text-gray-700 text-sm font-medium tracking-[-0.03em] leading-[180%]'
+const closeButtonStyle = 'bg-transparent border-none cursor-pointer text-gray-500 flex items-center'
 
 interface PreviewStudent {
   student_id: number

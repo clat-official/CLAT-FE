@@ -3,20 +3,32 @@
 import { useState } from 'react'
 import Modal from '@/components/common/Modal'
 import Text from '@/components/common/Text'
-import {
-  titleStyle,
-  subtitleStyle,
-  timeSectionStyle,
-  timeChipGroupStyle,
-  timeChipRecipe,
-  customInputWrapperStyle,
-  customInputStyle,
-  infoBoxStyle,
-  buttonGroupStyle,
-  cancelButtonStyle,
-  confirmButtonStyle,
-} from './AttendanceStartModal.css'
+import { cva } from 'class-variance-authority'
 import TimerIcon from '@/assets/icons/icon-timer.svg'
+
+const titleStyle = 'mt-5 mb-3'
+const subtitleStyle = 'mb-[60px]'
+const timeSectionStyle = 'flex flex-col gap-3 mb-7'
+const timeChipGroupStyle = 'flex items-center gap-2'
+const customInputWrapperStyle = 'flex items-center gap-2'
+const customInputStyle = 'w-20 h-8 rounded-lg border border-primary-500 bg-white px-[10px] text-sm font-semibold tracking-[-0.03em] text-gray-900 outline-none text-center placeholder:text-gray-300'
+const infoBoxStyle = 'rounded-xl bg-primary-50 p-5 mb-[40px]'
+const buttonGroupStyle = 'flex gap-3'
+const cancelButtonStyle = 'flex-1 h-[54px] rounded-xl border-none cursor-pointer bg-gray-50 text-gray-700 text-base font-semibold tracking-[-0.03em] leading-[140%]'
+const confirmButtonStyle = 'flex-1 h-[54px] rounded-xl border-none cursor-pointer bg-primary-500 text-white text-base font-semibold tracking-[-0.03em] leading-[140%]'
+
+const timeChipVariants = cva(
+  'w-16 h-8 rounded-lg border-none cursor-pointer text-sm font-semibold tracking-[-0.03em] leading-[140%] transition-[background-color,color] duration-150',
+  {
+    variants: {
+      selected: {
+        true: 'bg-primary-50 text-primary-500',
+        false: 'bg-gray-50 text-gray-700',
+      },
+    },
+    defaultVariants: { selected: false },
+  }
+)
 
 const PRESET_DURATIONS = [5, 10, 15, 20] as const
 
@@ -79,7 +91,7 @@ export default function AttendanceStartModal({
           {PRESET_DURATIONS.map((min) => (
             <button
               key={min}
-              className={timeChipRecipe({ selected: !isCustom && selectedMinutes === min })}
+              className={timeChipVariants({ selected: !isCustom && selectedMinutes === min })}
               onClick={() => {
                 setIsCustom(false)
                 setSelectedMinutes(min)
@@ -89,7 +101,7 @@ export default function AttendanceStartModal({
             </button>
           ))}
           <button
-            className={timeChipRecipe({ selected: isCustom })}
+            className={timeChipVariants({ selected: isCustom })}
             onClick={() => setIsCustom(true)}
             style={{ width: 'auto', padding: '0 12px' }}
           >

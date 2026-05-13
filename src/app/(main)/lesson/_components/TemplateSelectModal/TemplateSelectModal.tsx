@@ -8,18 +8,34 @@ import Button from '@/components/common/Button'
 import Chip from '@/components/common/Chip'
 import Dropdown from '@/components/common/Dropdown'
 import ArrowRightIcon from '@/assets/icons/icon-chevron-right.svg'
+import { cva } from 'class-variance-authority'
 import { templateService, type Template, type TemplateDetail } from '@/services/template'
-import {
-  modalContentStyle,
-  actionsStyle,
-  templateCompareStyle,
-  templateColStyle,
-  templateColTitleStyle,
-  itemChipGroupStyle,
-  chipGroupStyle,
-  chipButtonRecipe,
-  currentTemplateNameStyle,
-} from './TemplateSelectModal.css'
+
+const modalContentStyle = 'flex flex-col gap-6'
+const actionsStyle = 'flex gap-2'
+const templateCompareStyle = 'flex items-start gap-3'
+const templateColStyle = 'flex-1 flex flex-col gap-3 p-4 bg-background rounded-lg mb-6'
+const templateColTitleStyle = 'text-sm font-medium tracking-[-0.03em] leading-[140%] text-gray-500 uppercase'
+const itemChipGroupStyle = 'flex flex-wrap gap-[6px]'
+const chipGroupStyle = 'flex flex-wrap gap-2'
+const currentTemplateNameStyle = 'h-10 px-3 rounded-lg bg-white text-gray-700 text-sm font-semibold flex items-center tracking-[-0.03em]'
+
+const chipButtonVariants = cva(
+  'h-10 px-4 rounded-lg cursor-pointer text-sm font-medium tracking-[-0.03em] leading-[140%] transition-[background-color,border-color,color] duration-150',
+  {
+    variants: {
+      selected: {
+        true: 'bg-primary-100 border border-primary-500 text-primary-500',
+        false: 'bg-white border border-gray-100 text-gray-500',
+      },
+      current: {
+        true: 'bg-gray-100 border border-gray-200 text-gray-500 cursor-not-allowed',
+        false: '',
+      },
+    },
+    defaultVariants: { selected: false, current: false },
+  }
+)
 
 interface TemplateSelectModalProps {
   isOpen: boolean
@@ -156,7 +172,7 @@ export default function TemplateSelectModal({
                 {templates.map((t) => (
                   <button
                     key={t.id}
-                    className={chipButtonRecipe({ selected: selectedId === t.id })}
+                    className={chipButtonVariants({ selected: selectedId === t.id })}
                     onClick={() => handleSelect(String(t.id))}
                   >
                     {t.name}

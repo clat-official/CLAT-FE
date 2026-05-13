@@ -12,14 +12,12 @@ import AddLessonModal from './_components/AddLessonModal/AddLessonModal'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
 import ArrowLeftIcon from '@/assets/icons/icon-chevron-left.svg'
 import ArrowRightIcon from '@/assets/icons/icon-chevron-right.svg'
-import {
-  pageStyle,
-  dateGridStyle,
-  lessonGridStyle,
-  sectionTitleStyle,
-  navButtonStyle,
-  weekNavStyle,
-} from './lesson.css'
+const pageStyle = 'flex flex-col'
+const navButtonStyle = 'flex items-center bg-gray-50 rounded text-gray-500 border-none cursor-pointer hover:bg-gray-75'
+const dateGridStyle = 'grid grid-cols-7 gap-3'
+const lessonGridStyle = 'grid grid-cols-3 max-xl:grid-cols-2 max-md:grid-cols-1 gap-5 *:min-h-[248px]'
+const sectionTitleStyle = 'mt-[80px] mb-5'
+const weekNavStyle = 'flex items-center gap-4 mt-[60px] mb-6'
 import { lessonService, type LessonSummary } from '@/services/lesson'
 
 const DAYS_KO = ['월', '화', '수', '목', '금', '토', '일']
