@@ -71,6 +71,18 @@
   /* ── Animations ──────────────────────────────────── */
   --animate-fade-slide-in: fade-slide-in 0.25s ease-out;
   --animate-fade-slide-out: fade-slide-out 0.25s ease-in forwards;
+  --animate-slide-in-right: slide-in-right 0.3s ease-out;
+  --animate-slide-out-right: slide-out-right 0.3s ease-in forwards;
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-out-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
 }
 
 @keyframes fade-slide-in {
