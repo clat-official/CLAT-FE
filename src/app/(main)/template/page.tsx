@@ -8,7 +8,7 @@ import AddCard from '@/components/common/AddCard'
 import TemplateCard from './_components/TemplateCard/TemplateCard'
 import DeleteConfirmModal from './_components/DeleteConfirmModal/DeleteConfirmModal'
 import PlusIcon from '@/assets/icons/icon-plus.svg'
-import { gridStyle } from './template.css'
+const gridStyle = 'grid grid-cols-3 max-xl:grid-cols-2 max-md:grid-cols-1 gap-5 mt-[60px]'
 import { templateService, type Template } from '@/services/template'
 
 type DeleteTarget = {

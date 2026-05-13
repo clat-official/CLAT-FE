@@ -24,33 +24,38 @@ import NumberIcon from '@/assets/icons/icon-number.svg'
 import TextIcon from '@/assets/icons/icon-text.svg'
 import SelectIcon from '@/assets/icons/icon-select.svg'
 import CheckIcon from '@/assets/icons/icon-check.svg'
+import { cva } from 'class-variance-authority'
 import type { LessonStudent } from '@/types/lessonStudent'
 import type { IndividualTemplateItem, IndividualItemType } from '../../_types/template'
 import AddItemModal from '../AddItemModal/AddItemModal'
 import DragHandle from '@/components/common/DragHandle/DragHandle'
-import {
-  tableStyle,
-  thStudentStyle,
-  thAttendanceStyle,
-  thColumnStyle,
-  thAddStyle,
-  tdStudentStyle,
-  tdAttendanceStyle,
-  tdColumnStyle,
-  tdAddStyle,
-  colHeaderWrapperStyle,
-  colHeaderInnerStyle,
-  colNameStyle,
-  requiredMarkStyle,
-  deleteButtonStyle,
-  addColumnButtonStyle,
-  nameCellStyle,
-  cellButtonGroupStyle,
-  cellButtonRecipe,
-  dragOverlayWrapperStyle,
-  dragOverlayThStyle,
-  dragOverlayTdStyle,
-} from './IndividualContentTable.css'
+
+const tableStyle = 'w-full border-collapse border border-gray-100 overflow-hidden'
+const thBase = 'h-10 pl-4 bg-gray-50 text-gray-700 text-sm font-semibold tracking-[-0.03em] text-left border-b border-r border-gray-100 whitespace-nowrap'
+const thStudentStyle = `${thBase} pr-9 w-[1%]`
+const thAttendanceStyle = `${thBase} pr-9 w-[1%]`
+const thColumnStyle = `${thBase} pr-4 w-[1%] hover:bg-primary-50`
+const thAddStyle = `${thBase} pr-6 border-r-0 hover:bg-primary-50`
+const tdBase = 'h-10 pl-4 pr-4 bg-white border-b border-r border-gray-100 [tr:last-child_&]:border-b-0'
+const tdStudentStyle = `${tdBase} pr-9 w-[1%]`
+const tdAttendanceStyle = `${tdBase} w-[1%]`
+const tdColumnStyle = `${tdBase} w-[1%]`
+const tdAddStyle = `${tdBase} border-r-0`
+const colHeaderInnerStyle = 'flex items-center gap-1 text-gray-300 flex-1'
+const colHeaderWrapperStyle = 'flex items-center gap-4'
+const colNameStyle = 'text-sm font-semibold text-gray-700 tracking-[-0.03em] leading-[140%]'
+const requiredMarkStyle = 'text-error-500'
+const deleteButtonStyle = 'flex items-center bg-transparent border-none cursor-pointer p-0 text-gray-300 ml-auto hover:text-gray-500'
+const addColumnButtonStyle = 'inline-flex items-center gap-1 bg-transparent border-none cursor-pointer p-0 text-primary-500 text-sm font-semibold tracking-[-0.03em] whitespace-nowrap'
+const nameCellStyle = 'text-sm font-medium text-gray-700 tracking-[-0.03em] whitespace-nowrap'
+const cellButtonGroupStyle = 'flex gap-1'
+const dragOverlayWrapperStyle = 'flex flex-col shadow-[0_8px_24px_rgba(0,0,0,0.12)] overflow-hidden'
+const dragOverlayThStyle = 'h-10 px-4 bg-gray-50 border-b border-gray-100 flex items-center whitespace-nowrap'
+const dragOverlayTdStyle = 'h-10 px-4 bg-white border-b border-gray-100 flex items-center'
+
+const cellButtonVariants = cva(
+  'h-6 w-[44px] rounded-[6px] text-xs font-medium tracking-[-0.03em] leading-[140%] border-none bg-gray-50 text-gray-300 cursor-default'
+)
 
 interface IndividualContentTableProps {
   students: LessonStudent[]
@@ -146,10 +151,10 @@ function ColumnDragOverlay({ item, students }: ColumnDragOverlayProps) {
 function CompletePreviewCell() {
   return (
     <div className={cellButtonGroupStyle}>
-      <button className={cellButtonRecipe({})} type="button" disabled>
+      <button className={cellButtonVariants({})} type="button" disabled>
         완료
       </button>
-      <button className={cellButtonRecipe({})} type="button" disabled>
+      <button className={cellButtonVariants({})} type="button" disabled>
         미완료
       </button>
     </div>
@@ -159,13 +164,13 @@ function CompletePreviewCell() {
 function AttendancePreviewCell() {
   return (
     <div className={cellButtonGroupStyle}>
-      <button className={cellButtonRecipe({})} type="button" disabled>
+      <button className={cellButtonVariants({})} type="button" disabled>
         출석
       </button>
-      <button className={cellButtonRecipe({})} type="button" disabled>
+      <button className={cellButtonVariants({})} type="button" disabled>
         지각
       </button>
-      <button className={cellButtonRecipe({})} type="button" disabled>
+      <button className={cellButtonVariants({})} type="button" disabled>
         결석
       </button>
     </div>

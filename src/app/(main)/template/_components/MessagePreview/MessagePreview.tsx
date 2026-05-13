@@ -3,17 +3,16 @@
 import Text from '@/components/common/Text'
 import type { TemplateItem } from '../../_types/template'
 import { useUserStore } from '@/stores/userStore'
-import {
-  sectionHeaderStyle,
-  messageContainerStyle,
-  emptyStyle,
-  lineStyle,
-  chipStyle,
-  valueChipStyle,
-  dividerStyle,
-  itemListStyle,
-  bulletLineStyle,
-} from './MessagePreview.css'
+
+const sectionHeaderStyle = 'flex items-center gap-3 mb-3'
+const messageContainerStyle = 'bg-white rounded-lg p-6 flex flex-col gap-4 text-sm font-medium text-gray-900 leading-[180%] tracking-[-0.03em]'
+const emptyStyle = 'flex items-center justify-center bg-white rounded-lg p-5 text-sm font-medium text-gray-300 tracking-[-0.03em] min-h-[120px]'
+const lineStyle = 'flex flex-wrap items-center gap-1'
+const chipStyle = 'inline-flex items-center px-3 py-0.5 rounded-[20px] border border-gray-200 bg-gray-50 text-gray-500 text-xs font-semibold tracking-[-0.03em] leading-[140%]'
+const valueChipStyle = 'inline-flex items-center px-3 py-0.5 rounded-[20px] border border-primary-300 bg-primary-100 text-primary-500 text-xs font-semibold tracking-[-0.03em] leading-[140%]'
+const dividerStyle = 'h-px bg-gray-75 my-2'
+const itemListStyle = 'flex flex-col gap-4'
+const bulletLineStyle = 'flex flex-wrap items-center gap-1'
 
 // 추후 온보딩 데이터로 교체
 const DUMMY_ACADEMY = '엘리에듀학원'

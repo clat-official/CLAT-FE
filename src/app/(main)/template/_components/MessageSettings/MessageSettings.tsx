@@ -20,14 +20,13 @@ import Chip from '@/components/common/Chip'
 import Toggle from '@/components/common/Toggle'
 import DragHandle from '@/components/common/DragHandle/DragHandle'
 import type { TemplateItem } from '../../_types/template'
-import {
-  sectionHeaderStyle,
-  rowListStyle,
-  rowStyle,
-  rowDraggingStyle,
-  rowLabelStyle,
-  itemTypeBadgeStyle,
-} from './MessageSettings.css'
+
+const sectionHeaderStyle = 'flex items-center gap-3 mb-3'
+const rowListStyle = 'flex flex-col gap-2'
+const rowStyle = 'flex items-center gap-2 bg-white rounded-lg h-[52px] px-3 select-none'
+const rowDraggingStyle = 'opacity-50 shadow-[0_4px_12px_rgba(0,0,0,0.12)]'
+const rowLabelStyle = 'flex-1 text-base font-semibold text-gray-700 tracking-[-0.03em] leading-[140%] overflow-hidden text-ellipsis whitespace-nowrap'
+const itemTypeBadgeStyle = 'text-xs font-medium text-gray-500 tracking-[-0.03em] shrink-0'
 
 const ITEM_TYPE_LABELS: Record<string, string> = {
   number: '숫자형',
