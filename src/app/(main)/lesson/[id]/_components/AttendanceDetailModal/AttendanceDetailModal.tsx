@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Modal from '@/components/common/Modal'
 import Text from '@/components/common/Text'
+import useRemainingTime from '@/hooks/useRemainingTime'
 import TimerIcon from '@/assets/icons/icon-timer.svg'
 import NumberIcon from '@/assets/icons/icon-number-2.svg'
 import ClockIcon from '@/assets/icons/icon-clock-fill.svg'
@@ -43,23 +44,6 @@ function getStatusLabel(status: AttendanceStatus | null): '출석' | '결석' | 
   return STATUS_LABEL[status]
 }
 
-function useRemainingTime(expiresAt: string) {
-  const [remaining, setRemaining] = useState('')
-
-  useEffect(() => {
-    const calc = () => {
-      const diff = Math.max(0, new Date(expiresAt).getTime() - Date.now())
-      const m = Math.floor(diff / 60000)
-      const s = Math.floor((diff % 60000) / 1000)
-      setRemaining(`${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`)
-    }
-    calc()
-    const id = setInterval(calc, 1000)
-    return () => clearInterval(id)
-  }, [expiresAt])
-
-  return remaining
-}
 
 interface Props {
   isOpen: boolean
