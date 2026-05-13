@@ -1,9 +1,6 @@
 // 출석 상태 (null = 미응답)
 export type AttendanceStatus = 'PRESENT' | 'ABSENT'
 
-// 세션 진행 상태 (학생 측 공개)
-export type PublicSessionStatus = 'ACTIVE' | 'ENDED' | 'EXPIRED'
-
 // 강사 측
 
 export interface AttendanceStudentRecord {
@@ -48,14 +45,20 @@ export interface PatchStudentAttendanceDto {
 // 학생 측 (공개, 인증 불필요)
 
 export interface PublicAttendanceSession {
-  session_id: number
-  status: PublicSessionStatus
-  expires_at: string // ISO timestamp
+  ok: boolean
   class_name: string
-  lesson_date: string // YYYY-MM-DD
+  expires_at: string
+  student_name: string
+  already_checked: boolean
+  closed: boolean
+  message: string
+  session_active: boolean
+  current_status: 'PRESENT' | 'ABSENT' | null
+  reason_code: string
 }
 
 export interface SubmitAttendanceCodeDto {
+  student_id: number
   code: string
 }
 

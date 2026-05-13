@@ -1,4 +1,5 @@
 import axiosInstance from '@/lib/api/axiosInstance'
+import publicAxiosInstance from '@/lib/api/publicAxiosInstance'
 import type {
   AttendanceSession,
   AttendanceSummary,
@@ -47,9 +48,10 @@ export const attendanceService = {
 
   // 학생 측 (공개, 인증 불필요)
 
-  async getPublicSession(sessionId: number): Promise<PublicAttendanceSession> {
-    const { data } = await axiosInstance.get(
-      `/attendance/public/sessions/${sessionId}`
+  async getPublicCheckSession(sessionId: number, studentId: number): Promise<PublicAttendanceSession> {
+    const { data } = await publicAxiosInstance.get(
+      `/attendance/public/sessions/${sessionId}`,
+      { params: { student_id: studentId } }
     )
     return data.data.data
   },
@@ -58,7 +60,7 @@ export const attendanceService = {
     sessionId: number,
     dto: SubmitAttendanceCodeDto
   ): Promise<SubmitAttendanceCodeResponse> {
-    const { data } = await axiosInstance.post(
+    const { data } = await publicAxiosInstance.post(
       `/attendance/public/sessions/${sessionId}/check`,
       dto
     )

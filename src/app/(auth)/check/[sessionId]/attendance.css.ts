@@ -1,10 +1,11 @@
 import { style } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
 import { colors } from '@/styles/tokens/colors'
-import { fontStyles } from '@/styles/tokens/typography'
 
 export const pageStyle = style({
-  minHeight: '100vh',
+  minHeight: '100dvh',
+  maxWidth: '440px',
+  margin: '0 auto',
   backgroundColor: colors.background,
   display: 'flex',
   flexDirection: 'column',
@@ -57,6 +58,15 @@ export const timerStyle = style({
   width: '100%',
 })
 
+export const timerLabelStyle = style({
+  color: colors.gray500,
+})
+
+export const timerValueStyle = style({
+  color: colors.primary500,
+  fontWeight: 600,
+})
+
 export const codeInputGroupStyle = style({
   display: 'flex',
   gap: '8px',
@@ -78,10 +88,12 @@ export const codeBoxRecipe = recipe({
     letterSpacing: '-0.03em',
     lineHeight: '140%',
     transition: 'border-color 0.15s',
+    position: 'relative',
   },
   variants: {
     state: {
       empty: { border: `1px solid ${colors.gray100}` },
+      focused: { border: `1.5px solid ${colors.primary500}` },
       filled: { border: `1.5px solid ${colors.primary500}`, color: colors.gray900 },
       error: { border: `1.5px solid ${colors.error500}`, color: colors.error500 },
     },
@@ -89,46 +101,42 @@ export const codeBoxRecipe = recipe({
   defaultVariants: { state: 'empty' },
 })
 
+export const codeBoxInputStyle = style({
+  position: 'absolute',
+  inset: 0,
+  opacity: 0,
+  cursor: 'text',
+  width: '100%',
+  height: '100%',
+  border: 'none',
+  background: 'transparent',
+})
+
 export const errorTextStyle = style({
   marginTop: '16px',
   textAlign: 'center',
 })
 
-export const confirmButtonStyle = style({
+export const confirmButtonWrapperStyle = style({
   position: 'fixed',
   bottom: '32px',
-  left: '24px',
-  right: '24px',
-  height: '56px',
-  borderRadius: '16px',
-  border: 'none',
-  cursor: 'pointer',
-  fontSize: fontStyles.titleMd.fontSize,
-  fontWeight: fontStyles.titleMd.fontWeight,
-  letterSpacing: '-0.03em',
-  lineHeight: '140%',
-  transition: 'background-color 0.15s',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: 'calc(100% - 48px)',
+  maxWidth: 'calc(440px - 48px)',
 })
 
-export const confirmButtonActiveStyle = style({
-  backgroundColor: colors.primary500,
-  color: colors.white,
-})
-
-export const confirmButtonDisabledStyle = style({
-  backgroundColor: colors.gray75,
-  color: colors.gray300,
-  cursor: 'not-allowed',
-})
-
-// 출결 확인/마감 화면
+// 출결 확인/마감/에러 화면
 
 export const resultPageStyle = style({
-  minHeight: '100vh',
+  minHeight: '100dvh',
+  maxWidth: '440px',
+  margin: '0 auto',
   backgroundColor: colors.background,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  position: 'relative',
 })
 
 export const resultCenterStyle = style({
@@ -141,6 +149,8 @@ export const resultCenterStyle = style({
   left: '50%',
   transform: 'translateX(-50%)',
   width: '186px',
+  whiteSpace: 'pre-line',
+  textAlign: 'center',
 })
 
 export const resultIconStyle = style({
@@ -172,4 +182,18 @@ export const resultInfoRowStyle = style({
       marginTop: '12px',
     },
   },
+})
+
+export const resultInfoValueStyle = style({
+  fontSize: '12px',
+  fontWeight: 600,
+  color: colors.gray900,
+  letterSpacing: '-0.03em',
+})
+
+export const resultInfoStatusStyle = style({
+  fontSize: '12px',
+  fontWeight: 600,
+  color: colors.primary500,
+  letterSpacing: '-0.03em',
 })

@@ -1,7 +1,9 @@
 'use client'
 
 import { use, useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Text from '@/components/common/Text'
+import Button from '@/components/common/Button'
 import { attendanceService } from '@/services/attendance'
 import type { PublicAttendanceSession, SubmitAttendanceCodeResponse } from '@/types/attendance'
 import {
@@ -11,20 +13,25 @@ import {
   titleStyle,
   subtitleStyle,
   timerStyle,
+  timerLabelStyle,
+  timerValueStyle,
   codeInputGroupStyle,
   codeBoxRecipe,
+  codeBoxInputStyle,
   errorTextStyle,
-  confirmButtonStyle,
-  confirmButtonActiveStyle,
-  confirmButtonDisabledStyle,
+  confirmButtonWrapperStyle,
   resultPageStyle,
   resultCenterStyle,
   resultIconStyle,
   resultInfoCardStyle,
   resultInfoRowStyle,
+  resultInfoValueStyle,
+  resultInfoStatusStyle,
 } from './attendance.css'
+import WarningIcon from '@/assets/icons/icon-warning-2.svg'
+import CheckIcon from '@/assets/icons/icon-check-2.svg'
 
-type PageState = 'input' | 'error' | 'success' | 'expired'
+type PageState = 'input' | 'error' | 'success' | 'expired' | 'no_student'
 
 function RemainingTimer({ expiresAt }: { expiresAt: string }) {
   const [remaining, setRemaining] = useState('')
@@ -43,9 +50,9 @@ function RemainingTimer({ expiresAt }: { expiresAt: string }) {
 
   return (
     <div className={timerStyle}>
-      <Text variant="bodyMd" color="gray700">
-        <span style={{ color: '#9492A9' }}>남은 시간</span>{' '}
-        <span style={{ color: '#3B51CC', fontWeight: 600 }}>{remaining}</span>
+      <Text variant="bodyMd">
+        <span className={timerLabelStyle}>남은 시간</span>{' '}
+        <span className={timerValueStyle}>{remaining}</span>
       </Text>
     </div>
   )
@@ -61,6 +68,7 @@ function CodeInputScreen({
   const [digits, setDigits] = useState(['', '', '', ''])
   const [hasError, setHasError] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const code = digits.join('')
@@ -103,34 +111,32 @@ function CodeInputScreen({
   const getBoxState = (index: number) => {
     if (hasError) return 'error'
     if (digits[index]) return 'filled'
+    if (focusedIndex === index) return 'focused'
     return 'empty'
   }
 
   return (
-    <div className={pageStyle} style={{ position: 'relative' }}>
-      {/* 반 배지 */}
+    <div className={pageStyle}>
       <span className={classBadgeStyle}>{session.class_name}</span>
 
       <div className={centerContentStyle}>
-        {/* 제목 */}
         <div className={titleStyle}>
-          <Text variant="headingLg" as="h1">출결 코드를 입력해주세요</Text>
+          <Text variant="headingLg" as="h1">
+            출결 코드를 입력해주세요
+          </Text>
         </div>
 
-        {/* 부제 */}
         <div className={subtitleStyle}>
           <Text variant="bodyMd" color="gray500">
             {'선생님께 받은\n4자리 코드를 입력해주세요'}
           </Text>
         </div>
 
-        {/* 남은 시간 */}
         <RemainingTimer expiresAt={session.expires_at} />
 
-        {/* 4자리 코드 입력 */}
         <div className={codeInputGroupStyle}>
           {digits.map((digit, i) => (
-            <div key={i} className={codeBoxRecipe({ state: getBoxState(i) })} style={{ position: 'relative' }}>
+            <div key={i} className={codeBoxRecipe({ state: getBoxState(i) })}>
               <input
                 ref={(el) => { inputRefs.current[i] = el }}
                 type="text"
@@ -139,16 +145,9 @@ function CodeInputScreen({
                 value={digit}
                 onChange={(e) => handleInput(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: 0,
-                  cursor: 'text',
-                  width: '100%',
-                  height: '100%',
-                  border: 'none',
-                  background: 'transparent',
-                }}
+                onFocus={() => setFocusedIndex(i)}
+                onBlur={() => setFocusedIndex(null)}
+                className={codeBoxInputStyle}
               />
               {digit}
             </div>
@@ -157,65 +156,69 @@ function CodeInputScreen({
 
         {hasError && (
           <div className={errorTextStyle}>
-            <Text variant="bodyMd" color="error500">코드가 올바르지 않아요</Text>
+            <Text variant="bodyMd" color="error500">
+              코드가 올바르지 않아요
+            </Text>
           </div>
         )}
       </div>
 
-      {/* 확인 버튼 */}
-      <button
-        className={`${confirmButtonStyle} ${isFilled ? confirmButtonActiveStyle : confirmButtonDisabledStyle}`}
-        onClick={handleConfirm}
-        disabled={!isFilled || isSubmitting}
-      >
-        확인
-      </button>
+      <div className={confirmButtonWrapperStyle}>
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          onClick={handleConfirm}
+          disabled={!isFilled || isSubmitting}
+        >
+          확인
+        </Button>
+      </div>
     </div>
   )
 }
 
+const STATUS_DISPLAY: Record<string, string> = {
+  PRESENT: '출석',
+  LATE: '지각',
+  ABSENT: '결석',
+}
+
 function SuccessScreen({ result }: { result: SubmitAttendanceCodeResponse }) {
   const formatDate = (dateStr: string) => {
+    if (!dateStr) return '-'
     const d = new Date(dateStr)
     return `${d.getMonth() + 1}월 ${d.getDate()}일(${['일', '월', '화', '수', '목', '금', '토'][d.getDay()]})`
   }
 
   return (
-    <div className={resultPageStyle} style={{ position: 'relative' }}>
+    <div className={resultPageStyle}>
       <div className={resultCenterStyle}>
-        {/* 성공 아이콘 */}
         <div className={resultIconStyle}>
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-            <path d="M5 12l5 5L20 7" stroke="#3B51CC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <CheckIcon width={80} height={80} />
         </div>
 
-        <Text variant="headingLg" as="h1">출결이 확인됐어요</Text>
+        <Text variant="headingLg" as="h1">
+          출결이 확인됐어요
+        </Text>
 
         <Text variant="bodyMd" color="gray500">
           {'선생님께 출석이\n자동으로 전달됐어요'}
         </Text>
       </div>
 
-      {/* 정보 카드 */}
       <div className={resultInfoCardStyle}>
         <div className={resultInfoRowStyle}>
           <Text variant="labelSm" color="gray700">반</Text>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#363744', letterSpacing: '-0.03em' }}>
-            {result.class_name}
-          </span>
+          <span className={resultInfoValueStyle}>{result.class_name}</span>
         </div>
         <div className={resultInfoRowStyle}>
           <Text variant="labelSm" color="gray700">날짜</Text>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#363744', letterSpacing: '-0.03em' }}>
-            {formatDate(result.lesson_date)}
-          </span>
+          <span className={resultInfoValueStyle}>{formatDate(result.lesson_date)}</span>
         </div>
         <div className={resultInfoRowStyle}>
           <Text variant="labelSm" color="gray700">상태</Text>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#3B51CC', letterSpacing: '-0.03em' }}>
-            {result.status}
-          </span>
+          <span className={resultInfoStatusStyle}>{STATUS_DISPLAY[result.status] ?? result.status}</span>
         </div>
       </div>
     </div>
@@ -224,18 +227,15 @@ function SuccessScreen({ result }: { result: SubmitAttendanceCodeResponse }) {
 
 function ExpiredScreen() {
   return (
-    <div className={resultPageStyle} style={{ position: 'relative' }}>
+    <div className={resultPageStyle}>
       <div className={resultCenterStyle}>
-        {/* 마감 아이콘 */}
         <div className={resultIconStyle}>
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" stroke="#3B51CC" strokeWidth="2" />
-            <path d="M12 7v5l3 3" stroke="#3B51CC" strokeWidth="2" strokeLinecap="round" />
-            <path d="M12 3v2M12 19v2M3 12H1M23 12h-2" stroke="#3B51CC" strokeWidth="2" strokeLinecap="round" />
-          </svg>
+          <WarningIcon width={80} height={80} />
         </div>
 
-        <Text variant="headingLg" as="h1">출결이 마감됐어요</Text>
+        <Text variant="headingLg" as="h1">
+          출결이 마감됐어요
+        </Text>
 
         <Text variant="bodyMd" color="gray500">
           {'출결 가능 시간이 지났어요.\n선생님께 직접 문의해주세요.'}
@@ -245,46 +245,107 @@ function ExpiredScreen() {
   )
 }
 
-export default function AttendancePage({
-  params,
-}: {
-  params: Promise<{ sessionId: string }>
-}) {
+function NoStudentScreen() {
+  return (
+    <div className={resultPageStyle}>
+      <div className={resultCenterStyle}>
+        <div className={resultIconStyle}>
+          <WarningIcon width={80} height={80} />
+        </div>
+
+        <Text variant="headingLg" as="h1">
+          잘못된 링크입니다
+        </Text>
+
+        <Text variant="bodyMd" color="gray500">
+          {'선생님께 올바른 링크를\n다시 받아주세요.'}
+        </Text>
+      </div>
+    </div>
+  )
+}
+
+export default function AttendancePage({ params }: { params: Promise<{ sessionId: string }> }) {
   const { sessionId } = use(params)
   const sessionIdNum = Number(sessionId)
+  const searchParams = useSearchParams()
+  const studentIdRaw = searchParams.get('studentId')
+  const studentId = studentIdRaw !== null ? Number(studentIdRaw) : null
+  const hasValidStudentId = studentId !== null && !isNaN(studentId) && studentId > 0
 
   const [session, setSession] = useState<PublicAttendanceSession | null>(null)
-  const [pageState, setPageState] = useState<PageState>('input')
+  const [pageState, setPageState] = useState<PageState>(hasValidStudentId ? 'input' : 'no_student')
   const [result, setResult] = useState<SubmitAttendanceCodeResponse | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(hasValidStudentId)
 
   useEffect(() => {
+    if (!hasValidStudentId || !studentId) return
+
     const load = async () => {
       try {
-        const s = await attendanceService.getPublicSession(sessionIdNum)
+        const s = await attendanceService.getPublicCheckSession(sessionIdNum, studentId)
         setSession(s)
-        if (s.status === 'EXPIRED' || s.status === 'ENDED') {
+        if (s.closed || !s.session_active) {
           setPageState('expired')
+        } else if (s.already_checked) {
+          setResult({
+            student_name: s.student_name,
+            status: s.current_status ?? 'PRESENT',
+            class_name: s.class_name,
+            lesson_date: s.expires_at.slice(0, 10),
+          })
+          setPageState('success')
         }
-      } catch {
-        setPageState('expired')
+      } catch (err: unknown) {
+        const status =
+          err !== null &&
+          typeof err === 'object' &&
+          'response' in err &&
+          err.response !== null &&
+          typeof err.response === 'object' &&
+          'status' in err.response
+            ? (err.response as { status: number }).status
+            : null
+        setPageState(status === 400 || status === 404 ? 'no_student' : 'expired')
       } finally {
         setIsLoading(false)
       }
     }
     load()
-  }, [sessionIdNum])
+  }, [sessionIdNum, studentId, hasValidStudentId])
+
+  useEffect(() => {
+    if (pageState !== 'input' || !hasValidStudentId || !studentId) return
+
+    const interval = setInterval(async () => {
+      try {
+        const s = await attendanceService.getPublicCheckSession(sessionIdNum, studentId)
+        if (s.closed || !s.session_active) {
+          setPageState('expired')
+        }
+      } catch {
+        // 폴링 실패는 무시
+      }
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [pageState, sessionIdNum, studentId, hasValidStudentId])
 
   const handleSubmit = async (code: string) => {
-    const res = await attendanceService.submitAttendanceCode(sessionIdNum, { code })
+    if (!studentId) return
+    const res = await attendanceService.submitAttendanceCode(sessionIdNum, {
+      student_id: studentId,
+      code,
+    })
     setResult(res)
     setPageState('success')
   }
 
-  if (isLoading || !session) return null
+  if (isLoading) return null
 
+  if (pageState === 'no_student') return <NoStudentScreen />
   if (pageState === 'expired') return <ExpiredScreen />
   if (pageState === 'success' && result) return <SuccessScreen result={result} />
 
-  return <CodeInputScreen session={session} onSubmit={handleSubmit} />
+  return <CodeInputScreen session={session!} onSubmit={handleSubmit} />
 }
