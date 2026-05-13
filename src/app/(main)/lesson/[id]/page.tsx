@@ -69,6 +69,22 @@ export default function LessonDetailPage({ params }: { params: Promise<{ id: str
     if (lesson) attendanceInit(lessonId, lesson.class_name)
   }, [lessonId, lesson, attendanceInit])
 
+  useEffect(() => {
+    if (!attendanceSession) return
+    setStudents((prev) =>
+      prev.map((student) => {
+        const sessionStudent = attendanceSession.students.find(
+          (s) => s.student_id === student.id
+        )
+        if (!sessionStudent?.status) return student
+        return {
+          ...student,
+          attendance: sessionStudent.status === 'PRESENT' ? '출석' : '결석',
+        }
+      })
+    )
+  }, [attendanceSession])
+
   const handleSave = async () => {
     if (!lesson) return
     try {

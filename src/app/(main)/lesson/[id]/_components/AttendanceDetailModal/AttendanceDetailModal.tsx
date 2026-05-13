@@ -105,10 +105,13 @@ export default function AttendanceDetailModal({
     })
   }
 
+  const presentCount = session.students.filter((s) => s.status === 'PRESENT').length
+  const absentCount = session.students.filter((s) => s.status === 'ABSENT').length
+
   const filterCount: Record<FilterType, number> = {
     전체: session.total_count,
-    PRESENT: session.present_count,
-    ABSENT: session.absent_count,
+    PRESENT: presentCount,
+    ABSENT: absentCount,
   }
 
   // 학생 쌍으로 2열 배치
@@ -159,7 +162,7 @@ export default function AttendanceDetailModal({
             출석
           </Text>
           <span className={statNumberStyle} style={{ color: '#3B51CC' }}>
-            {session.present_count}
+            {presentCount}
           </span>
         </div>
         <div className={statCardStyle}>
@@ -167,7 +170,7 @@ export default function AttendanceDetailModal({
             결석
           </Text>
           <span className={statNumberStyle} style={{ color: '#5B5C72' }}>
-            {session.absent_count}
+            {absentCount}
           </span>
         </div>
       </div>
@@ -195,7 +198,7 @@ export default function AttendanceDetailModal({
                   <Text variant="bodyLg">{student.student_name}</Text>
                   <div className={studentRightStyle}>
                     {student.checked_at && (
-                      <Text variant="bodyLg" color="gray500">
+                      <Text variant="bodyMd" color="gray500">
                         {formatTime(student.checked_at)}
                       </Text>
                     )}

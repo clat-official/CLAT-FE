@@ -57,9 +57,12 @@ export default function AttendanceFloatingBar({ session, className, onOpenDetail
     }
   }
 
+  const presentCount = session.students.filter((s) => s.status === 'PRESENT').length
+  const absentCount = session.students.filter((s) => s.status === 'ABSENT').length
+
   const STATS = [
-    { label: '출석', value: session.present_count },
-    { label: '결석', value: session.absent_count },
+    { label: '출석', value: presentCount },
+    { label: '결석', value: absentCount },
   ]
 
   return (
