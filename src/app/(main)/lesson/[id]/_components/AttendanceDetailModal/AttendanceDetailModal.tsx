@@ -68,7 +68,6 @@ interface Props {
   session: AttendanceSession
   className: string
   isEnding: boolean
-  onPatchStudent: (studentId: number, status: AttendanceStatus) => Promise<void>
 }
 
 export default function AttendanceDetailModal({
@@ -78,7 +77,6 @@ export default function AttendanceDetailModal({
   session,
   className,
   isEnding,
-  onPatchStudent,
 }: Props) {
   const [filter, setFilter] = useState<FilterType>('전체')
   const remaining = useRemainingTime(session.expires_at)

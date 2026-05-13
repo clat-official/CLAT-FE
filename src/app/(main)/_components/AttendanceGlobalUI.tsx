@@ -16,7 +16,6 @@ export default function AttendanceGlobalUI() {
   const closeDetailModal = useAttendanceStore((s) => s.closeDetailModal)
   const closeCompleteModal = useAttendanceStore((s) => s.closeCompleteModal)
   const endSession = useAttendanceStore((s) => s.endSession)
-  const patchStudentAttendance = useAttendanceStore((s) => s.patchStudentAttendance)
 
   return (
     <>
@@ -38,7 +37,6 @@ export default function AttendanceGlobalUI() {
           session={session}
           className={className}
           isEnding={isEnding}
-          onPatchStudent={patchStudentAttendance}
         />
       )}
 
