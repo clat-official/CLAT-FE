@@ -4,12 +4,15 @@ import { attendanceService } from '@/services/attendance'
 import type { AttendanceSession, AttendanceSummary, AttendanceStatus } from '@/types/attendance'
 
 let pollInterval: ReturnType<typeof setInterval> | null = null
+let consecutiveFailures = 0
+const MAX_CONSECUTIVE_FAILURES = 5
 
 function stopPolling() {
   if (pollInterval) {
     clearInterval(pollInterval)
     pollInterval = null
   }
+  consecutiveFailures = 0
 }
 
 // onRehydrateStorage에서 호출할 수 있도록 모듈 레벨에 정의
@@ -19,9 +22,13 @@ function startPolling(sessionId: number) {
   pollInterval = setInterval(async () => {
     try {
       const s = await attendanceService.getSession(sessionId)
+      consecutiveFailures = 0
       useAttendanceStore.setState({ session: s })
       if (!s.is_active) stopPolling()
-    } catch {}
+    } catch {
+      consecutiveFailures += 1
+      if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) stopPolling()
+    }
   }, 3000)
 }
 
