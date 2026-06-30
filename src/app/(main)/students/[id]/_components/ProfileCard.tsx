@@ -1,8 +1,11 @@
 'use client'
 
 import type { StudentDetail } from '@/types/student'
-import UsersIcon from '@/assets/icons/icon-users.svg'
-import BookOpenIcon from '@/assets/icons/icon-book-open.svg'
+import ProfileIcon from '@/assets/icons/icon-profile.svg'
+import LocationIcon from '@/assets/icons/icon-location.svg'
+import BookIcon from '@/assets/icons/icon-book.svg'
+import SchoolIcon from '@/assets/icons/icon-school.svg'
+import PhoneIcon from '@/assets/icons/icon-phone.svg'
 import FlagIcon from '@/assets/icons/icon-flag.svg'
 
 interface Props {
@@ -37,22 +40,20 @@ export default function ProfileCard({ detail, isLoading }: Props) {
   const initial = detail.name.charAt(0)
 
   return (
-    <div className="bg-white rounded-[20px] p-6 flex flex-col gap-5">
+    <div className="bg-white border border-gray-50 rounded-[20px] p-6 flex flex-col gap-8">
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-500 flex items-center justify-center text-xl font-semibold shrink-0">
-          {initial}
-        </div>
+        <ProfileIcon width={48} height={48} />
         <span className="text-2xl font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">
           {detail.name}
         </span>
       </div>
 
       <div className="flex flex-col gap-3">
-        <InfoRow icon={<FlagIcon width={20} height={20} />} label="학원명" value={academyNames} />
-        <InfoRow icon={<UsersIcon width={20} height={20} />} label="소속 반" value={classNames} />
-        <InfoRow icon={<BookOpenIcon width={20} height={20} />} label="학교명" value={detail.school_name || '-'} />
-        <InfoRow icon={<UsersIcon width={20} height={20} />} label="학생 전화번호" value={detail.phone || '-'} />
-        <InfoRow icon={<UsersIcon width={20} height={20} />} label="학부모 전화번호" value={detail.parent_phone || '-'} />
+        <InfoRow icon={<LocationIcon width={20} height={20} />} label="학원명" value={academyNames} />
+        <InfoRow icon={<BookIcon width={20} height={20} />} label="소속 반" value={classNames} />
+        <InfoRow icon={<SchoolIcon width={20} height={20} />} label="학교명" value={detail.school_name || '-'} />
+        <InfoRow icon={<PhoneIcon width={20} height={20} />} label="학생 전화번호" value={detail.phone || '-'} />
+        <InfoRow icon={<PhoneIcon width={20} height={20} />} label="학부모 전화번호" value={detail.parent_phone || '-'} />
       </div>
     </div>
   )

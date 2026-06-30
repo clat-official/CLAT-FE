@@ -1,6 +1,7 @@
 'use client'
 
 import { useAiAnalysis } from '@/hooks/useStudentDashboard'
+import StarIcon from '@/assets/icons/icon-star-fill.svg'
 
 interface Props {
   studentId: number
@@ -12,8 +13,8 @@ export default function AiAnalysisCard({ studentId }: Props) {
   return (
     <div className="bg-primary-50 rounded-xl px-6 py-5 flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-primary-500 text-base leading-none">✦</span>
+        <div className="flex items-center gap-1">
+          <StarIcon width={20} height={20} />
           <span className="text-base font-semibold text-primary-500 tracking-[-0.03em] leading-[1.4]">
             AI 분석
           </span>

@@ -23,7 +23,7 @@ function ElapsedBadge({ lessonDate }: { lessonDate: string }) {
 
 export default function IncompleteItemsPanel({ items, isLoading, onComplete }: Props) {
   return (
-    <div className="bg-white rounded-[20px] p-7 flex flex-col gap-6">
+    <div className="bg-white border border-gray-50 rounded-[20px] p-7 flex flex-col gap-6">
       <div className="flex items-center gap-2">
         <span className="text-xl font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4]">
           미완료 항목
