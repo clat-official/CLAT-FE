@@ -1,5 +1,7 @@
 import axiosInstance from '@/lib/api/axiosInstance'
-import type { Student, StudentDetail } from '@/types/student'
+import type { Student, StudentDetail, ScoreDataPoint, LessonHistoryRecord, AlimtalkRecord, AiAnalysis } from '@/types/student'
+
+export type ScoreHistoryPeriod = 'recent5' | 'recent10' | '1month' | '3months' | 'all'
 
 export interface StudentClass {
   id: number
@@ -72,5 +74,27 @@ export const studentService = {
     await axiosInstance.post('/students/bulk', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
+  },
+
+  async getScoreHistory(id: number, period?: ScoreHistoryPeriod): Promise<ScoreDataPoint[]> {
+    const { data } = await axiosInstance.get(`/students/${id}/score-history`, {
+      params: period ? { period } : undefined,
+    })
+    return Array.isArray(data.data) ? data.data : []
+  },
+
+  async getLessonHistory(id: number): Promise<LessonHistoryRecord[]> {
+    const { data } = await axiosInstance.get(`/students/${id}/lesson-history`)
+    return Array.isArray(data.data) ? data.data : []
+  },
+
+  async getAlimtalkHistory(id: number): Promise<AlimtalkRecord[]> {
+    const { data } = await axiosInstance.get(`/students/${id}/alimtalk`)
+    return Array.isArray(data.data) ? data.data : []
+  },
+
+  async postAiAnalysis(id: number): Promise<AiAnalysis> {
+    const { data } = await axiosInstance.post(`/students/${id}/ai-analysis`)
+    return data.data
   },
 }
