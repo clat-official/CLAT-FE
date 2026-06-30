@@ -18,7 +18,7 @@ export default function StudentDashboardPage({ params }: { params: Promise<{ id:
   const router = useRouter()
   const addToast = useToastStore((s) => s.addToast)
 
-  const { detail, isLoading } = useStudentDetail(studentId)
+  const { detail, isLoading, refetch } = useStudentDetail(studentId)
   const [incompleteItems, setIncompleteItems] = useState<IncompleteItem[]>([])
 
   useEffect(() => {
@@ -29,6 +29,7 @@ export default function StudentDashboardPage({ params }: { params: Promise<{ id:
     try {
       await studentService.completeItem(itemId)
       setIncompleteItems((prev) => prev.filter((i) => i.lesson_student_data_id !== itemId))
+      refetch()
       addToast({ variant: 'success', message: '완료 처리됐어요.' })
     } catch {
       addToast({ variant: 'error', message: '완료 처리에 실패했어요.' })
@@ -49,7 +50,7 @@ export default function StudentDashboardPage({ params }: { params: Promise<{ id:
 
       <div className="flex gap-5 items-start">
         {/* 좌측 패널 */}
-        <div className="w-[448px] shrink-0 flex flex-col gap-3">
+        <div className="w-[448px] shrink-0 flex flex-col gap-6">
           <ProfileCard detail={detail} isLoading={isLoading} />
           <StatsRow stats={detail?.stats ?? null} />
           <IncompleteItemsPanel
