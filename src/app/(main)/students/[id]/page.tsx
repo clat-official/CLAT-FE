@@ -16,6 +16,14 @@ export default function StudentDashboardPage({ params }: { params: Promise<{ id:
   const { id } = use(params)
   const studentId = Number(id)
   const router = useRouter()
+
+  if (isNaN(studentId)) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="text-sm text-gray-400 tracking-[-0.03em]">유효하지 않은 학생입니다.</span>
+      </div>
+    )
+  }
   const addToast = useToastStore((s) => s.addToast)
 
   const { detail, isLoading, refetch } = useStudentDetail(studentId)
