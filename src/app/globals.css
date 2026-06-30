@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* ── Primary ─────────────────────────────────────── */
+  /* ── Brand (Primary) ─────────────────────────────── */
   --color-primary-50: #F1F4FD;
   --color-primary-100: #E0E7F9;
   --color-primary-200: #C8D5F5;
@@ -12,20 +12,20 @@
   --color-primary-700: #333A9A;
   --color-primary-800: #2E367A;
 
-  /* ── Gray ────────────────────────────────────────── */
+  /* ── Gray (Primitives) ───────────────────────────── */
   --color-white: #FFFFFF;
-  --color-background: #FAFAFA;
   --color-gray-50: #F3F4F5;
-  --color-gray-75: #E5E6EC;
   --color-gray-100: #D7D7E3;
   --color-gray-200: #C5C6D3;
   --color-gray-300: #A9AABF;
+  --color-gray-400: #999BB3;
   --color-gray-500: #9492A9;
   --color-gray-600: #757693;
   --color-gray-700: #5B5C72;
+  --color-gray-800: #474859;
   --color-gray-900: #363744;
 
-  /* ── Semantic ────────────────────────────────────── */
+  /* ── Status (Primitives) ─────────────────────────── */
   --color-success-50: #EDFCF5;
   --color-success-200: #ABEFD2;
   --color-success-500: #1DAA7F;
@@ -38,35 +38,69 @@
   --color-error-600: #DC223B;
   --color-error-700: #B91730;
 
-  /* ── Typography ──────────────────────────────────── */
-  --font-size-display: 28px;
-  --font-weight-display: 700;
-  --font-size-heading-lg: 24px;
-  --font-weight-heading-lg: 600;
-  --font-size-heading-md: 20px;
-  --font-weight-heading-md: 600;
-  --font-size-heading-sm: 18px;
-  --font-weight-heading-sm: 600;
-  --font-size-title-md: 16px;
-  --font-weight-title-md: 600;
-  --font-size-title-sm: 14px;
-  --font-weight-title-sm: 600;
-  --font-size-body-lg: 16px;
-  --font-weight-body-lg: 500;
-  --font-size-body-md: 14px;
-  --font-weight-body-md: 500;
-  --font-size-label-sm: 12px;
-  --font-weight-label-sm: 500;
+  /* ── Compatibility (Stage 3에서 class명 교체 예정) ────────── */
+  --color-background: #FAFAFA;    /* bg-background → bg-page */
+  --color-gray-75: #E5E6EC;       /* border-gray-75 → border-border-default, bg-gray-75 → bg-bg-hover */
 
-  /* ── Grid ────────────────────────────────────────── */
-  --grid-cols-default: repeat(3, 1fr);
-  --grid-gap: 20px;
+  /* ── Semantic: Background ────────────────────────── */
+  --color-bg-page: #FAFAFA;
+  --color-bg-default: #FFFFFF;
+  --color-bg-subtle: #F3F4F5;
+  --color-bg-hover: #E5E6EC;
+  --color-bg-selected: #E0E7F9;
+  --color-bg-disabled: #D7D7E3;
+  --color-bg-brand: #F1F4FD;
+  --color-bg-brand-hover: #E0E7F9;
+  --color-bg-positive: #EDFCF5;
+  --color-bg-warning: #FFF9EB;
+  --color-bg-danger: #FFF1F1;
 
-  /* ── Card ────────────────────────────────────────── */
-  --card-radius: 16px;
-  --card-padding: 24px;
-  --card-min-height: 160px;
-  --card-border: 1px solid #E5E6EC;
+  /* ── Semantic: Foreground ────────────────────────── */
+  --color-fg-default: #363744;
+  --color-fg-secondary: #5B5C72;
+  --color-fg-tertiary: #757693;
+  --color-fg-disabled: #9492A9;
+  --color-fg-on-color: #FFFFFF;
+  --color-fg-brand: #3B51CC;
+  --color-fg-positive: #1DAA7F;
+  --color-fg-warning: #FDAD22;
+  --color-fg-danger: #EF4453;
+
+  /* ── Semantic: Border ────────────────────────────── */
+  --color-border-default: #E5E6EC;
+  --color-border-subtle: #F3F4F5;
+  --color-border-strong: #D7D7E3;
+  --color-border-brand: #5774DA;
+  --color-border-danger: #EF4453;
+
+  /* ── Spacing ─────────────────────────────────────── */
+  --spacing-100: 4px;
+  --spacing-200: 8px;
+  --spacing-300: 12px;
+  --spacing-400: 16px;
+  --spacing-600: 20px;
+  --spacing-700: 24px;
+  --spacing-800: 28px;
+  --spacing-900: 36px;
+
+  /* ── Border Radius ───────────────────────────────── */
+  --radius-100: 4px;
+  --radius-200: 8px;
+  --radius-300: 12px;
+  --radius-400: 16px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ─────────────────────────────────────── */
+  --shadow-01: 0 0 8px rgba(0, 0, 0, 0.08);
+  --shadow-dropdown: 0 0 12px rgba(0, 0, 0, 0.08);
+
+  /* ── Z-Index ─────────────────────────────────────── */
+  --z-bar: 100;
+  --z-tooltip: 150;
+  --z-dropdown: 150;
+  --z-modal: 300;
+  --z-sidebar: 300;
+  --z-toast: 500;
 
   /* ── Animations ──────────────────────────────────── */
   --animate-fade-slide-in: fade-slide-in 0.25s ease-out;
@@ -75,6 +109,71 @@
   --animate-slide-out-right: slide-out-right 0.3s ease-in forwards;
 }
 
+/* ── Typography Utilities ────────────────────────────── */
+@utility text-display {
+  font-size: 28px;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+@utility text-heading-lg {
+  font-size: 24px;
+  line-height: 1.33;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+@utility text-heading-md {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+@utility text-heading-sm {
+  font-size: 18px;
+  line-height: 1.44;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+@utility text-title-md {
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+@utility text-title-sm {
+  font-size: 14px;
+  line-height: 1.43;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+@utility text-body-lg {
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+@utility text-body-md {
+  font-size: 14px;
+  line-height: 1.43;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+@utility text-label-sm {
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+/* ── Keyframes ───────────────────────────────────────── */
 @keyframes slide-in-right {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
@@ -95,12 +194,14 @@
   to   { opacity: 0; transform: translateY(8px); }
 }
 
+/* ── Custom Utilities ────────────────────────────────── */
 @layer utilities {
   .dropzone-dashed-border {
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23C5C6D3' stroke-width='1' stroke-dasharray='6' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
   }
 }
 
+/* ── Fonts ───────────────────────────────────────────── */
 @font-face {
   font-family: 'Pretendard';
   src: url('/font/PretendardVariable.woff2') format('woff2');
@@ -109,6 +210,7 @@
   font-display: swap;
 }
 
+/* ── Base Styles ─────────────────────────────────────── */
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
