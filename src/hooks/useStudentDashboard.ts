@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { studentService, type ScoreHistoryPeriod } from '@/services/student'
 import type {
   StudentDetail,
@@ -14,21 +14,19 @@ export function useStudentDetail(id: number) {
   const [detail, setDetail] = useState<StudentDetail | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
-  const cancelledRef = useRef(false)
-
   useEffect(() => {
     if (!id) return
-    cancelledRef.current = false
+    let cancelled = false
     setIsLoading(true)
     setError(null)
 
     studentService
       .getStudent(id)
-      .then((data) => { if (!cancelledRef.current) setDetail(data) })
-      .catch((err: unknown) => { if (!cancelledRef.current) setError(err instanceof Error ? err : new Error('Failed')) })
-      .finally(() => { if (!cancelledRef.current) setIsLoading(false) })
+      .then((data) => { if (!cancelled) setDetail(data) })
+      .catch((err: unknown) => { if (!cancelled) setError(err instanceof Error ? err : new Error('Failed')) })
+      .finally(() => { if (!cancelled) setIsLoading(false) })
 
-    return () => { cancelledRef.current = true }
+    return () => { cancelled = true }
   }, [id])
 
   const refetch = useCallback(() => {
