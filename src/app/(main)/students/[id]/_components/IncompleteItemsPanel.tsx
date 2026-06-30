@@ -1,6 +1,6 @@
 'use client'
 
-import { differenceInDays, parseISO } from 'date-fns'
+import { differenceInDays, parseISO, isValid } from 'date-fns'
 import type { IncompleteItem } from '@/types/student'
 import CheckIcon from '@/assets/icons/icon-check.svg'
 import WarningIcon from '@/assets/icons/icon-warning.svg'
@@ -12,7 +12,8 @@ interface Props {
 }
 
 function ElapsedBadge({ lessonDate }: { lessonDate: string }) {
-  const days = differenceInDays(new Date(), parseISO(lessonDate))
+  const parsed = parseISO(lessonDate)
+  const days = isValid(parsed) ? differenceInDays(new Date(), parsed) : 0
   if (days <= 0) return null
   return (
     <span className="text-xs font-medium text-error-500 bg-error-50 rounded-[6px] px-2 py-1 shrink-0 tracking-[-0.03em]">

@@ -2,7 +2,7 @@
 
 import { useAlimtalkHistory } from '@/hooks/useStudentDashboard'
 import { cn } from '@/lib/utils'
-import { format, parseISO } from 'date-fns'
+import { format, parseISO, isValid } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import type { AlimtalkRecord } from '@/types/student'
 
@@ -51,7 +51,10 @@ export default function AlimtalkTab({ studentId }: Props) {
           {/* Row 1: sent date + status */}
           <div className="flex items-center gap-3">
             <span className="text-sm font-semibold text-gray-900 tracking-[-0.03em] leading-[1.4] flex-1">
-              {format(parseISO(record.sent_at), 'M월 d일(E) HH:mm', { locale: ko })}
+              {(() => {
+                const d = parseISO(record.sent_at)
+                return isValid(d) ? format(d, 'M월 d일(E) HH:mm', { locale: ko }) : '-'
+              })()}
             </span>
             <StatusBadge status={record.status} />
           </div>
