@@ -4,23 +4,23 @@ import { cn } from '@/lib/utils'
 
 const inputVariants = cva(
   [
-    'w-full py-[10px] px-4 text-sm font-medium leading-[1.4] tracking-[-0.03em] text-gray-700',
+    'w-full py-[10px] px-4 text-sm font-medium leading-[1.4] tracking-[-0.03em] text-fg-secondary',
     'outline-none transition-all duration-200',
-    'placeholder:text-gray-300 focus:border-primary-500',
-    'disabled:text-gray-100 disabled:cursor-not-allowed',
+    'placeholder:text-fg-disabled focus:border-border-brand',
+    'disabled:text-fg-disabled disabled:cursor-not-allowed',
   ].join(' '),
   {
     variants: {
       variant: {
-        default: 'bg-white border border-gray-100',
-        gray:    'bg-background border border-gray-50',
+        default: 'bg-bg-default border border-border-strong',
+        gray:    'bg-bg-page border border-border-subtle',
       },
       shape: {
         square:  'h-12 rounded-lg',
-        capsule: 'h-12 rounded-full px-8 border-gray-200',
+        capsule: 'h-12 rounded-full px-8 border-border-default',
       },
       hasError: {
-        true:  'border-error-500 focus:border-error-500',
+        true:  'border-border-danger focus:border-border-danger',
         false: '',
       },
     },
@@ -47,7 +47,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative flex items-center w-full">
         {inputEl}
-        <span className="absolute right-4 text-gray-300 text-sm font-medium pointer-events-none">
+        <span className="absolute right-4 text-fg-disabled text-sm font-medium pointer-events-none">
           {suffix}
         </span>
       </div>

@@ -9,11 +9,11 @@ export default function Textarea({ className, ...props }: TextareaProps) {
   return (
     <textarea
       className={cn(
-        'w-full min-h-10 py-[10px] px-4 rounded-lg border border-gray-100 bg-background',
-        'text-sm font-medium leading-[1.4] tracking-[-0.03em] text-gray-700',
+        'w-full min-h-10 py-[10px] px-4 rounded-lg border border-border-strong bg-bg-page',
+        'text-sm font-medium leading-[1.4] tracking-[-0.03em] text-fg-secondary',
         'outline-none resize-y transition-[border-color] duration-200',
-        'placeholder:text-gray-300 focus:border-primary-500',
-        'disabled:text-gray-100 disabled:cursor-not-allowed',
+        'placeholder:text-fg-disabled focus:border-border-brand',
+        'disabled:text-fg-disabled disabled:cursor-not-allowed',
         className,
       )}
       {...props}

@@ -2,6 +2,9 @@ import { cn } from '@/lib/utils'
 
 type TextVariant = 'display' | 'headingLg' | 'headingMd' | 'headingSm' | 'titleMd' | 'titleSm' | 'bodyLg' | 'bodyMd' | 'labelSm'
 type TextColor =
+  // Semantic tokens (권장)
+  | 'fgDefault' | 'fgSecondary' | 'fgTertiary' | 'fgDisabled' | 'fgOnColor' | 'fgBrand' | 'fgDanger'
+  // Primitive tokens (하위 호환)
   | 'primary50' | 'primary100' | 'primary200' | 'primary300' | 'primary400'
   | 'primary500' | 'primary600' | 'primary700' | 'primary800'
   | 'white' | 'background'
@@ -21,18 +24,27 @@ interface TextProps {
 }
 
 const variantClasses: Record<TextVariant, string> = {
-  display:   'text-[28px] font-bold leading-[1.4] tracking-[-0.03em]',
-  headingLg: 'text-2xl font-semibold leading-[1.4] tracking-[-0.03em]',
-  headingMd: 'text-xl font-semibold leading-[1.4] tracking-[-0.03em]',
-  headingSm: 'text-lg font-semibold leading-[1.4] tracking-[-0.03em]',
-  titleMd:   'text-base font-semibold leading-[1.4] tracking-[-0.03em]',
-  titleSm:   'text-sm font-semibold leading-[1.4] tracking-[-0.03em]',
-  bodyLg:    'text-base font-medium leading-[1.4] tracking-[-0.03em]',
-  bodyMd:    'text-sm font-medium leading-[1.4] tracking-[-0.03em]',
-  labelSm:   'text-xs font-medium leading-[1.4] tracking-[-0.03em]',
+  display:   'text-display',
+  headingLg: 'text-heading-lg',
+  headingMd: 'text-heading-md',
+  headingSm: 'text-heading-sm',
+  titleMd:   'text-title-md',
+  titleSm:   'text-title-sm',
+  bodyLg:    'text-body-lg',
+  bodyMd:    'text-body-md',
+  labelSm:   'text-label-sm',
 }
 
 const colorClasses: Record<TextColor, string> = {
+  // Semantic
+  fgDefault:   'text-fg-default',
+  fgSecondary: 'text-fg-secondary',
+  fgTertiary:  'text-fg-tertiary',
+  fgDisabled:  'text-fg-disabled',
+  fgOnColor:   'text-fg-on-color',
+  fgBrand:     'text-fg-brand',
+  fgDanger:    'text-fg-danger',
+  // Primitive
   primary50:  'text-primary-50',
   primary100: 'text-primary-100',
   primary200: 'text-primary-200',
@@ -68,7 +80,7 @@ const colorClasses: Record<TextColor, string> = {
 
 export default function Text({
   variant = 'bodyMd',
-  color = 'gray900',
+  color = 'fgDefault',
   as: Tag = 'span',
   children,
   className,

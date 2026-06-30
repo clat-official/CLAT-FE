@@ -53,12 +53,12 @@ export default function Dropdown({
     >
       <button
         className={cn(
-          'flex items-center gap-8 bg-white border border-gray-200 rounded-lg px-4 py-2 cursor-pointer',
-          'text-gray-700 text-sm font-semibold tracking-[-0.03em] leading-[1.4]',
-          'transition-[border-color,color] duration-200 hover:bg-primary-50',
-          noBorder && 'border-0 hover:bg-gray-50',
+          'flex items-center gap-8 bg-bg-default border border-border-default rounded-lg px-4 py-2 cursor-pointer',
+          'text-fg-secondary text-sm font-semibold tracking-[-0.03em] leading-[1.4]',
+          'transition-[border-color,color] duration-200 hover:bg-bg-brand',
+          noBorder && 'border-0 hover:bg-bg-subtle',
           fullWidth && 'w-full justify-between',
-          isSelected && 'text-primary-500',
+          isSelected && 'text-fg-brand',
           triggerClassName,
         )}
         onClick={() => setIsOpen((prev) => !prev)}
@@ -73,12 +73,12 @@ export default function Dropdown({
       {isOpen && (
         <div
           className={cn(
-            'absolute top-[calc(100%+8px)] left-0 bg-white border border-gray-200 rounded-lg z-[100] min-w-full overflow-hidden py-2',
+            'absolute top-[calc(100%+8px)] left-0 bg-bg-default border border-border-default rounded-lg z-[100] min-w-full overflow-hidden py-2',
             noBorder && 'border-0 shadow-[0_4px_16px_rgba(0,0,0,0.08)]',
           )}
         >
           {menuLabel && (
-            <div className="px-4 py-2 text-gray-300 text-sm font-semibold tracking-[-0.03em] leading-[1.4]">
+            <div className="px-4 py-2 text-fg-disabled text-sm font-semibold tracking-[-0.03em] leading-[1.4]">
               {menuLabel}
             </div>
           )}
@@ -86,10 +86,10 @@ export default function Dropdown({
             <div
               key={opt.value}
               className={cn(
-                'flex items-center px-4 py-2 cursor-pointer text-gray-700',
+                'flex items-center px-4 py-2 cursor-pointer text-fg-secondary',
                 'text-sm font-semibold tracking-[-0.03em] leading-[1.4]',
-                'transition-[background-color] duration-150 hover:bg-gray-50',
-                opt.value === value && 'text-primary-500',
+                'transition-[background-color] duration-150 hover:bg-bg-subtle',
+                opt.value === value && 'text-fg-brand',
               )}
               onClick={() => {
                 onChange(opt.value)

@@ -6,9 +6,9 @@ const chipVariants = cva(
   {
     variants: {
       variant: {
-        default:    'bg-gray-50 text-gray-500',
-        active:     'bg-primary-50 text-primary-500',
-        ended:      'bg-error-50 text-error-500',
+        default:    'bg-bg-subtle text-fg-disabled',
+        active:     'bg-bg-brand text-fg-brand',
+        ended:      'bg-bg-danger text-fg-danger',
         done:       'bg-success-50 text-success-500',
         inProgress: 'bg-warning-50 text-warning-500',
       },
