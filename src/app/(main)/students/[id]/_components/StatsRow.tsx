@@ -25,11 +25,23 @@ export default function StatsRow({ stats }: Props) {
     return <div className="flex gap-2 h-[88px]" />
   }
 
+  const recentScore = stats.recent_scores[0]?.value
+  const recentScoreDisplay = recentScore && recentScore !== '' ? recentScore : '-'
+
   return (
     <div className="flex gap-2">
-      <StatCard label="완료율" value={`${Math.round(stats.completion_rate * 100)}%`} />
-      <StatCard label="완료" value={`${stats.total_complete_items}개`} />
-      <StatCard label="미완료" value={`${stats.total_incomplete_items}개`} />
+      <StatCard
+        label="이번 달 완료율"
+        value={`${Math.round(stats.monthly_completion_rate * 100)}%`}
+      />
+      <StatCard
+        label="최근 점수"
+        value={recentScoreDisplay}
+      />
+      <StatCard
+        label="이번 달 출석률"
+        value={`${Math.round(stats.monthly_attendance_rate * 100)}%`}
+      />
     </div>
   )
 }

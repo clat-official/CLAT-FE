@@ -4,10 +4,19 @@ export interface StudentClass {
   academy_name?: string
 }
 
+export interface RecentScore {
+  lesson_date: string
+  item_name: string
+  value: string
+}
+
 export interface StudentStats {
   total_complete_items: number
   total_incomplete_items: number
   completion_rate: number
+  monthly_completion_rate: number
+  monthly_attendance_rate: number
+  recent_scores: RecentScore[]
 }
 
 export interface Student {
