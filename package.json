@@ -32,17 +32,20 @@
   },
   "devDependencies": {
     "@storybook/nextjs-vite": "^10.4.6",
+    "@storybook/react": "^10.4.6",
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/webpack": "^8.1.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.28.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.1",
     "storybook": "^10.4.6",
     "typescript": "^5",
-    "vite-plugin-svgr": "^5.2.0",
     "webpack": "^5.105.2"
   }
 }

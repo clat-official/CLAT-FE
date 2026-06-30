@@ -66,6 +66,15 @@ importers:
       '@storybook/nextjs-vite':
         specifier: ^10.4.6
         version: 10.4.6(@babel/core@7.29.0)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(esbuild@0.28.1)(next@16.2.4(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.14)(prettier@3.8.1)(react@19.2.3))(typescript@5.9.3)(vite@8.1.1(@types/node@20.19.33)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.0))(webpack@5.105.2(esbuild@0.28.1))
+      '@storybook/react':
+        specifier: ^10.4.6
+        version: 10.4.6(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.14)(prettier@3.8.1)(react@19.2.3))(typescript@5.9.3)
+      '@svgr/core':
+        specifier: ^8.1.0
+        version: 8.1.0(typescript@5.9.3)
+      '@svgr/plugin-jsx':
+        specifier: ^8.1.0
+        version: 8.1.0(@svgr/core@8.1.0(typescript@5.9.3))
       '@svgr/webpack':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.9.3)
@@ -78,6 +87,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.14)
+      esbuild:
+        specifier: ^0.28.1
+        version: 0.28.1
       eslint:
         specifier: ^9
         version: 9.39.3(jiti@2.7.0)
@@ -96,9 +108,6 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
-      vite-plugin-svgr:
-        specifier: ^5.2.0
-        version: 5.2.0(typescript@5.9.3)(vite@8.1.1(@types/node@20.19.33)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.0))
       webpack:
         specifier: ^5.105.2
         version: 5.105.2(esbuild@0.28.1)
@@ -3991,11 +4000,6 @@ packages:
       next: ^14.1.0 || ^15.0.0 || ^16.0.0
       storybook: ^0.0.0-0 || ^9.0.0 || ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0 || ^10.4.0-0 || ^10.5.0-0 || ^10.6.0-0
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
-
-  vite-plugin-svgr@5.2.0:
-    resolution: {integrity: sha512-qj2eAKF8C6PZWemVTvQA0xgQIcP1hHU6Buh7fl6BhvayWwnuxE+z417miKxeDvRWbDrupQ1oK99hfxElopJ3sQ==}
-    peerDependencies:
-      vite: '>=3.0.0'
 
   vite-tsconfig-paths@5.1.4:
     resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
@@ -8302,17 +8306,6 @@ snapshots:
       vite: 8.1.1(@types/node@20.19.33)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.0)
       vite-tsconfig-paths: 5.1.4(typescript@5.9.3)(vite@8.1.1(@types/node@20.19.33)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.0))
     transitivePeerDependencies:
-      - supports-color
-      - typescript
-
-  vite-plugin-svgr@5.2.0(typescript@5.9.3)(vite@8.1.1(@types/node@20.19.33)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.0)):
-    dependencies:
-      '@rollup/pluginutils': 5.4.0
-      '@svgr/core': 8.1.0(typescript@5.9.3)
-      '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0(typescript@5.9.3))
-      vite: 8.1.1(@types/node@20.19.33)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.0)
-    transitivePeerDependencies:
-      - rollup
       - supports-color
       - typescript
 
